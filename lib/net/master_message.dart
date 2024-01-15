@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 
 class MasterMessage {
@@ -20,7 +19,6 @@ class MasterMessage {
     this.token,
   });
 
-
   Map<String, dynamic> toJson() => {
         if (id != null) "id": id,
         if (version != null) "version": version,
@@ -37,7 +35,7 @@ class MasterMessage {
       version: json["version"],
       request: json["request"],
       response: json["response"],
-      content: json['content'] is Map ? jsonEncode(json['content']) : json['content'],
+      content: json['content'],
       path: json["path"],
       token: json["token"],
     );

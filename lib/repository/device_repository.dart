@@ -6,6 +6,7 @@ import 'package:k3_sipp_mobile/util/text_utils.dart';
 
 class DeviceRepository {
   static const String _userKey = "USER";
+  static const String _tokenKey = "TOKEN";
 
   static final DeviceRepository _instance = DeviceRepository._internal();
 
@@ -15,12 +16,29 @@ class DeviceRepository {
 
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
 
-  String? _version;
+  String? _versionNumber;
   User? _user;
+  String? _token;
 
-  String? get version => _version;
+  String? get versionNumber => _versionNumber;
 
-  set version(version) => _version = version;
+  set versionNumber(versionNumber) => _versionNumber = versionNumber;
+
+  Future<String?> getToken() async {
+    if (TextUtils.isEmpty(_token)) {
+      String? result = await _secureStorage.read(key: _tokenKey);
+      if (!TextUtils.isEmpty(result)) _token = result;
+    }
+
+    return _token;
+  }
+
+  Future<void> setToken(String token) async {
+    if(!TextUtils.isEmpty(token)){
+      _token = token;
+      await _secureStorage.write(key: _tokenKey, value: _token);
+    }
+  }
 
   ///
   /// This method is to check if it's user already registered or not
@@ -47,7 +65,7 @@ class DeviceRepository {
     await _secureStorage.write(key: _userKey, value: jsonEncode(_user));
   }
 
-  Future<void> logout() async{
+  Future<void> logout() async {
     _user = null;
     await _secureStorage.delete(key: _userKey);
   }

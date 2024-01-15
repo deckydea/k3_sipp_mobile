@@ -11,7 +11,7 @@ import 'package:k3_sipp_mobile/res/dimens.dart';
 import 'package:k3_sipp_mobile/ui/main/assignment_page.dart';
 import 'package:k3_sipp_mobile/ui/main/home_page.dart';
 import 'package:k3_sipp_mobile/ui/main/profile_page.dart';
-import 'package:k3_sipp_mobile/ui/main/tools_page.dart';
+import 'package:k3_sipp_mobile/ui/main/devices_page.dart';
 import 'package:k3_sipp_mobile/util/dialog_utils.dart';
 
 class MainMenuPage extends StatefulWidget {
@@ -51,7 +51,7 @@ class _MainMenuPageState extends State<MainMenuPage> {
           children:  [
             HomePage(user: widget.user),
             const AssignmentPage(),
-            const ToolsPage(),
+            const DevicesPage(),
             const ProfilePage(),
           ],
         ),

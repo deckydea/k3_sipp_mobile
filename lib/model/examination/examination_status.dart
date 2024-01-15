@@ -1,0 +1,15 @@
+// ignore_for_file: constant_identifier_names
+
+enum ExaminationStatus {
+  PENDING,
+  PENDING_APPROVE_QC1,
+  PENDING_APPROVE_QC2,
+  PENDING_INPUT_LAB,
+  REVISION_QC1,
+  REVISION_QC2,
+  REVISION_INPUT_LAB,
+  PENDING_SIGNED,
+  REJECT_SIGNED,
+  SIGNED,
+  COMPLETED,
+}

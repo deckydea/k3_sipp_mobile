@@ -40,7 +40,7 @@ class Dimens {
   static const double paddingSmall = 12.0;
   static const double paddingMedium = 24.0;
   static const double paddingLarge = 36.0;
-  static const double paddingPage = 12.0;
+  static const double paddingPage = 15.0;
 
   // Button
   static const double buttonHeight = 50;
@@ -59,7 +59,7 @@ class Dimens {
   static const double textBoxWidthSmall = 120;
   static const double textBoxWidth = 360;
   static const double textBoxHeightSmall = 57;
-  static const double textBoxRadius = 8;
+  static const double textBoxRadius = 20;
 
   // Chip
   static const double chipHeight = 54.0;

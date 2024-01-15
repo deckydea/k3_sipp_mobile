@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_jailbreak_detection/flutter_jailbreak_detection.dart';
 import 'package:k3_sipp_mobile/main.dart';
 import 'package:k3_sipp_mobile/model/other/version_verification.dart';
@@ -69,36 +71,58 @@ class LauncherState extends State<Launcher> {
   ///
   Future<void> _verifyVersion() async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
-    String version = packageInfo.version;
+    String versionNumber = packageInfo.version;
     int buildNumber = int.tryParse(packageInfo.buildNumber) ?? 0;
-    DeviceRepository().version = version;
+    DeviceRepository().versionNumber = versionNumber;
 
-    if (!TextUtils.isEmpty(version) && buildNumber > 0) {
-      VersionVerification verification = VersionVerification(versionNumber: version, buildNumber: buildNumber);
-      MasterMessage message = await ConnectionUtils.sendRequest(VerifyVersion(verification));
+    if (!TextUtils.isEmpty(versionNumber) && buildNumber > 0) {
+      MasterMessage message = await ConnectionUtils.sendRequest(VerifyVersion());
+      if (!TextUtils.isEmpty(message.token)) await DeviceRepository().setToken(message.token!);
 
       switch (message.response) {
         case MasterResponseType.success:
-          // Safe to use, proceed to login
           _onVersionVerified();
+          //TODO: Remove this
+          // VersionVerification versionServer = VersionVerification.fromJson(jsonDecode(message.content!));
+          // if (versionServer.buildNumber == buildNumber && TextUtils.equals(versionServer.versionNumber, versionNumber)) {
+          //   // Safe to use, proceed to login
+          //   _onVersionVerified();
+          // } else {
+          //   // The app is no longer valid
+          //   if (context.mounted) {
+          //     await MessageUtils.showMessage(
+          //       context: context,
+          //       title: _localizations.translate("invalid_version_title"),
+          //       content: _localizations.translate("invalid_version_message"),
+          //       dialog: true,
+          //     );
+          //   }
+          //   SystemNavigator.pop();
+          // }
           break;
         case MasterResponseType.noConnection:
-          //TODO: need offline login?
-          // _offlineLogin();
+          if (context.mounted) {
+            await MessageUtils.showMessage(
+              context: context,
+              title: _localizations.translate("failed_no_connection_title"),
+              content: _localizations.translate("failed_no_connection"),
+              dialog: true,
+            );
+          }
           break;
         default:
           _onVersionVerified();
-        //TODO: Uncomment this
-        // The app is no longer valid
-        //   if (context.mounted) {
-        //     await MessageUtils.showMessage(
-        //       context: context,
-        //       title: _localizations.translate("invalid_version_title"),
-        //       content: _localizations.translate("invalid_version_message"),
-        //       dialog: true,
-        //     );
-        //   }
-        //   SystemNavigator.pop();
+          //TODO: Remove this
+          // The app is no longer valid
+          // if (context.mounted) {
+          //   await MessageUtils.showMessage(
+          //     context: context,
+          //     title: _localizations.translate("invalid_version_title"),
+          //     content: _localizations.translate("invalid_version_message"),
+          //     dialog: true,
+          //   );
+          // }
+          // SystemNavigator.pop();
       }
     }
   }

@@ -31,6 +31,7 @@ class _LoginPageState extends State<LoginPage> {
     final AppsProgressDialog progressDialog = AppsProgressDialog(context, "Memproses Login", _logic.loginWithUsernamePassword());
 
     MasterMessage message = await progressDialog.show();
+    if(!TextUtils.isEmpty(message.token)) await DeviceRepository().setToken(message.token!);
     switch (message.response) {
       case MasterResponseType.success:
         if (!TextUtils.isEmpty(message.content)) {
@@ -49,15 +50,6 @@ class _LoginPageState extends State<LoginPage> {
             context,
             title: AppLocalizations.of(context).translate("failed_request"),
             content: AppLocalizations.of(context).translate("failed_pending_user"),
-          );
-        }
-        break;
-      case MasterResponseType.trialExpired:
-        if (mounted) {
-          DialogUtils.showAlertDialog(
-            context,
-            title: AppLocalizations.of(context).translate("failed_request"),
-            content: AppLocalizations.of(context).translate("failed_trial_expired"),
           );
         }
         break;
@@ -132,7 +124,6 @@ class _LoginPageState extends State<LoginPage> {
         ),
         const SizedBox(height: Dimens.paddingMedium),
         CustomButton(
-          key: _logic.loginButtonKey,
           minimumSize: const Size(double.infinity, Dimens.buttonHeightSmall),
           label: Text("Login", style: Theme.of(context).textTheme.titleMedium!.copyWith(color: Colors.white)),
           backgroundColor: ColorResources.buttonBackground,

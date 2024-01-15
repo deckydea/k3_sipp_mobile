@@ -15,7 +15,7 @@ class VersionVerification {
   factory VersionVerification.fromJson(Map<String, dynamic> json) {
     return VersionVerification(
       versionNumber: json["versionNumber"],
-      buildNumber: json["buildNumber"],
+      buildNumber: int.parse(json["buildNumber"]),
     );
   }
 }

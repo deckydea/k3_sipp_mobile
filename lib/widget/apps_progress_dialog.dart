@@ -10,16 +10,16 @@ class AppsProgressDialog {
 
   AppsProgressDialog(this.context, this.title, this.logic);
 
-  Future<MasterMessage> show() async {
+  Future<MasterMessage> show({bool showDialog = true}) async {
     MasterMessage message;
     try {
-      SmartDialog.showLoading(msg: title);
+      if(showDialog) SmartDialog.showLoading(msg: title);
       message = await logic;
     } catch (e) {
       debugPrint('[AppsProgressDialog] error: $e');
       message = MasterMessage(response: MasterResponseType.exception, content: e.toString());
     } finally {
-      SmartDialog.dismiss();
+      if(showDialog) SmartDialog.dismiss();
     }
     return message;
   }

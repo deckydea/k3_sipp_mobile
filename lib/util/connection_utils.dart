@@ -3,6 +3,7 @@ import "dart:convert";
 import "dart:io";
 import "dart:math";
 
+import "package:flutter/foundation.dart";
 import "package:http/http.dart" as http;
 import "package:k3_sipp_mobile/net/master_message.dart";
 import "package:k3_sipp_mobile/net/response/response_type.dart";
@@ -11,11 +12,6 @@ import "package:k3_sipp_mobile/util/text_utils.dart";
 import "package:uuid/uuid.dart";
 
 class ConnectionUtils {
-  static const String user = "user";
-  static const String merchant = "merchant";
-  static const String item = "item";
-  static const String bundle = "bundle";
-
   static const int timeout = 8; // seconds
   static const int longTimeout = 30; // seconds
   static const int maxAttempts = 3;
@@ -27,12 +23,12 @@ class ConnectionUtils {
 //   static final Uri altHakuUri = Uri.https("backend.hakureward", "/haku/rest");
 //   static final Uri altMilleImageUri = Uri.https("backend.millehub.com", "/mille/image");
 
-  static final Uri k3sippUri = Uri.http("192.168.1.14:8080", "/");
-  static final Uri imageUri = Uri.http("192.168.1.14:8080", "/");
-  static final Uri altK3sippUri = Uri.http("192.168.1.14:8080", "/");
-  static final Uri altMilleImageUri = Uri.http("192.168.1.14:8080", "/");
+  static final Uri k3sippUri = Uri.http("192.168.1.10:8080", "/");
+  static final Uri imageUri = Uri.http("192.168.1.10:8080", "/");
+  static final Uri altK3sippUri = Uri.http("192.168.1.10:8080", "/");
+  static final Uri altMilleImageUri = Uri.http("192.168.1.10:8080", "/");
 
-  static const Map<String, String> httpHeader = {"Accept": "application/json", "content-type": "application/json"};
+  static final Map<String, String> httpHeader = {"Accept": "application/json", "content-type": "application/json"};
   static const String noConnectionResponse = "Unable to connect to server.";
 
   static final Random random = Random();
@@ -70,7 +66,7 @@ class ConnectionUtils {
   static Future<MasterMessage> sendRequest(MasterMessage content, {int timeout = timeout}) async {
     Uuid uuid = const Uuid();
     content.id = uuid.v1();
-    content.version = DeviceRepository().version;
+    content.version = DeviceRepository().versionNumber;
 
     Uri uri = getUri();
     MasterMessage response = await _request(uri, content, timeout);
@@ -125,6 +121,12 @@ class ConnectionUtils {
   static Future<MasterMessage> _sendRequest(Uri uri, MasterMessage message, int timeout) async {
     try {
       Uri uriRequest = uri.replace(path: message.path);
+      if(kDebugMode){
+        print("_sendRequest...");
+        print("uriRequest: $uriRequest");
+        print(jsonEncode(message));
+      }
+      httpHeader['Authorization'] = 'Bearer ${message.token}';
       http.Response? response = await http
           .post(
             uriRequest,
@@ -134,6 +136,10 @@ class ConnectionUtils {
           .timeout(
             Duration(seconds: timeout),
           );
+
+      if(kDebugMode){
+        print("Response: ${response.statusCode} ${response.body}");
+      }
 
       return response.statusCode == 200
           ? MasterMessage.fromJson(json.decode(response.body))

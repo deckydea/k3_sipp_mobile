@@ -1,7 +1,6 @@
 class MasterRequestType {
   // Login/Logout
   static const String masterLogin = "MANAGEMENT_LOGIN";
-  static const String merchantLogin = "MERCHANT_LOGIN";
   static const String logout = "LOGOUT";
 
   // Authorization
@@ -10,4 +9,7 @@ class MasterRequestType {
 
   // Settings
   static const String verifyVersion = "VERIFY_VERSION";
+
+  //Tool / Device
+  static const String managementAlat = "MANAGEMENT_ALAT";
 }

@@ -203,19 +203,6 @@ class DialogUtils {
     );
   }
 
-  static Future<void> handleSubscriptionExpired(BuildContext context) async {
-    String title = AppLocalizations.of(context).translate("failed_expired_title");
-    String content = AppLocalizations.of(context).translate("failed_expired_message");
-    String neutralAction = AppLocalizations.of(context).translate("action_ok").toUpperCase();
-    await showAlertDialog(
-      context,
-      title: title,
-      content: content,
-      neutralAction: neutralAction,
-      onNeutral: () => Navigator.of(context).pop(),
-    );
-  }
-
   static Future<void> handleAccessDenied(BuildContext context) async {
     String title = AppLocalizations.of(context).translate("failed_access_denied_title");
     String content = AppLocalizations.of(context).translate("failed_access_denied");

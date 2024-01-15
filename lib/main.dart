@@ -3,12 +3,16 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:k3_sipp_mobile/bloc/devices_cubit.dart';
 import 'package:k3_sipp_mobile/bloc/menu_cubit.dart';
+import 'package:k3_sipp_mobile/model/device/device.dart';
 import 'package:k3_sipp_mobile/model/user/user.dart';
 import 'package:k3_sipp_mobile/res/colors.dart';
 import 'package:k3_sipp_mobile/res/dimens.dart';
 import 'package:k3_sipp_mobile/res/localizations.dart';
+import 'package:k3_sipp_mobile/ui/assignment/create_assignment_page.dart';
 import 'package:k3_sipp_mobile/ui/auth/login_page.dart';
+import 'package:k3_sipp_mobile/ui/devices/device_page.dart';
 import 'package:k3_sipp_mobile/ui/launcher.dart';
 import 'package:k3_sipp_mobile/ui/main/main_menu_page.dart';
 
@@ -35,6 +39,7 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<MenuCubit>(create: (context) => MenuCubit()),
+        BlocProvider<DevicesCubit>(create: (context) => DevicesCubit()),
       ],
       child: MaterialApp(
         navigatorObservers: [FlutterSmartDialog.observer],
@@ -125,8 +130,11 @@ class MyApp extends StatelessWidget {
         onGenerateRoute: (RouteSettings settings) {
           var routes = {
             "/": (context) => const Launcher(),
+            "/create_assignment": (context) =>  const CreateAssignmentPage(),
+            "/create_device": (context) => const DevicePage(device: null),
             "/login": (context) => const LoginPage(),
             "/main_menu": (context) => MainMenuPage(user: settings.arguments as User),
+            "/update_device": (context) =>  DevicePage(device: settings.arguments as Device),
           };
           WidgetBuilder? builder = routes[settings.name];
           return MaterialPageRoute(builder: (context) => builder!(context));
