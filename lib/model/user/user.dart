@@ -24,6 +24,7 @@ class User {
 
   // Access
   int? userGroupId;
+  String? userGroupName;
   UserGroup? userGroup;
 
   User({
@@ -39,6 +40,7 @@ class User {
     this.createdAt,
     this.updatedAt,
     this.userGroupId,
+    this.userGroupName,
     this.userGroup,
   });
 
@@ -57,6 +59,7 @@ class User {
         email: email,
         phone: phone,
         userGroupId: userGroupId,
+        userGroupName: userGroupName,
         userGroup: userGroup,
         createdAt: createdAt,
         updatedAt: updatedAt,
@@ -74,6 +77,7 @@ class User {
         if (phone != null) 'phone': phone,
         if (userGroup != null) "userGroup": userGroup,
         if (userGroupId != null) "userGroupId": userGroupId,
+        if (userGroupName != null) "userGroupName": userGroupName,
         if (createdAt != null) 'createdAt': DateTimeUtils.format(createdAt!),
         if (updatedAt != null) 'updatedAt': DateTimeUtils.format(updatedAt!),
       };
@@ -89,6 +93,7 @@ class User {
       email: json['email'],
       phone: json['phone'],
       userGroupId: json['userGroupId'],
+      userGroupName: json['userGroupName'],
       userGroup: json['userGroup'] == null ? null : UserGroup.fromJson(jsonDecode(jsonEncode(json["userGroup"]))),
       createdAt: json['createdAt'] == null ? null : DateTime.parse(json['createdAt']).toLocal(),
       updatedAt: json['updatedAt'] == null ? null : DateTime.parse(json['updatedAt']).toLocal(),

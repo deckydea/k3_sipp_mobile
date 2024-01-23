@@ -1,5 +1,4 @@
 // ignore_for_file: constant_identifier_names
-
 enum ExaminationStatus {
   PENDING,
   PENDING_APPROVE_QC1,

@@ -17,6 +17,7 @@ class Dimens {
   static const double cardRadius = 8.0;
   static const double cardRadiusSmall = 4.0;
   static const double cardRadiusLarge = 16.0;
+  static const double cardRadiusXLarge = 30.0;
   static const double cardElevation = 0.5;
   static const double cardBorderWidth = 0.1;
 
@@ -34,8 +35,10 @@ class Dimens {
   static const double iconSizeSmall = 16.0;
   static const double iconSizeMedium = 32;
   static const double iconSizeLarge = 42.0;
+  static const double iconSizeMenu = 25.0;
 
   // Padding
+  static const double paddingGap = 5.0;
   static const double paddingWidget = 8.0;
   static const double paddingSmall = 12.0;
   static const double paddingMedium = 24.0;
@@ -43,7 +46,7 @@ class Dimens {
   static const double paddingPage = 15.0;
 
   // Button
-  static const double buttonHeight = 50;
+  static const double buttonHeight = 45;
   static const double buttonWidth = 320;
   static const double buttonWidthSmall = 120;
   static const double buttonHeightSmall = 24;
@@ -58,8 +61,8 @@ class Dimens {
   static const double textBoxWidthXSmall = 80;
   static const double textBoxWidthSmall = 120;
   static const double textBoxWidth = 360;
-  static const double textBoxHeightSmall = 57;
-  static const double textBoxRadius = 20;
+  static const double textBoxHeightSmall = 45;
+  static const double textBoxRadius = 15;
 
   // Chip
   static const double chipHeight = 54.0;
@@ -104,11 +107,6 @@ class Dimens {
   static const double chartLegendSize = 16.0;
   static const double barChartRadius = 2.0;
   static const double pieChartRadius = 70;
-
-  // Step
-  static const double stepBorderRadius = 100;
-  static const double stepRadius = 18;
-  static const double stepRadiusLarge = 25;
 
   // Indicator
   static const double indicatorSize = 12.0;

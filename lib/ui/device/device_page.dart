@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:k3_sipp_mobile/bloc/devices_cubit.dart';
-import 'package:k3_sipp_mobile/logic/devices_logic.dart';
+import 'package:k3_sipp_mobile/bloc/device/devices_bloc.dart';
+import 'package:k3_sipp_mobile/logic/device/device_logic.dart';
 import 'package:k3_sipp_mobile/main.dart';
 import 'package:k3_sipp_mobile/model/device/device.dart';
 import 'package:k3_sipp_mobile/net/master_message.dart';
@@ -15,9 +15,9 @@ import 'package:k3_sipp_mobile/util/dialog_utils.dart';
 import 'package:k3_sipp_mobile/util/message_utils.dart';
 import 'package:k3_sipp_mobile/util/text_utils.dart';
 import 'package:k3_sipp_mobile/util/validator_utils.dart';
-import 'package:k3_sipp_mobile/widget/apps_progress_dialog.dart';
 import 'package:k3_sipp_mobile/widget/custom/custom_button.dart';
 import 'package:k3_sipp_mobile/widget/custom/custom_edit_text.dart';
+import 'package:k3_sipp_mobile/widget/progress_dialog.dart';
 
 class DevicePage extends StatefulWidget {
   final Device? device;
@@ -29,20 +29,20 @@ class DevicePage extends StatefulWidget {
 }
 
 class _DevicePageState extends State<DevicePage> {
-  final DevicesLogic _logic = DevicesLogic();
+  final DeviceLogic _logic = DeviceLogic();
 
   Future<void> _actionUpdate() async {
-    final AppsProgressDialog progressDialog = AppsProgressDialog(context, "Memperbarui...", _logic.onUpdateDevice());
+    final ProgressDialog progressDialog = ProgressDialog(context, "Memperbarui...", _logic.onUpdateDevice());
 
     MasterMessage message = await progressDialog.show();
-    if(!TextUtils.isEmpty(message.token)) await DeviceRepository().setToken(message.token!);
+    if(!TextUtils.isEmpty(message.token)) await AppRepository().setToken(message.token!);
     switch (message.response) {
       case MasterResponseType.success:
         if (!TextUtils.isEmpty(message.content)) {
           Device device = Device.fromJson(jsonDecode(message.content!));
           _logic.setDevice(null);
           if (mounted) {
-            context.read<DevicesCubit>().updateDevice(device);
+            context.read<DevicesBloc>().add(UpdateDeviceEvent(device));
             await MessageUtils.showMessage(
               context: context,
               title: "Berhasil",
@@ -54,7 +54,7 @@ class _DevicePageState extends State<DevicePage> {
         break;
       case MasterResponseType.notExist:
       case MasterResponseType.invalidCredential:
-        if (mounted) DialogUtils.handleInvalidCredential(context, pinMode: false);
+        if (mounted) DialogUtils.handleInvalidCredential(context);
         break;
       case MasterResponseType.invalidMessageFormat:
         if (mounted) DialogUtils.handleInvalidMessageFormat(context);
@@ -68,17 +68,17 @@ class _DevicePageState extends State<DevicePage> {
   }
 
   Future<void> _actionCreate() async {
-    final AppsProgressDialog progressDialog = AppsProgressDialog(context, "Mendaftarkan...", _logic.onCreateDevice());
+    final ProgressDialog progressDialog = ProgressDialog(context, "Mendaftarkan...", _logic.onCreateDevice());
 
     MasterMessage message = await progressDialog.show();
-    if(!TextUtils.isEmpty(message.token)) await DeviceRepository().setToken(message.token!);
+    if(!TextUtils.isEmpty(message.token)) await AppRepository().setToken(message.token!);
     switch (message.response) {
       case MasterResponseType.success:
         if (!TextUtils.isEmpty(message.content)) {
           Device device = Device.fromJson(jsonDecode(message.content!));
           _logic.setDevice(null);
           if (mounted) {
-            context.read<DevicesCubit>().addDevice(device);
+            context.read<DevicesBloc>().add(AddDeviceEvent(device));
             await MessageUtils.showMessage(
               context: context,
               title: "Berhasil",
@@ -90,7 +90,7 @@ class _DevicePageState extends State<DevicePage> {
         break;
       case MasterResponseType.notExist:
       case MasterResponseType.invalidCredential:
-        if (mounted) DialogUtils.handleInvalidCredential(context, pinMode: false);
+        if (mounted) DialogUtils.handleInvalidCredential(context);
         break;
       case MasterResponseType.invalidMessageFormat:
         if (mounted) DialogUtils.handleInvalidMessageFormat(context);
@@ -112,9 +112,9 @@ class _DevicePageState extends State<DevicePage> {
           children: [
             CustomEditText(
               width: double.infinity,
-              label: "Nama Device",
+              label: "Nama Alat",
               controller: _logic.nameController,
-              icon: const Icon(Icons.monitor, color: Colors.black),
+              icon: const Icon(Icons.monitor, color: Colors.black, size: Dimens.iconSize),
               validator: (value) => ValidatorUtils.validateNotEmpty(context, value),
               textInputType: TextInputType.name,
             ),
@@ -123,7 +123,7 @@ class _DevicePageState extends State<DevicePage> {
               width: double.infinity,
               label: "Deskripsi",
               controller: _logic.descriptionController,
-              icon: const Icon(Icons.description, color: Colors.black),
+              icon: const Icon(Icons.description, color: Colors.black, size: Dimens.iconSize),
               validator: (value) => ValidatorUtils.validateInputLength(context, value, 0, 200),
               textInputType: TextInputType.name,
             ),
@@ -132,7 +132,7 @@ class _DevicePageState extends State<DevicePage> {
               width: double.infinity,
               label: "Value Kalibrasi",
               controller: _logic.calibrationValueController,
-              icon: const Icon(Icons.confirmation_number_outlined, color: Colors.black),
+              icon: const Icon(Icons.confirmation_number_outlined, color: Colors.black, size: Dimens.iconSize),
               validator: (value) => ValidatorUtils.validateNotEmpty(context, value),
               textInputType: TextInputType.number,
             ),
@@ -140,7 +140,7 @@ class _DevicePageState extends State<DevicePage> {
             CustomEditText(
               width: double.infinity,
               label: "U95",
-              icon: const Icon(Icons.numbers_outlined, color: Colors.black),
+              icon: const Icon(Icons.numbers_outlined, color: Colors.black, size: Dimens.iconSize),
               controller: _logic.u95Controller,
               validator: (value) => ValidatorUtils.validateNotEmpty(context, value),
               textInputType: TextInputType.number,
@@ -148,9 +148,9 @@ class _DevicePageState extends State<DevicePage> {
             const SizedBox(height: Dimens.paddingSmall),
             CustomEditText(
               width: double.infinity,
-              label: "Coverage Factor",
+              label: "K (Coverage Factor)",
               controller: _logic.coverageFactorController,
-              icon: const Icon(Icons.landscape_outlined, color: Colors.black),
+              icon: const Icon(Icons.landscape_outlined, color: Colors.black, size: Dimens.iconSize),
               validator: (value) => ValidatorUtils.validateNotEmpty(context, value),
               textInputType: TextInputType.number,
             ),
@@ -198,7 +198,7 @@ class _DevicePageState extends State<DevicePage> {
       appBar: AppBar(
         iconTheme: const IconThemeData(color: ColorResources.primaryDark),
         backgroundColor: ColorResources.background,
-        title: Text(_logic.isUpdate ? "Update ${_logic.device!.name}" : "Create Device",
+        title: Text(_logic.isUpdate ? "${_logic.device!.name}" : "Create Device",
             style: Theme.of(context).textTheme.headlineLarge),
       ),
       body: _buildBody(),

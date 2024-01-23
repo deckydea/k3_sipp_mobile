@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:k3_sipp_mobile/logic/home_logic.dart';
+import 'package:k3_sipp_mobile/logic/menu/home_logic.dart';
 import 'package:k3_sipp_mobile/main.dart';
 import 'package:k3_sipp_mobile/model/user/user.dart';
 import 'package:k3_sipp_mobile/repository/device_repository.dart';
@@ -32,7 +31,7 @@ class _HomePageState extends State<HomePage> {
 
     if (result != null && result is bool && result) {
       //TODO: Clear repository etc
-      DeviceRepository().logout();
+      AppRepository().logout();
       navigatorKey.currentState!.pushReplacementNamed("/login");
     }
   }
@@ -134,7 +133,7 @@ class _HomePageState extends State<HomePage> {
       extendBody: true,
       drawer: _buildDrawer(),
       drawerScrimColor: ColorResources.backgroundDark,
-      body: Center(child: Text("Home")),
+      body: const Center(child: Text("Home")),
     );
   }
 }

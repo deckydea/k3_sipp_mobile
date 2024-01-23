@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:k3_sipp_mobile/logic/login_logic.dart';
+import 'package:k3_sipp_mobile/logic/auth/login_logic.dart';
 import 'package:k3_sipp_mobile/main.dart';
 import 'package:k3_sipp_mobile/model/user/user.dart';
 import 'package:k3_sipp_mobile/net/master_message.dart';
@@ -13,9 +13,9 @@ import 'package:k3_sipp_mobile/res/localizations.dart';
 import 'package:k3_sipp_mobile/util/dialog_utils.dart';
 import 'package:k3_sipp_mobile/util/text_utils.dart';
 import 'package:k3_sipp_mobile/util/validator_utils.dart';
-import 'package:k3_sipp_mobile/widget/apps_progress_dialog.dart';
 import 'package:k3_sipp_mobile/widget/custom/custom_button.dart';
 import 'package:k3_sipp_mobile/widget/custom/custom_edit_text.dart';
+import 'package:k3_sipp_mobile/widget/progress_dialog.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -28,21 +28,21 @@ class _LoginPageState extends State<LoginPage> {
   final LoginLogic _logic = LoginLogic();
 
   Future<void> _actionLogin() async {
-    final AppsProgressDialog progressDialog = AppsProgressDialog(context, "Memproses Login", _logic.loginWithUsernamePassword());
+    final ProgressDialog progressDialog = ProgressDialog(context, "Memproses Login", _logic.loginWithUsernamePassword());
 
     MasterMessage message = await progressDialog.show();
-    if(!TextUtils.isEmpty(message.token)) await DeviceRepository().setToken(message.token!);
+    if(!TextUtils.isEmpty(message.token)) await AppRepository().setToken(message.token!);
     switch (message.response) {
       case MasterResponseType.success:
         if (!TextUtils.isEmpty(message.content)) {
           User user = User.fromJson(jsonDecode(message.content!));
-          DeviceRepository().setUser(user);
+          AppRepository().setUser(user);
           navigatorKey.currentState!.pushReplacementNamed("/main_menu", arguments: user);
         }
         break;
       case MasterResponseType.notExist:
       case MasterResponseType.invalidCredential:
-        if (mounted) DialogUtils.handleInvalidCredential(context, pinMode: false);
+        if (mounted) DialogUtils.handleInvalidCredential(context);
         break;
       case MasterResponseType.pendingUser:
         if (mounted) {

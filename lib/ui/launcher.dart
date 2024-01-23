@@ -73,11 +73,11 @@ class LauncherState extends State<Launcher> {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     String versionNumber = packageInfo.version;
     int buildNumber = int.tryParse(packageInfo.buildNumber) ?? 0;
-    DeviceRepository().versionNumber = versionNumber;
+    AppRepository().versionNumber = versionNumber;
 
     if (!TextUtils.isEmpty(versionNumber) && buildNumber > 0) {
       MasterMessage message = await ConnectionUtils.sendRequest(VerifyVersion());
-      if (!TextUtils.isEmpty(message.token)) await DeviceRepository().setToken(message.token!);
+      if (!TextUtils.isEmpty(message.token)) await AppRepository().setToken(message.token!);
 
       switch (message.response) {
         case MasterResponseType.success:
@@ -134,7 +134,7 @@ class LauncherState extends State<Launcher> {
   /// 2. The device has not been setup, hence redirect to setup page,
   ///
   Future<void> _onVersionVerified() async {
-    User? user = await DeviceRepository().getUser();
+    User? user = await AppRepository().getUser();
 
     if (user != null) {
       navigatorKey.currentState?.pushReplacementNamed("/main_menu", arguments: user);

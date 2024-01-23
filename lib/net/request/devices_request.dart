@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:k3_sipp_mobile/model/device/device.dart';
+import 'package:k3_sipp_mobile/model/device/device_filter.dart';
 import 'package:k3_sipp_mobile/net/master_message.dart';
 import 'package:k3_sipp_mobile/net/request/request_type.dart';
 
@@ -23,12 +24,14 @@ class CreateDeviceRequest extends MasterMessage {
   }) : super(request: MasterRequestType.managementAlat, content: jsonEncode(device), path: "devices/create-device");
 }
 
-class GetDevicesRequest extends MasterMessage {
-  GetDevicesRequest({
+class QueryDevicesRequest extends MasterMessage {
+  QueryDevicesRequest({
+    required DeviceFilter filter,
     required super.token,
   }) : super(
-          request: MasterRequestType.managementAlat,
-          path: "devices/get-devices",
+          request: MasterRequestType.queryDevices,
+          content: jsonEncode(filter),
+          path: "devices/query-devices",
         );
 }
 

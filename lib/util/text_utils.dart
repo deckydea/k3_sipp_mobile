@@ -3,6 +3,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 class TextUtils {
+  static const int maxIntValue = 4294967296;
+
   static bool isEmpty(String? string) => string == null || string.isEmpty;
 
   static bool equals(String? string1, String? string2) {
@@ -111,5 +113,16 @@ class TextUtils {
       }
     }
     return stringBuffer.toString();
+  }
+
+  static int generateRandomInt() {
+    Random random = Random();
+    return random.nextInt(maxIntValue);
+  }
+}
+
+extension StringExtension on String {
+  String toCapitalize() {
+    return split(" ").map((str) => str[0].toUpperCase() + str.substring(1).toLowerCase()).join(" ");
   }
 }

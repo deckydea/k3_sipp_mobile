@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:k3_sipp_mobile/logic/assignment_logic.dart';
+import 'package:k3_sipp_mobile/logic/examination/assignment_logic.dart';
 import 'package:k3_sipp_mobile/main.dart';
 import 'package:k3_sipp_mobile/res/colors.dart';
 import 'package:k3_sipp_mobile/res/dimens.dart';
@@ -40,9 +40,10 @@ class _AssignmentPageState extends State<AssignmentPage> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               const SizedBox(width: Dimens.paddingWidget),
-              const Expanded(child: CustomCard(child: CustomSearchField(), )),
+              const Expanded(child: CustomCard(child: CustomSearchField())),
               CustomCard(child: IconButton(onPressed: () {}, icon: const Icon(Icons.sort, size: Dimens.iconSizeSmall))),
-              CustomCard(child: IconButton(onPressed: () {}, icon: const Icon(Icons.filter_alt_outlined, size: Dimens.iconSizeSmall))),
+              CustomCard(
+                  child: IconButton(onPressed: () {}, icon: const Icon(Icons.filter_alt_outlined, size: Dimens.iconSizeSmall))),
               const SizedBox(width: Dimens.paddingWidget),
             ],
           ),

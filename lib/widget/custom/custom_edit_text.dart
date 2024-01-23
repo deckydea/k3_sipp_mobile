@@ -32,7 +32,7 @@ class CustomEditText extends StatelessWidget {
   const CustomEditText({
     super.key,
     this.width = Dimens.textBoxWidth,
-    this.height,
+    this.height = Dimens.textBoxHeightSmall,
     this.label,
     this.icon,
     this.obscure = false,
@@ -96,7 +96,7 @@ class CustomEditText extends StatelessWidget {
           enabledBorder: withBorder
               ? OutlineInputBorder(
                   borderRadius: BorderRadius.circular(Dimens.textBoxRadius),
-                  borderSide: const BorderSide(color: Colors.black54, width: 0.8),
+                  borderSide: const BorderSide(color: Colors.black54, style: BorderStyle.solid, width: 0.5),
                 )
               : null,
           suffixIcon: icon != null

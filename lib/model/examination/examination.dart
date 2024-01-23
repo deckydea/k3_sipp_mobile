@@ -19,6 +19,9 @@ class Examination {
   ExaminationStatus? status;
   List<DeviceCalibration> deviceCalibrations;
 
+  //Implement only for request approval to server
+  bool? isUpdate;
+
   Examination({
     this.id,
     this.templateId,

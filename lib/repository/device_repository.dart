@@ -4,15 +4,15 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:k3_sipp_mobile/model/user/user.dart';
 import 'package:k3_sipp_mobile/util/text_utils.dart';
 
-class DeviceRepository {
+class AppRepository {
   static const String _userKey = "USER";
   static const String _tokenKey = "TOKEN";
 
-  static final DeviceRepository _instance = DeviceRepository._internal();
+  static final AppRepository _instance = AppRepository._internal();
 
-  factory DeviceRepository() => _instance;
+  factory AppRepository() => _instance;
 
-  DeviceRepository._internal();
+  AppRepository._internal();
 
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
 
@@ -34,7 +34,7 @@ class DeviceRepository {
   }
 
   Future<void> setToken(String token) async {
-    if(!TextUtils.isEmpty(token)){
+    if(!TextUtils.isEmpty(token) && !TextUtils.equals(_token, token)){
       _token = token;
       await _secureStorage.write(key: _tokenKey, value: _token);
     }

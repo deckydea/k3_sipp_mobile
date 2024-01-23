@@ -10,6 +10,7 @@ import "package:k3_sipp_mobile/net/response/response_type.dart";
 import "package:k3_sipp_mobile/repository/device_repository.dart";
 import "package:k3_sipp_mobile/util/text_utils.dart";
 import "package:uuid/uuid.dart";
+import 'dart:developer' as dev;
 
 class ConnectionUtils {
   static const int timeout = 8; // seconds
@@ -23,10 +24,10 @@ class ConnectionUtils {
 //   static final Uri altHakuUri = Uri.https("backend.hakureward", "/haku/rest");
 //   static final Uri altMilleImageUri = Uri.https("backend.millehub.com", "/mille/image");
 
-  static final Uri k3sippUri = Uri.http("192.168.1.10:8080", "/");
-  static final Uri imageUri = Uri.http("192.168.1.10:8080", "/");
-  static final Uri altK3sippUri = Uri.http("192.168.1.10:8080", "/");
-  static final Uri altMilleImageUri = Uri.http("192.168.1.10:8080", "/");
+  static final Uri k3sippUri = Uri.http("192.168.1.4:8080", "/");
+  static final Uri imageUri = Uri.http("192.168.1.4:8080", "/");
+  static final Uri altK3sippUri = Uri.http("192.168.1.4:8080", "/");
+  static final Uri altMilleImageUri = Uri.http("192.168.1.4:8080", "/");
 
   static final Map<String, String> httpHeader = {"Accept": "application/json", "content-type": "application/json"};
   static const String noConnectionResponse = "Unable to connect to server.";
@@ -66,7 +67,7 @@ class ConnectionUtils {
   static Future<MasterMessage> sendRequest(MasterMessage content, {int timeout = timeout}) async {
     Uuid uuid = const Uuid();
     content.id = uuid.v1();
-    content.version = DeviceRepository().versionNumber;
+    content.version = AppRepository().versionNumber;
 
     Uri uri = getUri();
     MasterMessage response = await _request(uri, content, timeout);
@@ -93,6 +94,8 @@ class ConnectionUtils {
         }
       }
     }
+
+    if(!TextUtils.isEmpty(response.token)) await AppRepository().setToken(response.token!);
 
     return response;
   }
@@ -124,7 +127,7 @@ class ConnectionUtils {
       if(kDebugMode){
         print("_sendRequest...");
         print("uriRequest: $uriRequest");
-        print(jsonEncode(message));
+        dev.log("REQUEST: ${jsonEncode(message)}");
       }
       httpHeader['Authorization'] = 'Bearer ${message.token}';
       http.Response? response = await http
@@ -138,7 +141,7 @@ class ConnectionUtils {
           );
 
       if(kDebugMode){
-        print("Response: ${response.statusCode} ${response.body}");
+        dev.log("RESPONSE: ${response.statusCode} ${response.body}");
       }
 
       return response.statusCode == 200

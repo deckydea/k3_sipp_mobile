@@ -77,9 +77,9 @@ class CustomSearchFieldState extends State<CustomSearchField> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         shape: BoxShape.rectangle,
-        borderRadius: const BorderRadius.all(Radius.circular(Dimens.cardRadiusLarge)),
+        borderRadius: BorderRadius.all(Radius.circular(Dimens.cardRadiusLarge)),
         // color: Colors.grey.withOpacity(0.1),
       ),
       child: Row(

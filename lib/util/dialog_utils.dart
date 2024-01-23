@@ -135,10 +135,10 @@ class DialogUtils {
     );
   }
 
-  static Future<void> handleInvalidCredential(BuildContext context, {required bool pinMode, String? data}) async {
+  static Future<void> handleInvalidCredential(BuildContext context, {String? data}) async {
     String title = AppLocalizations.of(context).translate("failed_request");
     String content =
-        "${AppLocalizations.of(context).translate(pinMode ? "failed_invalid_pin" : "failed_invalid_credential")}${TextUtils.isEmpty(data) ? "" : "\n\n$data"}";
+        "${AppLocalizations.of(context).translate("failed_invalid_credential")}${TextUtils.isEmpty(data) ? "" : "\n\n$data"}";
     String neutralAction = AppLocalizations.of(context).translate("action_ok").toUpperCase();
     await showAlertDialog(
       context,

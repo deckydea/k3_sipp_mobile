@@ -6,7 +6,8 @@ import 'package:k3_sipp_mobile/net/response/response_type.dart';
 import 'package:k3_sipp_mobile/repository/device_repository.dart';
 import 'package:k3_sipp_mobile/util/connection_utils.dart';
 
-class DevicesLogic {
+class DeviceLogic{
+
   final GlobalKey<FormState> formKey = GlobalKey();
 
   final TextEditingController nameController = TextEditingController();
@@ -44,7 +45,7 @@ class DevicesLogic {
         coverageFactor: coverageFactor,
       );
 
-      String? token = await DeviceRepository().getToken();
+      String? token = await AppRepository().getToken();
       MasterMessage message = CreateDeviceRequest(device: device, token: token);
       return await ConnectionUtils.sendRequest(message);
     }
@@ -52,13 +53,8 @@ class DevicesLogic {
     return MasterMessage(response: MasterResponseType.failed);
   }
 
-  Future<MasterMessage> onGetDevices() async {
-    String? token = await DeviceRepository().getToken();
-    return await ConnectionUtils.sendRequest(GetDevicesRequest(token: token));
-  }
-
   Future<MasterMessage> onGetDevice(int deviceId) async {
-    String? token = await DeviceRepository().getToken();
+    String? token = await AppRepository().getToken();
     return await ConnectionUtils.sendRequest(GetDeviceRequest(deviceRequest: DeviceRequest(deviceId: deviceId), token: token));
   }
 
@@ -77,7 +73,7 @@ class DevicesLogic {
       replica.u95 = u95;
       replica.coverageFactor = coverageFactor;
 
-      String? token = await DeviceRepository().getToken();
+      String? token = await AppRepository().getToken();
       MasterMessage message = UpdateDeviceRequest(device: replica, token: token);
       return await ConnectionUtils.sendRequest(message);
     }
@@ -86,7 +82,7 @@ class DevicesLogic {
   }
 
   Future<MasterMessage> onDeleteDevice(int deviceId) async {
-    String? token = await DeviceRepository().getToken();
+    String? token = await AppRepository().getToken();
     return await ConnectionUtils.sendRequest(DeleteDeviceRequest(deviceRequest: DeviceRequest(deviceId: deviceId), token: token));
   }
 }

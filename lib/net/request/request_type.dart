@@ -12,4 +12,22 @@ class MasterRequestType {
 
   //Tool / Device
   static const String managementAlat = "MANAGEMENT_ALAT";
+  static const String queryDevices = "QUERY_DEVICES";
+
+  //Company
+  static const String queryCompanies = "QUERY_COMPANIES";
+  static const String queryCompany = "QUERY_COMPANY";
+  static const String createCompany = "CREATE_COMPANY";
+  static const String updateCompany = "UPDATE_COMPANY";
+  static const String deleteCompany = "DELETE_COMPANY";
+
+  //Examination
+  static const String queryTypeExaminations = "QUERY_TYPE_EXAMINATIONS";
+
+  //User
+  static const String queryUsers = "QUERY_USERS";
+  static const String createUser = "CREATE_USER";
+
+
+  //Report
 }
