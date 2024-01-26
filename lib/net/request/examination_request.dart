@@ -5,3 +5,5 @@ class QueryExaminationsTypeRequest extends MasterMessage {
   QueryExaminationsTypeRequest({required super.token})
       : super(request: MasterRequestType.queryTypeExaminations, content: null, path: "examinations/query-examinationtype");
 }
+
+

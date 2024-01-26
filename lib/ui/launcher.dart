@@ -1,17 +1,14 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_jailbreak_detection/flutter_jailbreak_detection.dart';
 import 'package:k3_sipp_mobile/main.dart';
-import 'package:k3_sipp_mobile/model/other/version_verification.dart';
 import 'package:k3_sipp_mobile/model/user/user.dart';
 import 'package:k3_sipp_mobile/net/master_message.dart';
 import 'package:k3_sipp_mobile/net/request/settings_request.dart';
 import 'package:k3_sipp_mobile/net/response/response_type.dart';
-import 'package:k3_sipp_mobile/repository/device_repository.dart';
+import 'package:k3_sipp_mobile/repository/app_repository.dart';
 import 'package:k3_sipp_mobile/res/dimens.dart';
 import 'package:k3_sipp_mobile/res/localizations.dart';
 import 'package:k3_sipp_mobile/util/connection_utils.dart';

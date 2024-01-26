@@ -32,7 +32,7 @@ class CustomEditText extends StatelessWidget {
   const CustomEditText({
     super.key,
     this.width = Dimens.textBoxWidth,
-    this.height = Dimens.textBoxHeightSmall,
+    this.height,
     this.label,
     this.icon,
     this.obscure = false,
@@ -61,7 +61,7 @@ class CustomEditText extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: width,
-      height: height,
+      // height: height,
       child: TextFormField(
         scrollPadding: EdgeInsets.zero,
         keyboardType: textInputType,
@@ -80,6 +80,8 @@ class CustomEditText extends StatelessWidget {
         inputFormatters: inputFormatters,
         focusNode: focusNode,
         decoration: InputDecoration(
+          isDense: true,
+          contentPadding:  const EdgeInsets.symmetric(vertical: Dimens.textBoxHeightSmall, horizontal: Dimens.paddingWidget),
           filled: true,
           fillColor: enabled ? Colors.white : Colors.grey[50],
           labelText: label,

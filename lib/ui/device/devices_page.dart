@@ -10,7 +10,6 @@ import 'package:k3_sipp_mobile/res/colors.dart';
 import 'package:k3_sipp_mobile/res/dimens.dart';
 import 'package:k3_sipp_mobile/util/dialog_utils.dart';
 import 'package:k3_sipp_mobile/util/message_utils.dart';
-import 'package:k3_sipp_mobile/util/text_utils.dart';
 import 'package:k3_sipp_mobile/widget/custom/custom_card.dart';
 import 'package:k3_sipp_mobile/widget/custom/custom_search_field.dart';
 import 'package:k3_sipp_mobile/widget/custom/custom_shimmer.dart';
@@ -94,6 +93,53 @@ class _DevicesPageState extends State<DevicesPage> {
     }
   }
 
+  Widget _buildDevices(List<Device> devices) {
+    return ListView.builder(
+      itemCount: devices.length,
+      itemBuilder: (context, index) {
+        Device device = devices.elementAt(index);
+        return DeviceRow(
+          device: device,
+          onTap: () => _navigateTo(device),
+          onLongPress: () => _deleteDevice(device),
+        );
+      },
+    );
+  }
+
+  Widget _buildNoData() {
+    return Padding(
+      padding: const EdgeInsets.only(top: Dimens.paddingMedium),
+      child: Center(
+        child: Text(
+          "Tidak ada alat.",
+          style: Theme.of(context).textTheme.headlineSmall?.copyWith(color: ColorResources.warningText),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildError() {
+    return Padding(
+      padding: const EdgeInsets.only(top: Dimens.paddingMedium),
+      child: Center(
+        child: Text(
+          "Our service is currently unavailable.",
+          style: Theme.of(context).textTheme.headlineSmall?.copyWith(color: ColorResources.warningText),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildShimmer() {
+    return ListView.separated(
+      physics: const ClampingScrollPhysics(),
+      itemCount: 5,
+      itemBuilder: (context, index) => const CustomShimmer(),
+      separatorBuilder: (context, index) => const SizedBox(height: Dimens.paddingWidget),
+    );
+  }
+
   Widget _buildBody() {
     return Padding(
       padding: const EdgeInsets.all(Dimens.paddingPage),
@@ -112,55 +158,22 @@ class _DevicesPageState extends State<DevicesPage> {
               ),
             ),
             const SizedBox(height: Dimens.paddingWidget),
-            BlocBuilder<DevicesBloc, DevicesState>(
-              builder: (context, state) {
-                if (state is DevicesLoadingState) {
-                  return Expanded(
-                    child: ListView.separated(
-                      physics: const ClampingScrollPhysics(),
-                      itemCount: 5,
-                      itemBuilder: (context, index) => const CustomShimmer(),
-                      separatorBuilder: (context, index) => const SizedBox(height: Dimens.paddingWidget),
-                    ),
-                  );
-                } else if (state is DevicesLoadedState) {
-                  if (state.devices.isNotEmpty) {
-                    return Expanded(
-                      child: ListView.builder(
-                        itemCount: state.devices.length,
-                        itemBuilder: (context, index) {
-                          Device device = state.devices.elementAt(index);
-                          return DeviceRow(
-                            device: device,
-                            onTap: () => _navigateTo(device),
-                            onLongPress: () => _deleteDevice(device),
-                          );
-                        },
-                      ),
-                    );
+            Expanded(
+              child: BlocBuilder<DevicesBloc, DevicesState>(
+                builder: (context, state) {
+                  if (state is DevicesLoadingState) {
+                    return _buildShimmer();
+                  } else if (state is DevicesLoadedState) {
+                    if (state.devices.isNotEmpty) {
+                      return _buildDevices(state.devices);
+                    } else {
+                      return _buildNoData();
+                    }
                   } else {
-                    return Padding(
-                      padding: const EdgeInsets.only(top: Dimens.paddingMedium),
-                      child: Center(
-                        child: Text(
-                          "Tidak ada alat.",
-                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(color: ColorResources.warningText),
-                        ),
-                      ),
-                    );
+                    return _buildError();
                   }
-                } else {
-                  return Padding(
-                    padding: const EdgeInsets.only(top: Dimens.paddingMedium),
-                    child: Center(
-                      child: Text(
-                        "Our service is currently unavailable.",
-                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(color: ColorResources.warningText),
-                      ),
-                    ),
-                  );
-                }
-              },
+                },
+              ),
             )
           ],
         ),

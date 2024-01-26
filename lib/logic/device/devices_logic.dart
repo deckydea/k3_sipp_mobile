@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:k3_sipp_mobile/model/device/device_filter.dart';
 import 'package:k3_sipp_mobile/net/master_message.dart';
 import 'package:k3_sipp_mobile/net/request/devices_request.dart';
-import 'package:k3_sipp_mobile/repository/device_repository.dart';
+import 'package:k3_sipp_mobile/repository/app_repository.dart';
 import 'package:k3_sipp_mobile/util/connection_utils.dart';
 import 'package:k3_sipp_mobile/widget/custom/custom_search_field.dart';
 

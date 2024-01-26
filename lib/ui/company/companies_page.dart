@@ -41,13 +41,11 @@ class _CompaniesPageState extends State<CompaniesPage> {
   }
 
   Widget _buildCompanies(List<Company> companies) {
-    return Expanded(
-      child: ListView.builder(
-        itemCount: companies.length,
-        itemBuilder: (context, index) => CompanyRow(
-          company: companies.elementAt(index),
-          onTap: () => _navigateTo(companies.elementAt(index)),
-        ),
+    return ListView.builder(
+      itemCount: companies.length,
+      itemBuilder: (context, index) => CompanyRow(
+        company: companies.elementAt(index),
+        onTap: () => _navigateTo(companies.elementAt(index)),
       ),
     );
   }
@@ -77,13 +75,11 @@ class _CompaniesPageState extends State<CompaniesPage> {
   }
 
   Widget _buildShimmer() {
-    return Expanded(
-      child: ListView.separated(
-        physics: const ClampingScrollPhysics(),
-        itemCount: 5,
-        itemBuilder: (context, index) => const CustomShimmer(),
-        separatorBuilder: (context, index) => const SizedBox(height: Dimens.paddingWidget),
-      ),
+    return ListView.separated(
+      physics: const ClampingScrollPhysics(),
+      itemCount: 5,
+      itemBuilder: (context, index) => const CustomShimmer(),
+      separatorBuilder: (context, index) => const SizedBox(height: Dimens.paddingWidget),
     );
   }
 
@@ -105,20 +101,22 @@ class _CompaniesPageState extends State<CompaniesPage> {
               ),
             ),
             const SizedBox(height: Dimens.paddingWidget),
-            BlocBuilder<CompaniesBloc, CompaniesState>(
-              builder: (context, state) {
-                if (state is CompaniesLoadingState) {
-                  return _buildShimmer();
-                } else if (state is CompaniesLoadedState) {
-                  if (state.companies.isNotEmpty) {
-                    return _buildCompanies(state.companies);
+            Expanded(
+              child: BlocBuilder<CompaniesBloc, CompaniesState>(
+                builder: (context, state) {
+                  if (state is CompaniesLoadingState) {
+                    return _buildShimmer();
+                  } else if (state is CompaniesLoadedState) {
+                    if (state.companies.isNotEmpty) {
+                      return _buildCompanies(state.companies);
+                    } else {
+                      return _buildNoData();
+                    }
                   } else {
-                    return _buildNoData();
+                    return _buildError();
                   }
-                } else {
-                  return _buildError();
-                }
-              },
+                },
+              ),
             )
           ],
         ),

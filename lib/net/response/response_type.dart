@@ -16,6 +16,9 @@ class MasterResponseType {
   static const String invalidAccess = "INVALID_ACCESS";
   static const String applicationOutdated = "APPLICATION_OUTDATED";
 
+  //For internal only
+  static const String invalidFormat = "INVALID_FORMAT";
+
   // Account
   static const String accountLocked = "ACCOUNT_LOCKED";
   static const String voidUser = "VOID_USER";

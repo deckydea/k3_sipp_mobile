@@ -34,7 +34,7 @@ class _MenuPageState extends State<MenuPage> {
       title: "User",
       icon: Icons.people_alt_outlined,
       backgroundColor: ColorResources.primaryDark,
-      onTap: () {},
+      onTap: () => navigatorKey.currentState?.pushNamed("/users"),
     ),
   };
 

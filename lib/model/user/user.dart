@@ -14,9 +14,9 @@ class User {
   String username;
   String? password;
   String name;
-  String? nip;
+  String nip;
   String? signature;
-  String? dateOfBirth;
+  DateTime? dateOfBirth;
   String? email;
   String? phone;
   DateTime? createdAt;
@@ -32,7 +32,7 @@ class User {
     required this.username,
     this.password,
     required this.name,
-    this.nip,
+    required this.nip,
     this.signature,
     this.dateOfBirth,
     this.email,
@@ -70,9 +70,9 @@ class User {
         'username': username,
         if (password != null) 'password': password,
         'name': name,
-        if (nip != null) 'nip': nip,
+        'nip': nip,
         if (signature != null) 'signature': signature,
-        if (dateOfBirth != null) 'dateOfBirth': dateOfBirth,
+        if (dateOfBirth != null) 'dateOfBirth': DateTimeUtils.format(dateOfBirth!),
         if (email != null) 'email': email,
         if (phone != null) 'phone': phone,
         if (userGroup != null) "userGroup": userGroup,
@@ -89,7 +89,8 @@ class User {
       password: json['password'],
       name: json['name'],
       nip: json['nip'],
-      dateOfBirth: json['dateOfBirth'],
+      signature: json['signature'],
+      dateOfBirth: json['dateOfBirth'] == null ? null : DateTime.parse(json['dateOfBirth']).toLocal(),
       email: json['email'],
       phone: json['phone'],
       userGroupId: json['userGroupId'],

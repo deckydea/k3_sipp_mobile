@@ -20,7 +20,7 @@ class CustomDropdownButton<T> extends StatelessWidget {
     this.value,
     this.onChanged,
     this.width = Dimens.textBoxWidth,
-    this.height = Dimens.textBoxHeightSmall,
+    this.height = Dimens.dropDownHeightSmall,
     this.padding,
     this.enabled = true,
     this.style,

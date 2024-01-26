@@ -3,18 +3,20 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
-import 'package:k3_sipp_mobile/bloc/assignment/create_assignment_cubit.dart';
+import 'package:k3_sipp_mobile/bloc/assignment/examination_cubit.dart';
 import 'package:k3_sipp_mobile/bloc/assignment/device_calibration_cubit.dart';
 import 'package:k3_sipp_mobile/bloc/company/companies_bloc.dart';
 import 'package:k3_sipp_mobile/bloc/device/devices_bloc.dart';
 import 'package:k3_sipp_mobile/bloc/menu/menu_cubit.dart';
 import 'package:k3_sipp_mobile/bloc/user/users_bloc.dart';
 import 'package:k3_sipp_mobile/model/device/device.dart';
+import 'package:k3_sipp_mobile/model/examination/examination.dart';
 import 'package:k3_sipp_mobile/model/user/user.dart';
+import 'package:k3_sipp_mobile/model/user/user_filter.dart';
 import 'package:k3_sipp_mobile/res/colors.dart';
 import 'package:k3_sipp_mobile/res/dimens.dart';
 import 'package:k3_sipp_mobile/res/localizations.dart';
-import 'package:k3_sipp_mobile/ui/assignment/add_examination_page.dart';
+import 'package:k3_sipp_mobile/ui/assignment/add_update_examination_page.dart';
 import 'package:k3_sipp_mobile/ui/assignment/create_assignment_page.dart';
 import 'package:k3_sipp_mobile/ui/auth/login_page.dart';
 import 'package:k3_sipp_mobile/ui/company/companies_page.dart';
@@ -22,6 +24,7 @@ import 'package:k3_sipp_mobile/ui/device/device_page.dart';
 import 'package:k3_sipp_mobile/ui/device/devices_page.dart';
 import 'package:k3_sipp_mobile/ui/launcher.dart';
 import 'package:k3_sipp_mobile/ui/main/main_menu_page.dart';
+import 'package:k3_sipp_mobile/ui/user/user_page.dart';
 import 'package:k3_sipp_mobile/ui/user/users_page.dart';
 
 void main() {
@@ -47,7 +50,7 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<MenuCubit>(create: (context) => MenuCubit()),
-        BlocProvider<CreateAssignmentCubit>(create: (context) => CreateAssignmentCubit()),
+        BlocProvider<ExaminationsCubit>(create: (context) => ExaminationsCubit()),
         BlocProvider<DeviceCalibrationCubit>(create: (context) => DeviceCalibrationCubit()),
         BlocProvider<UsersBloc>(create: (context) => UsersBloc()),
         BlocProvider<DevicesBloc>(create: (context) => DevicesBloc()),
@@ -146,22 +149,30 @@ class MyApp extends StatelessWidget {
             "/main_menu": (context) => MainMenuPage(user: settings.arguments as User),
 
             //Template
-            "/create_assignment": (context) =>  const CreateAssignmentPage(),
-            "/add_examination_page": (context) => const AddExaminationPage(),
+            "/create_assignment": (context) => const CreateAssignmentPage(),
+
+            //Examination
+            "/add_examination_page": (context) => const AddOrUpdateExaminationPage(),
+            "/update_examination_page": (context) =>
+                AddOrUpdateExaminationPage(examination: settings.arguments == null ? null : settings.arguments as Examination),
 
             //Device
             "/devices": (context) => const DevicesPage(pageMode: DevicesPageMode.deviceList),
             "/select_device": (context) => const DevicesPage(pageMode: DevicesPageMode.selectDevice),
-            "/create_device": (context) => const DevicePage(device: null),
-            "/update_device": (context) =>  DevicePage(device: settings.arguments as Device),
+            "/create_device": (context) => const DevicePage(),
+            "/update_device": (context) => DevicePage(device: settings.arguments as Device),
 
             //Company
             "/companies": (context) => const CompaniesPage(pageMode: CompaniesPageMode.companyList),
             "/select_company": (context) => const CompaniesPage(pageMode: CompaniesPageMode.selectCompany),
 
             //User
-            "/select_user": (context) =>   const UsersPage(pageMode: UsersPageMode.selectUser),
-            "/users": (context) =>   const UsersPage(pageMode: UsersPageMode.userList),
+            "/select_user": (context) => UsersPage(
+                pageMode: UsersPageMode.selectUser, filter: settings.arguments == null ? null : settings.arguments as UserFilter),
+            "/users": (context) => UsersPage(
+                pageMode: UsersPageMode.userList, filter: settings.arguments == null ? null : settings.arguments as UserFilter),
+            "/create_user": (context) => const UserPage(),
+            "/update_user": (context) => UserPage(user: settings.arguments as User),
           };
           WidgetBuilder? builder = routes[settings.name];
           return MaterialPageRoute(builder: (context) => builder!(context));

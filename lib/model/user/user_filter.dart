@@ -3,11 +3,11 @@ import 'package:k3_sipp_mobile/util/date_time_utils.dart';
 
 class UserFilter extends ReportFilter {
   String? query;
-  int? userGroupId;
+  String? userAccessMenu;
 
   UserFilter({
     this.query = "",
-    this.userGroupId,
+    this.userAccessMenu,
     super.startDate,
     super.endDate,
     super.upperBoundEpoch, //the last queried epoch
@@ -17,7 +17,7 @@ class UserFilter extends ReportFilter {
   @override
   Map<String, dynamic> toJson() => {
         'query': query,
-        if (userGroupId != null) 'userGroupId': userGroupId,
+        'userAccessMenu': userAccessMenu,
 
         //Parent
         if (startDate != null) 'startDate': DateTimeUtils.format(startDate!),
@@ -29,7 +29,7 @@ class UserFilter extends ReportFilter {
   factory UserFilter.fromJson(Map<String, dynamic> json) {
     return UserFilter(
       query: json['query'],
-      userGroupId: json['userGroupId'],
+      userAccessMenu: json['userAccessMenu'],
 
       //Parent
       startDate: json['startDate'] == null ? null : DateTime.parse(json['startDate']).toLocal(),

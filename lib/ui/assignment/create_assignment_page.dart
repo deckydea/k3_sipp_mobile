@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:k3_sipp_mobile/bloc/assignment/examination_cubit.dart';
 import 'package:k3_sipp_mobile/logic/examination/create_assignment_logic.dart';
 import 'package:k3_sipp_mobile/main.dart';
 import 'package:k3_sipp_mobile/model/company/company.dart';
 import 'package:k3_sipp_mobile/model/examination/examination.dart';
 import 'package:k3_sipp_mobile/net/master_message.dart';
 import 'package:k3_sipp_mobile/net/response/response_type.dart';
-import 'package:k3_sipp_mobile/repository/device_repository.dart';
+import 'package:k3_sipp_mobile/repository/app_repository.dart';
 import 'package:k3_sipp_mobile/res/colors.dart';
 import 'package:k3_sipp_mobile/res/dimens.dart';
 import 'package:k3_sipp_mobile/util/dialog_utils.dart';
@@ -16,9 +17,8 @@ import 'package:k3_sipp_mobile/util/validator_utils.dart';
 import 'package:k3_sipp_mobile/widget/custom/custom_button.dart';
 import 'package:k3_sipp_mobile/widget/custom/custom_card.dart';
 import 'package:k3_sipp_mobile/widget/custom/custom_edit_text.dart';
+import 'package:k3_sipp_mobile/widget/examination/examination_row.dart';
 import 'package:k3_sipp_mobile/widget/progress_dialog.dart';
-
-import '../../bloc/assignment/create_assignment_cubit.dart';
 
 class CreateAssignmentPage extends StatefulWidget {
   const CreateAssignmentPage({super.key});
@@ -33,13 +33,14 @@ class _CreateAssignmentPageState extends State<CreateAssignmentPage> {
   Future<void> _selectCompany() async {
     var result = await navigatorKey.currentState?.pushNamed("/select_company");
     if (result != null && result is Company) {
+      _logic.selectedCompany = result;
       _logic.companyController.text = result.companyName ?? "";
-      if (mounted) context.read<CreateAssignmentCubit>().setAssignment(company: result);
     }
   }
 
   Future<void> _actionCreate() async {
-    final ProgressDialog progressDialog = ProgressDialog(context, "Mendaftarkan...", _logic.onCreate());
+    final ProgressDialog progressDialog = ProgressDialog(
+        context, "Mendaftarkan...", _logic.onCreate(examinations: context.read<ExaminationsCubit>().state.examinations));
 
     MasterMessage message = await progressDialog.show();
     if (!TextUtils.isEmpty(message.token)) await AppRepository().setToken(message.token!);
@@ -75,35 +76,62 @@ class _CreateAssignmentPageState extends State<CreateAssignmentPage> {
 
   Future<void> _addExamination() async {
     var result = await navigatorKey.currentState?.pushNamed("/add_examination_page");
-    if(result != null && result is Examination){
-
+    if (result != null && result is Examination) {
+      if (mounted) context.read<ExaminationsCubit>().addOrUpdateExamination(result);
     }
   }
 
+  Future<void> _updateExamination(Examination examination) async {
+    var result = await navigatorKey.currentState?.pushNamed("/update_examination_page", arguments: examination);
+    if (result != null && result is Examination) {
+      print("result: ${result.id}");
+      if (mounted) context.read<ExaminationsCubit>().addOrUpdateExamination(result);
+    }
+  }
+
+  Future<void> _deleteExamination(Examination examination) async{
+    var result = await DialogUtils.showAlertDialog(
+      context,
+      dismissible: false,
+      title: "Hapus Device",
+      content: "Apakah Anda yakin akan menghapus ${examination.typeOfExaminationName}?",
+      neutralAction: "Tidak",
+      onNeutral: () => navigatorKey.currentState?.pop(false),
+      negativeAction: "Hapus",
+      onNegative: () => navigatorKey.currentState?.pop(true),
+    );
+
+    if (result == null || !result) return;
+
+    if (mounted) context.read<ExaminationsCubit>().deleteExamination(examination);
+  }
+
   Widget _buildExaminations() {
-    return CustomCard(
-      color: Colors.white,
-      child: Padding(
-        padding: const EdgeInsets.all(Dimens.paddingPage),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            // Text("SNI 7231: 2009", style: Theme.of(context).textTheme.labelSmall),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text("Kebisingan", style: Theme.of(context).textTheme.headlineMedium),
-                Text("18 Jan 2024", style: Theme.of(context).textTheme.labelMedium),
-              ],
+    return BlocBuilder<ExaminationsCubit, ExaminationsState>(
+      builder: (context, state) {
+        List<Examination> examinations = state.examinations;
+        if (examinations.isNotEmpty) {
+          return ListView.builder(
+            itemCount: examinations.length,
+            shrinkWrap: true,
+            itemBuilder: (context, index) {
+              Examination examination = examinations.elementAt(index);
+              return ExaminationRow(
+                examination: examination,
+                onTap: () => _updateExamination(examination),
+                onLongPress: () => _deleteExamination(examination),
+              );
+            },
+          );
+        } else {
+          return Center(
+            child: Text(
+              "Tidak pengujian, silahkan tambah pengujian.",
+              style: Theme.of(context).textTheme.labelLarge?.copyWith(color: Colors.deepOrange),
             ),
-            Text("Jenis Intensitas Kebisingan Lingkungan Kerja", style: Theme.of(context).textTheme.labelMedium),
-            const SizedBox(height: Dimens.paddingGap),
-            Text("Sound Level Master", style: Theme.of(context).textTheme.labelMedium),
-          ],
-        ),
-      ),
+          );
+        }
+      },
     );
   }
 
@@ -156,7 +184,7 @@ class _CreateAssignmentPageState extends State<CreateAssignmentPage> {
               ],
             ),
             const SizedBox(height: Dimens.paddingSmall),
-            _buildExaminations(),
+            Expanded(child: _buildExaminations()),
             const SizedBox(height: Dimens.paddingMedium),
             CustomButton(
               minimumSize: const Size(double.infinity, Dimens.buttonHeightSmall),
@@ -168,6 +196,12 @@ class _CreateAssignmentPageState extends State<CreateAssignmentPage> {
         ),
       ),
     );
+  }
+
+  @override
+  void deactivate() {
+    context.read<ExaminationsCubit>().clear();
+    super.deactivate();
   }
 
   @override

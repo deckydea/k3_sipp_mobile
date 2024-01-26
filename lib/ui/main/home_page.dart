@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:k3_sipp_mobile/logic/menu/home_logic.dart';
 import 'package:k3_sipp_mobile/main.dart';
 import 'package:k3_sipp_mobile/model/user/user.dart';
-import 'package:k3_sipp_mobile/repository/device_repository.dart';
+import 'package:k3_sipp_mobile/repository/app_repository.dart';
 import 'package:k3_sipp_mobile/res/colors.dart';
 import 'package:k3_sipp_mobile/res/dimens.dart';
 import 'package:k3_sipp_mobile/util/dialog_utils.dart';

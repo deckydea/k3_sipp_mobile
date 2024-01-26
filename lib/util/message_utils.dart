@@ -73,6 +73,14 @@ class MessageUtils {
     }
   }
 
+  static void handlePermissionDenied({required BuildContext context, required AppLocalizations localizations}) {
+    if (context.mounted) {
+      DialogUtils.handleAccessDenied(context);
+    } else {
+      _showSnackbar(localizations.translate("failed_permission_denied"));
+    }
+  }
+
   static void handleFeatureComingSoon(AppLocalizations localizations) {
     _showSnackbar(localizations.translate("common_feature_coming_soon"));
   }

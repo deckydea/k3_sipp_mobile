@@ -21,13 +21,22 @@ class MasterRequestType {
   static const String updateCompany = "UPDATE_COMPANY";
   static const String deleteCompany = "DELETE_COMPANY";
 
-  //Examination
-  static const String queryTypeExaminations = "QUERY_TYPE_EXAMINATIONS";
-
   //User
   static const String queryUsers = "QUERY_USERS";
   static const String createUser = "CREATE_USER";
+  static const String updateUser = "UPDATE_USER";
+  static const String deleteUser = "DELETE_USER";
 
+  //Template
+  static const String queryTemplates = "QUERY_TEMPLATES";
+  static const String queryTemplate = "QUERY_TEMPLATE";
+  static const String managementTemplate = "MANAGEMENT_TEMPLATE";
 
-  //Report
+  //Examination
+  static const String queryTypeExaminations = "QUERY_TYPE_EXAMINATIONS";
+  static const String inputExaminationKebisinganLK = "INPUT_EXAMINATION_KEBISINGAN_LK";
+  static const String resultExaminationKebisinganLK = "RESULT_EXAMINATION_KEBISINGAN_LK";
+  static const String inputExaminationPencahayaan = "INPUT_EXAMINATION_PENCAHAYAAN";
+  static const String resultExaminationPencahayaan = "RESULT_EXAMINATION_PENCAHAYAAN";
+  static const String approvalQC1 = "APPROVAL_QC1";
 }

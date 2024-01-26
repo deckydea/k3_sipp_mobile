@@ -8,11 +8,8 @@ class DeviceCalibrationState extends Equatable {
 
   const DeviceCalibrationState({this.deviceCalibrationMap});
 
-  DeviceCalibrationState copyWith({
-    Map<int, DeviceCalibration>? deviceCalibrationMap,
-  }) {
-    return DeviceCalibrationState(deviceCalibrationMap: deviceCalibrationMap ?? this.deviceCalibrationMap);
-  }
+  DeviceCalibrationState copyWith({Map<int, DeviceCalibration>? deviceCalibrationMap}) =>
+      DeviceCalibrationState(deviceCalibrationMap: deviceCalibrationMap ?? this.deviceCalibrationMap);
 
   @override
   List<Object?> get props => [deviceCalibrationMap];
@@ -21,7 +18,7 @@ class DeviceCalibrationState extends Equatable {
 class DeviceCalibrationCubit extends Cubit<DeviceCalibrationState> {
   DeviceCalibrationCubit() : super(const DeviceCalibrationState(deviceCalibrationMap: {}));
 
-  void setDeviceCalibration(DeviceCalibration deviceCalibration) {
+  void addOrUpdateDeviceCalibration(DeviceCalibration deviceCalibration) {
     final updatedMap = Map<int, DeviceCalibration>.from(state.deviceCalibrationMap ?? {});
     deviceCalibration.id ??= TextUtils.generateRandomInt();
     updatedMap[deviceCalibration.id!] = deviceCalibration;
@@ -32,5 +29,17 @@ class DeviceCalibrationCubit extends Cubit<DeviceCalibrationState> {
     final updatedMap = Map<int, DeviceCalibration>.from(state.deviceCalibrationMap ?? {});
     updatedMap.remove(deviceCalibration.id);
     emit(state.copyWith(deviceCalibrationMap: updatedMap));
+  }
+
+  void setDeviceCalibration(List<DeviceCalibration> deviceCalibrations) {
+    Map<int, DeviceCalibration>? deviceCalibrationMap = {};
+    for (DeviceCalibration calibration in deviceCalibrations) {
+      deviceCalibrationMap[calibration.id ?? TextUtils.generateRandomInt()] = calibration;
+    }
+    emit(state.copyWith(deviceCalibrationMap: deviceCalibrationMap));
+  }
+
+  void clear() {
+    emit(const DeviceCalibrationState(deviceCalibrationMap: {}));
   }
 }

@@ -15,8 +15,8 @@ class Company{
   // Convert Company object to JSON data
   Map<String, dynamic> toJson() => {
       'id': id,
-      'companyName': companyName,
-      'companyAddress': companyAddress,
+      'company_name': companyName,
+      'company_address': companyAddress,
     };
 
 

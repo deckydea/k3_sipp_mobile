@@ -17,7 +17,7 @@ class LoginLogic {
   Future<MasterMessage> loginWithUsernamePassword() async {
     String username = usernameController.text;
     String password = passwordController.text;
-    User user = User(username: username, password: password, name: '');
+    User user = User(username: username, password: password, name: '', nip: '');
     MasterMessage message = MasterLoginRequest(user: user);
     return await ConnectionUtils.sendRequest(message);
   }

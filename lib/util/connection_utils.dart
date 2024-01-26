@@ -7,7 +7,7 @@ import "package:flutter/foundation.dart";
 import "package:http/http.dart" as http;
 import "package:k3_sipp_mobile/net/master_message.dart";
 import "package:k3_sipp_mobile/net/response/response_type.dart";
-import "package:k3_sipp_mobile/repository/device_repository.dart";
+import "package:k3_sipp_mobile/repository/app_repository.dart";
 import "package:k3_sipp_mobile/util/text_utils.dart";
 import "package:uuid/uuid.dart";
 import 'dart:developer' as dev;

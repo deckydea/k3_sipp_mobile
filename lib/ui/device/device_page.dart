@@ -8,7 +8,7 @@ import 'package:k3_sipp_mobile/main.dart';
 import 'package:k3_sipp_mobile/model/device/device.dart';
 import 'package:k3_sipp_mobile/net/master_message.dart';
 import 'package:k3_sipp_mobile/net/response/response_type.dart';
-import 'package:k3_sipp_mobile/repository/device_repository.dart';
+import 'package:k3_sipp_mobile/repository/app_repository.dart';
 import 'package:k3_sipp_mobile/res/colors.dart';
 import 'package:k3_sipp_mobile/res/dimens.dart';
 import 'package:k3_sipp_mobile/util/dialog_utils.dart';
@@ -22,7 +22,7 @@ import 'package:k3_sipp_mobile/widget/progress_dialog.dart';
 class DevicePage extends StatefulWidget {
   final Device? device;
 
-  const DevicePage({super.key, required this.device});
+  const DevicePage({super.key, this.device});
 
   @override
   State<DevicePage> createState() => _DevicePageState();

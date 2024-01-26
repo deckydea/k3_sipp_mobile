@@ -2,12 +2,13 @@
 
 import 'dart:math';
 
+import 'package:equatable/equatable.dart';
 import 'package:k3_sipp_mobile/util/date_time_utils.dart';
 import 'package:k3_sipp_mobile/util/text_utils.dart';
 
 enum UserGroupStatus { ACTIVE, VOID }
 
-class UserGroup {
+class UserGroup extends Equatable{
   static Comparator<UserGroup> get nameComparator => (a, b) {
         return TextUtils.equals(a.name, "ADMIN")
             ? -1
@@ -16,13 +17,13 @@ class UserGroup {
                 : a.name.toLowerCase().compareTo(b.name.toLowerCase());
       };
 
-  int id;
-  String name;
-  DateTime createdAt;
-  DateTime updatedAt;
-  Set<String> userAccessMenu;
+  final int id;
+  final String name;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final Set<String> userAccessMenu;
 
-  UserGroup({
+  const UserGroup({
     required this.id,
     required this.name,
     required this.createdAt,
@@ -85,4 +86,7 @@ class UserGroup {
       userAccessMenu: userAccessMenu,
     );
   }
+
+  @override
+  List<Object?> get props => [id, name, createdAt, updatedAt, userAccessMenu];
 }

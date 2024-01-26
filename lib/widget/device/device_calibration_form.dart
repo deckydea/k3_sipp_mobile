@@ -72,6 +72,7 @@ class DeviceCalibrationFormState extends State<DeviceCalibrationForm> {
     super.initState();
     if (widget.hide != null) _hideForm = widget.hide!;
     if (widget.deviceCalibration != null) {
+      _selectedDeviceId = widget.deviceCalibration!.id;
       _deviceController.text = widget.deviceCalibration!.deviceName;
       _internalCalibrationController.text = "${widget.deviceCalibration!.internalCalibration}";
       _noteController.text = widget.deviceCalibration!.name;

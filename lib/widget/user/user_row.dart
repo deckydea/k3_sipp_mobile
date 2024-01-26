@@ -5,15 +5,17 @@ import 'package:k3_sipp_mobile/res/dimens.dart';
 import 'package:k3_sipp_mobile/widget/custom/custom_card.dart';
 
 class UserRow extends StatelessWidget {
-  final VoidCallback? onSelected;
+  final GestureLongPressCallback? onLongPress;
+  final VoidCallback? onTap;
   final User user;
 
-  const UserRow({super.key, required this.user, this.onSelected});
+  const UserRow({super.key, required this.user, this.onTap, this.onLongPress});
 
   @override
   Widget build(BuildContext context) {
     return CustomCard(
-      onTap: onSelected,
+      onTap: onTap,
+      onLongPress: onLongPress,
       color: Colors.white,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: Dimens.paddingPage),
@@ -29,7 +31,7 @@ class UserRow extends StatelessWidget {
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(color: ColorResources.primaryLight))
             ],
           ),
-          subtitle: Text(user.nip ?? "", style: Theme.of(context).textTheme.titleSmall),
+          subtitle: Text(user.nip, style: Theme.of(context).textTheme.titleSmall),
         ),
       ),
     );
