@@ -2,6 +2,7 @@ import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:k3_sipp_mobile/bloc/menu/menu_cubit.dart';
+import 'package:k3_sipp_mobile/logic/menu/main_menu_logic.dart';
 import 'package:k3_sipp_mobile/model/user/user.dart';
 import 'package:k3_sipp_mobile/res/colors.dart';
 import 'package:k3_sipp_mobile/ui/main/assignment_page.dart';
@@ -19,6 +20,13 @@ class MainMenuPage extends StatefulWidget {
 }
 
 class _MainMenuPageState extends State<MainMenuPage> {
+  final MainMenuLogic _logic = MainMenuLogic();
+
+  Future<void> _init() async {
+    await _logic.init();
+    _logic.initialized = true;
+    setState(() {});
+  }
 
   Widget _buildBottomNavigationBar() {
     return ConvexAppBar(
@@ -37,20 +45,29 @@ class _MainMenuPageState extends State<MainMenuPage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     print("BUILD MAIN MENU");
+
+    if (!_logic.initialized) _init();
     return Scaffold(
-      body: BlocBuilder<MenuCubit, int>(
-        builder: (BuildContext context, state) => IndexedStack(
-          index: state,
-          children:  [
-            HomePage(user: widget.user),
-            const AssignmentPage(),
-            const MenuPage(),
-            const ProfilePage(),
-          ],
-        ),
-      ),
+      body: _logic.initialized
+          ? BlocBuilder<MenuCubit, int>(
+              builder: (BuildContext context, state) => IndexedStack(
+                index: state,
+                children: [
+                  HomePage(user: widget.user),
+                  const AssignmentPage(),
+                  const MenuPage(),
+                  const ProfilePage(),
+                ],
+              ),
+            )
+          : Container(),
       bottomNavigationBar: _buildBottomNavigationBar(),
     );
   }

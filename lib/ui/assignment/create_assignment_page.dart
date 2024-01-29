@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:k3_sipp_mobile/bloc/assignment/examination_cubit.dart';
+import 'package:k3_sipp_mobile/bloc/examination/examination_cubit.dart';
 import 'package:k3_sipp_mobile/logic/examination/create_assignment_logic.dart';
 import 'package:k3_sipp_mobile/main.dart';
 import 'package:k3_sipp_mobile/model/company/company.dart';
@@ -84,7 +84,6 @@ class _CreateAssignmentPageState extends State<CreateAssignmentPage> {
   Future<void> _updateExamination(Examination examination) async {
     var result = await navigatorKey.currentState?.pushNamed("/update_examination_page", arguments: examination);
     if (result != null && result is Examination) {
-      print("result: ${result.id}");
       if (mounted) context.read<ExaminationsCubit>().addOrUpdateExamination(result);
     }
   }

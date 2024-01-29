@@ -22,6 +22,7 @@ class Dimens {
   static const double cardBorderWidth = 0.1;
   static const double cardGroupHeight = 120;
   static const double cardGroupWidth = 100;
+  static const double cardAssignmentHeight = 100;
 
   // Logo
   static const double logoSize = 90.0;
@@ -34,8 +35,11 @@ class Dimens {
   // Icon
   static const double iconSize = 22.0;
   static const double iconSizeThumbnail = 8.0;
+  static const double iconSizeTitle = 15.0;
   static const double iconSizeSmall = 16.0;
   static const double iconSizeMedium = 32;
+  static const double iconSizeAppbar = 28;
+  static const double iconWeightAppbar = 900;
   static const double iconSizeLarge = 42.0;
   static const double iconSizeMenu = 25.0;
 
@@ -80,6 +84,7 @@ class Dimens {
   // Font
   static const double fontButton = 14;
   static const double fontDefault = 13;
+  static const double fontXSmall = 10;
   static const double fontSmall = 12;
   static const double fontLarge = 16;
   static const double fontToolbar = 16;

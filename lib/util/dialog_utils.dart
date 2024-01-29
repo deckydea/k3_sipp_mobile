@@ -59,7 +59,7 @@ class DialogUtils {
     required BuildContext context,
     String? title,
     required List<String> options,
-    List<IconData>? icons,
+    List<Icon>? icons,
     required List<Function()> onSelected,
     bool? dismissible = true,
     List<Color>? color,
@@ -91,7 +91,7 @@ class DialogUtils {
                     title: Text(
                       option,
                       style: TextStyle(
-                        fontSize: Dimens.fontDefault,
+                        fontSize: Dimens.fontDefault, fontWeight: FontWeight.bold,
                         color: color == null || color.length <= index
                             ? ColorResources.text
                             : color.elementAt(index),
@@ -101,7 +101,7 @@ class DialogUtils {
                         icons.length <= index ||
                         icons.isEmpty
                         ? Container()
-                        : Icon(icons.elementAt(index))
+                        : icons.elementAt(index)
                   ),
                 );
               }).toList());

@@ -3,21 +3,17 @@ import 'package:k3_sipp_mobile/model/examination/examination_status.dart';
 import 'package:k3_sipp_mobile/model/report/report_filter.dart';
 import 'package:k3_sipp_mobile/util/date_time_utils.dart';
 
-class TemplateFilter extends ReportFilter {
-  String? query;
-  int? companyId;
+class AssignmentFilter extends ReportFilter{
+  Set<ExaminationStatus>? statuses;
+  DateTime? date;
   int? petugasId;
   int? analisId;
-  String? typeOfExaminationName;
-  Set<ExaminationStatus>? statuses;
 
-  TemplateFilter({
-    this.query,
-    this.companyId,
+  AssignmentFilter({
+    this.statuses,
+    this.date,
     this.petugasId,
     this.analisId,
-    this.typeOfExaminationName,
-    this.statuses,
     super.startDate,
     super.endDate,
     super.resultSize,
@@ -26,21 +22,19 @@ class TemplateFilter extends ReportFilter {
 
   @override
   Map<String, dynamic> toJson() => {
-        if (query != null) 'query': query,
-        if (companyId != null) 'companyId': companyId,
-        if (petugasId != null) 'petugasId': petugasId,
-        if (analisId != null) 'analisId': analisId,
-        if (typeOfExaminationName != null) 'typeOfExaminationName': typeOfExaminationName,
-        if (statuses != null) "statuses": statuses!.map((element) => EnumToString.convertToString(element)).toList(),
+    if (statuses != null) "statuses": statuses!.map((element) => EnumToString.convertToString(element)).toList(),
+    if (date != null) 'date': DateTimeUtils.format(date!),
+    if (petugasId != null) 'petugasId': petugasId,
+    if (analisId != null) 'analisId': analisId,
 
-        //Parent
-        if (startDate != null) 'startDate': DateTimeUtils.format(startDate!),
-        if (endDate != null) 'endDate': DateTimeUtils.format(endDate!),
-        if (upperBoundEpoch != null) 'upperBoundEpoch': upperBoundEpoch,
-        if (resultSize != null) 'resultSize': resultSize,
-      };
+    //Parent
+    if (startDate != null) 'startDate': DateTimeUtils.format(startDate!),
+    if (endDate != null) 'endDate': DateTimeUtils.format(endDate!),
+    if (upperBoundEpoch != null) 'upperBoundEpoch': upperBoundEpoch,
+    if (resultSize != null) 'resultSize': resultSize,
+  };
 
-  factory TemplateFilter.fromJson(Map<String, dynamic> json) {
+  factory AssignmentFilter.fromJson(Map<String, dynamic> json) {
     Set<ExaminationStatus>? statuses;
     if (json["statuses"] != null) {
       statuses = {};
@@ -54,13 +48,11 @@ class TemplateFilter extends ReportFilter {
         }
       }
     }
-    return TemplateFilter(
-      query: json['query'],
-      companyId: json['companyId'],
+    return AssignmentFilter(
+      statuses: statuses,
+      date: json['date'] == null ? null : DateTime.parse(json['date']).toLocal(),
       petugasId: json['petugasId'],
       analisId: json['analisId'],
-      typeOfExaminationName: json['typeOfExaminationName'],
-      statuses: statuses,
 
       //Parent
       startDate: json['startDate'] == null ? null : DateTime.parse(json['startDate']).toLocal(),

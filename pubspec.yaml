@@ -49,6 +49,7 @@ dependencies:
   date_format: ^2.0.7
   intl: ^0.18.1
   syncfusion_flutter_datepicker: ^24.1.47
+  easy_date_timeline: ^1.0.3
 
   #storage
   flutter_secure_storage: ^9.0.0
@@ -68,12 +69,15 @@ dependencies:
   image_cropper: ^5.0.1
   flutter_image_compress: ^2.1.0
 
+  #icon
+  material_symbols_icons: ^4.2718.0
+
   #Permission
   permission_handler: ^11.0.0
 
   #other
   flutter_jailbreak_detection: ^1.10.0
-  package_info_plus: ^4.2.0
+  package_info_plus: ^5.0.1
   uuid: ^4.1.0
   http: ^1.1.0
   flutter_smart_dialog: ^4.9.6

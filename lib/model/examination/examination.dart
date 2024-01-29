@@ -1,8 +1,10 @@
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
+import 'package:k3_sipp_mobile/model/company/company.dart';
 import 'package:k3_sipp_mobile/model/device/device_calibration.dart';
 import 'package:k3_sipp_mobile/model/examination/examination_status.dart';
 import 'package:k3_sipp_mobile/model/examination/examination_type.dart';
+import 'package:k3_sipp_mobile/repository/examination_repository.dart';
 import 'package:k3_sipp_mobile/res/colors.dart';
 import 'package:k3_sipp_mobile/res/dimens.dart';
 import 'package:k3_sipp_mobile/util/date_time_utils.dart';
@@ -10,11 +12,10 @@ import 'package:k3_sipp_mobile/util/date_time_utils.dart';
 class Examination {
   int? id;
   int? templateId;
-  int typeOfExaminationId;
   String typeOfExaminationName;
-  String typeOfExaminationDescription;
-  MasterExaminationType typeOfExaminationType;
   DateTime? implementationDate;
+  DateTime? deadlineDate;
+  Company? company;
   int petugasId;
   String petugasName;
   int? analisId;
@@ -38,11 +39,10 @@ class Examination {
   Examination({
     this.id,
     this.templateId,
-    required this.typeOfExaminationId,
     required this.typeOfExaminationName,
-    required this.typeOfExaminationDescription,
-    required this.typeOfExaminationType,
     this.implementationDate,
+    this.deadlineDate,
+    this.company,
     required this.petugasId,
     required this.petugasName,
     this.analisId,
@@ -61,26 +61,101 @@ class Examination {
     required this.deviceCalibrations,
   });
 
+  ExaminationType? get examinationType => ExaminationRepository().getExaminationTypeByName(typeOfExaminationName);
+
+  //Styles
   Color get color {
     switch (typeOfExaminationName) {
-      case MasterExaminationTypeName.kebisingan:
+      case ExaminationTypeName.kebisingan:
         return Colors.brown;
-      case MasterExaminationTypeName.penerangan:
+      case ExaminationTypeName.penerangan:
         return Colors.amber;
     }
 
     return ColorResources.primaryDark;
   }
 
+  Color get backgroundColorStatus {
+    switch (status) {
+      case ExaminationStatus.PENDING:
+        return ColorResources.backgroundPending;
+      case ExaminationStatus.REVISION_QC1:
+        return ColorResources.backgroundRevisionQc1;
+      case ExaminationStatus.PENDING_APPROVE_QC1:
+        return ColorResources.backgroundPendingApproveQc1;
+      case ExaminationStatus.REVISION_QC2:
+        return ColorResources.backgroundPendingApproveQc2;
+      case ExaminationStatus.PENDING_INPUT_LAB:
+        return ColorResources.backgroundInputLab;
+      case ExaminationStatus.REVISION_INPUT_LAB:
+        return ColorResources.backgroundRevisionInputLab;
+      case ExaminationStatus.PENDING_APPROVE_QC2:
+        return ColorResources.backgroundPendingApproveQc2;
+      case ExaminationStatus.REJECT_SIGNED:
+        return ColorResources.dangerBackground;
+      case ExaminationStatus.PENDING_SIGNED:
+        return ColorResources.backgroundPendingSigned;
+      case ExaminationStatus.SIGNED:
+        return ColorResources.backgroundSigned;
+      case ExaminationStatus.COMPLETED:
+        return ColorResources.backgroundComplete;
+      default:
+        return ColorResources.backgroundNoneStatus;
+    }
+  }
+
+  Color get colorStatus {
+    switch (status) {
+      case ExaminationStatus.PENDING:
+        return Colors.deepOrangeAccent;
+      case ExaminationStatus.REVISION_QC1:
+        return Colors.blueGrey;
+      case ExaminationStatus.PENDING_APPROVE_QC1:
+        return Colors.greenAccent;
+      case ExaminationStatus.REVISION_QC2:
+        return Colors.orangeAccent;
+      case ExaminationStatus.PENDING_INPUT_LAB:
+        return Colors.purpleAccent;
+      case ExaminationStatus.REVISION_INPUT_LAB:
+        return Colors.yellow;
+      case ExaminationStatus.PENDING_APPROVE_QC2:
+        return Colors.deepPurple;
+      case ExaminationStatus.REJECT_SIGNED:
+        return Colors.redAccent;
+      case ExaminationStatus.PENDING_SIGNED:
+        return Colors.tealAccent;
+      case ExaminationStatus.SIGNED:
+        return Colors.blueAccent;
+      case ExaminationStatus.COMPLETED:
+        return Colors.teal;
+      default:
+        return ColorResources.primaryDark;
+    }
+  }
+  
   Icon get icon {
     switch (typeOfExaminationName) {
-      case MasterExaminationTypeName.kebisingan:
+      case ExaminationTypeName.kebisingan:
         return const Icon(Icons.noise_aware_outlined, color: Colors.white, size: Dimens.iconSize);
-      case MasterExaminationTypeName.penerangan:
+      case ExaminationTypeName.penerangan:
         return const Icon(Icons.light_mode_outlined, color: Colors.white, size: Dimens.iconSize);
     }
 
     return const Icon(Icons.unarchive_outlined, color: Colors.white, size: Dimens.iconSize);
+  }
+
+  Widget get statusBadge {
+    return Container(
+      decoration: BoxDecoration(
+        color: colorStatus,
+        borderRadius: BorderRadius.circular(Dimens.cardRadiusLarge),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: Dimens.paddingSmallGap, horizontal: Dimens.paddingGap),
+        child: Text(status == null ? "NOT STARTED" : status!.name.toUpperCase(),
+            style: const TextStyle(color: Colors.white, fontSize: Dimens.fontXSmall)),
+      ),
+    );
   }
 
   Examination replica() {
@@ -92,11 +167,10 @@ class Examination {
     return Examination(
       id: id,
       templateId: templateId,
-      typeOfExaminationId: typeOfExaminationId,
       typeOfExaminationName: typeOfExaminationName,
-      typeOfExaminationDescription: typeOfExaminationDescription,
-      typeOfExaminationType: typeOfExaminationType,
       implementationDate: implementationDate,
+      deadlineDate: deadlineDate,
+      company: company?.replica(),
       petugasId: petugasId,
       petugasName: petugasName,
       analisId: analisId,
@@ -120,11 +194,10 @@ class Examination {
     return {
       if (id != null) 'id': id,
       if (templateId != null) 'templateId': templateId,
-      'typeOfExaminationId': typeOfExaminationId,
       'typeOfExaminationName': typeOfExaminationName,
-      'typeOfExaminationDescription': typeOfExaminationDescription,
-      'typeOfExaminationType': EnumToString.convertToString(typeOfExaminationType),
       if (implementationDate != null) 'implementationDate': DateTimeUtils.format(implementationDate!),
+      if (deadlineDate != null) 'deadlineDate': DateTimeUtils.format(deadlineDate!),
+      if (company != null) 'company': company,
       'petugasId': petugasId,
       'petugasName': petugasName,
       if (analisId != null) 'analisId': analisId,
@@ -156,11 +229,10 @@ class Examination {
     return Examination(
       id: json['id'],
       templateId: json['templateId'],
-      typeOfExaminationId: json['typeOfExaminationId'],
       typeOfExaminationName: json['typeOfExaminationName'],
-      typeOfExaminationDescription: json['typeOfExaminationDescription'],
-      typeOfExaminationType: MasterExaminationType.values.firstWhere((element) => element.name == json['type']),
       implementationDate: json['implementationDate'] == null ? null : DateTime.parse(json['implementationDate']).toLocal(),
+      deadlineDate: json['deadlineDate'] == null ? null : DateTime.parse(json['deadlineDate']).toLocal(),
+      company: Company.fromJson(json['company']),
       petugasId: json['petugasId'],
       petugasName: json['petugasName'],
       analisName: json['analisName'],

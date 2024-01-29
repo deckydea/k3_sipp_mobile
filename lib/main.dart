@@ -3,8 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
-import 'package:k3_sipp_mobile/bloc/assignment/examination_cubit.dart';
-import 'package:k3_sipp_mobile/bloc/assignment/device_calibration_cubit.dart';
+import 'package:k3_sipp_mobile/bloc/examination/examination_cubit.dart';
+import 'package:k3_sipp_mobile/bloc/examination/device_calibration_cubit.dart';
 import 'package:k3_sipp_mobile/bloc/company/companies_bloc.dart';
 import 'package:k3_sipp_mobile/bloc/device/devices_bloc.dart';
 import 'package:k3_sipp_mobile/bloc/menu/menu_cubit.dart';
@@ -18,11 +18,13 @@ import 'package:k3_sipp_mobile/res/dimens.dart';
 import 'package:k3_sipp_mobile/res/localizations.dart';
 import 'package:k3_sipp_mobile/ui/assignment/add_update_examination_page.dart';
 import 'package:k3_sipp_mobile/ui/assignment/create_assignment_page.dart';
+import 'package:k3_sipp_mobile/ui/assignment/input/input_form_page.dart';
 import 'package:k3_sipp_mobile/ui/auth/login_page.dart';
 import 'package:k3_sipp_mobile/ui/company/companies_page.dart';
 import 'package:k3_sipp_mobile/ui/device/device_page.dart';
 import 'package:k3_sipp_mobile/ui/device/devices_page.dart';
 import 'package:k3_sipp_mobile/ui/launcher.dart';
+import 'package:k3_sipp_mobile/ui/main/assignment_page.dart';
 import 'package:k3_sipp_mobile/ui/main/main_menu_page.dart';
 import 'package:k3_sipp_mobile/ui/user/user_page.dart';
 import 'package:k3_sipp_mobile/ui/user/users_page.dart';
@@ -70,9 +72,10 @@ class MyApp extends StatelessWidget {
           visualDensity: VisualDensity.adaptivePlatformDensity,
           appBarTheme: const AppBarTheme(
             backgroundColor: ColorResources.primaryDark,
+            surfaceTintColor: Colors.transparent,
             elevation: 0.0,
             centerTitle: true,
-            iconTheme: IconThemeData(color: Colors.white),
+            iconTheme: IconThemeData(color: ColorResources.primaryDark),
             actionsIconTheme: IconThemeData(color: Colors.white),
             titleTextStyle: TextStyle(
               fontSize: Dimens.fontToolbar,
@@ -81,7 +84,7 @@ class MyApp extends StatelessWidget {
             ),
           ),
           textTheme: const TextTheme(
-            bodySmall: TextStyle(fontSize: Dimens.fontSmall, fontFamily: "Nunito", color: ColorResources.text),
+            bodySmall: TextStyle(fontSize: Dimens.fontXSmall, fontFamily: "Nunito", color: ColorResources.text),
             bodyMedium: TextStyle(fontSize: Dimens.fontDefault, fontFamily: "Nunito", color: ColorResources.text),
             bodyLarge: TextStyle(fontSize: Dimens.fontLarge, fontFamily: "Nunito", color: ColorResources.text),
             headlineSmall: TextStyle(
@@ -148,13 +151,15 @@ class MyApp extends StatelessWidget {
             "/login": (context) => const LoginPage(),
             "/main_menu": (context) => MainMenuPage(user: settings.arguments as User),
 
-            //Template
+            //Assignment
+            "/assignment_page": (context) => const AssignmentPage(),
             "/create_assignment": (context) => const CreateAssignmentPage(),
 
             //Examination
             "/add_examination_page": (context) => const AddOrUpdateExaminationPage(),
             "/update_examination_page": (context) =>
                 AddOrUpdateExaminationPage(examination: settings.arguments == null ? null : settings.arguments as Examination),
+            "/input_form": (context) => const InputFormPage(),
 
             //Device
             "/devices": (context) => const DevicesPage(pageMode: DevicesPageMode.deviceList),

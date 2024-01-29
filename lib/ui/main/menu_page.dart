@@ -28,7 +28,7 @@ class _MenuPageState extends State<MenuPage> {
       title: "Report",
       icon: Icons.pie_chart_outline,
       backgroundColor: Colors.deepOrangeAccent,
-      onTap: () {},
+      onTap: () => navigatorKey.currentState?.pushNamed("/create_assignment"),
     ),
     MasterRequestType.createUser: MenuItem(
       title: "User",

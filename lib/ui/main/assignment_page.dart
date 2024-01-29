@@ -1,13 +1,14 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:k3_sipp_mobile/logic/examination/assignment_logic.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:k3_sipp_mobile/bloc/assignment/assignment_bloc.dart';
 import 'package:k3_sipp_mobile/main.dart';
+import 'package:k3_sipp_mobile/model/examination/examination.dart';
+import 'package:k3_sipp_mobile/model/examination/examination_status.dart';
 import 'package:k3_sipp_mobile/res/colors.dart';
 import 'package:k3_sipp_mobile/res/dimens.dart';
-import 'package:k3_sipp_mobile/widget/custom/custom_card.dart';
-import 'package:k3_sipp_mobile/widget/custom/custom_search_field.dart';
-
-enum AssignmentTabCategory { pending, revision, signature, completed }
+import 'package:k3_sipp_mobile/widget/assignment/assignment_row.dart';
+import 'package:k3_sipp_mobile/widget/custom/custom_date_timeline.dart';
+import 'package:k3_sipp_mobile/widget/custom/custom_shimmer.dart';
 
 class AssignmentPage extends StatefulWidget {
   const AssignmentPage({super.key});
@@ -17,62 +18,131 @@ class AssignmentPage extends StatefulWidget {
 }
 
 class _AssignmentPageState extends State<AssignmentPage> {
-  final AssignmentLogic _logic = AssignmentLogic();
+  void _navigateTo(Examination examination) {
+    switch (examination.status) {
+      case ExaminationStatus.PENDING:
+      case ExaminationStatus.REVISION_QC1:
+        navigatorKey.currentState?.pushNamed("/input_form");
+        return;
+      case ExaminationStatus.PENDING_APPROVE_QC1:
+      case ExaminationStatus.REVISION_QC2:
+      //TODO: Navigate to Koordinator Approval
+        return;
+      case ExaminationStatus.PENDING_INPUT_LAB:
+      case ExaminationStatus.REVISION_INPUT_LAB:
+      //TODO: Navigate to input lab
+        return;
+      case ExaminationStatus.PENDING_APPROVE_QC2:
+      case ExaminationStatus.REJECT_SIGNED:
+      //TODO: Navigate to Penyelia Approval
+        return;
+      case ExaminationStatus.PENDING_SIGNED:
+      case ExaminationStatus.SIGNED:
+      // TODO: Navigate to Signed and View Report
+        return;
+      case ExaminationStatus.COMPLETED:
+      // TODO: Navigate to View Report
+        return;
+      case null:
+    }
+  }
 
-  Widget _buildBody() {
-    return DefaultTabController(
-      length: AssignmentTabCategory.values.length,
-      child: Column(
-        children: [
-          TabBar(
-            padding: EdgeInsets.zero,
-            isScrollable: false,
-            unselectedLabelColor: ColorResources.primary.withOpacity(0.7),
-            indicatorColor: ColorResources.primary,
-            labelColor: ColorResources.primary,
-            labelStyle: Theme.of(context).textTheme.headlineMedium!.copyWith(fontWeight: FontWeight.w800),
-            labelPadding: const EdgeInsets.symmetric(horizontal: Dimens.paddingSmall, vertical: Dimens.paddingSmall * 1.4),
-            tabs: AssignmentTabCategory.values.map((e) => Text(e.name.toUpperCase())).toList(),
-          ),
-          const SizedBox(height: Dimens.paddingWidget),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              const SizedBox(width: Dimens.paddingWidget),
-              const Expanded(child: CustomCard(child: CustomSearchField())),
-              CustomCard(child: IconButton(onPressed: () {}, icon: const Icon(Icons.sort, size: Dimens.iconSizeSmall))),
-              CustomCard(
-                  child: IconButton(onPressed: () {}, icon: const Icon(Icons.filter_alt_outlined, size: Dimens.iconSizeSmall))),
-              const SizedBox(width: Dimens.paddingWidget),
-            ],
-          ),
-          const SizedBox(height: Dimens.paddingWidget),
-          Expanded(
-            child: TabBarView(
-              children: AssignmentTabCategory.values.map((e) => Center(child: Text(e.name.toUpperCase()))).toList(),
-            ),
-          ),
-        ],
+  Widget _buildNoData() {
+    return Padding(
+      padding: const EdgeInsets.only(top: Dimens.paddingMedium),
+      child: Center(
+        child: Text(
+          "Tidak ada assignment.",
+          style: Theme
+              .of(context)
+              .textTheme
+              .headlineSmall
+              ?.copyWith(color: ColorResources.warningText),
+        ),
       ),
     );
   }
 
+  Widget _buildError() {
+    return Padding(
+      padding: const EdgeInsets.only(top: Dimens.paddingMedium),
+      child: Center(
+        child: Text(
+          "Our service is currently unavailable.",
+          style: Theme
+              .of(context)
+              .textTheme
+              .headlineSmall
+              ?.copyWith(color: ColorResources.warningText),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildShimmer() {
+    return ListView.separated(
+      physics: const ClampingScrollPhysics(),
+      itemCount: 5,
+      itemBuilder: (context, index) => const CustomShimmer(),
+      separatorBuilder: (context, index) => const SizedBox(height: Dimens.paddingWidget),
+    );
+  }
+
+  Widget _buildData(List<Examination> examinations) {
+    return Container(
+      color: Colors.white,
+      child: ListView.separated(
+        padding: const EdgeInsets.symmetric(horizontal: Dimens.paddingPage, vertical: Dimens.paddingMedium),
+        itemCount: 5,
+        itemBuilder: (context, index) =>
+            AssignmentRow(
+              onTap: () => navigatorKey.currentState?.pushNamed("/input_form"),
+            ),
+        separatorBuilder: (BuildContext context, int index) => const SizedBox(height: Dimens.paddingGap),
+      ),
+    );
+  }
+
+  Widget _buildBody() {
+    return Column(
+      children: [
+        CustomDateTimeLine(
+            onDateChange: (selectedDate) => context.read<AssignmentBloc>().add(FetchAssignmentEvent(date: selectedDate))),
+        const SizedBox(height: Dimens.paddingSmall),
+        BlocBuilder<AssignmentBloc, AssignmentState>(
+          builder: (BuildContext context, AssignmentState state) {
+            if (state is AssignmentLoadingState) {
+              return _buildShimmer();
+            } else if (state is AssignmentLoadedState) {
+              if (state.examinations.isNotEmpty) {
+                return _buildData(state.examinations);
+              } else {
+                return _buildNoData();
+              }
+            } else {
+              return _buildError();
+            }
+          },
+        ),
+      ],
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<AssignmentBloc>().add(FetchAssignmentEvent(date: DateTime.now()));
+  }
+
   @override
   Widget build(BuildContext context) {
-    if (kDebugMode) print("BUILD AssignmentPage");
     return Scaffold(
-      backgroundColor: ColorResources.background,
       appBar: AppBar(
-        iconTheme: const IconThemeData(color: ColorResources.primaryDark),
         backgroundColor: ColorResources.background,
-        title: Text("Assignment", style: Theme.of(context).textTheme.headlineLarge),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => navigatorKey.currentState!.pushNamed("/create_assignment"),
-        shape: const CircleBorder(),
-        backgroundColor: ColorResources.primary,
-        child: const Icon(Icons.add, color: Colors.white),
+        title: Text("Assignment", style: Theme
+            .of(context)
+            .textTheme
+            .headlineLarge),
       ),
       body: _buildBody(),
     );

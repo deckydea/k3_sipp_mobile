@@ -34,8 +34,11 @@ class MasterRequestType {
 
   //Examination
   static const String queryTypeExaminations = "QUERY_TYPE_EXAMINATIONS";
+  static const String queryExaminations = "QUERY_EXAMINATIONS";
+  static const String saveExaminationKebisinganLK = "SAVE_EXAMINATION_KEBISINGAN_LK";
   static const String inputExaminationKebisinganLK = "INPUT_EXAMINATION_KEBISINGAN_LK";
   static const String resultExaminationKebisinganLK = "RESULT_EXAMINATION_KEBISINGAN_LK";
+  static const String saveExaminationPencahayaan = "SAVE_EXAMINATION_PENCAHAYAAN";
   static const String inputExaminationPencahayaan = "INPUT_EXAMINATION_PENCAHAYAAN";
   static const String resultExaminationPencahayaan = "RESULT_EXAMINATION_PENCAHAYAAN";
   static const String approvalQC1 = "APPROVAL_QC1";

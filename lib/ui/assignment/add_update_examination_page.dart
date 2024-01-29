@@ -1,8 +1,6 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:k3_sipp_mobile/bloc/assignment/device_calibration_cubit.dart';
+import 'package:k3_sipp_mobile/bloc/examination/device_calibration_cubit.dart';
 import 'package:k3_sipp_mobile/logic/examination/add_examination_logic.dart';
 import 'package:k3_sipp_mobile/main.dart';
 import 'package:k3_sipp_mobile/model/device/device_calibration.dart';
@@ -10,11 +8,9 @@ import 'package:k3_sipp_mobile/model/examination/examination.dart';
 import 'package:k3_sipp_mobile/model/examination/examination_type.dart';
 import 'package:k3_sipp_mobile/model/user/user.dart';
 import 'package:k3_sipp_mobile/model/user/user_filter.dart';
-import 'package:k3_sipp_mobile/net/master_message.dart';
-import 'package:k3_sipp_mobile/net/response/response_type.dart';
+import 'package:k3_sipp_mobile/repository/examination_repository.dart';
 import 'package:k3_sipp_mobile/res/colors.dart';
 import 'package:k3_sipp_mobile/res/dimens.dart';
-import 'package:k3_sipp_mobile/util/dialog_utils.dart';
 import 'package:k3_sipp_mobile/util/message_utils.dart';
 import 'package:k3_sipp_mobile/util/text_utils.dart';
 import 'package:k3_sipp_mobile/util/validator_utils.dart';
@@ -24,7 +20,6 @@ import 'package:k3_sipp_mobile/widget/custom/custom_dropdown_button.dart';
 import 'package:k3_sipp_mobile/widget/custom/custom_edit_text.dart';
 import 'package:k3_sipp_mobile/widget/device/device_calibration_form.dart';
 import 'package:k3_sipp_mobile/widget/device/device_calibration_row.dart';
-import 'package:k3_sipp_mobile/widget/progress_dialog.dart';
 
 class AddOrUpdateExaminationPage extends StatefulWidget {
   final Examination? examination;
@@ -58,20 +53,14 @@ class _AddOrUpdateExaminationPageState extends State<AddOrUpdateExaminationPage>
         examination.petugasName = _logic.selectedPetugas!.name;
         examination.metode = _logic.metodeController.text;
         examination.deviceCalibrations = deviceCalibrations;
-        examination.typeOfExaminationId = _logic.selectedExaminationType!.id;
         examination.typeOfExaminationName = _logic.selectedExaminationType!.name;
-        examination.typeOfExaminationDescription = _logic.selectedExaminationType!.description;
-        examination.typeOfExaminationType = _logic.selectedExaminationType!.type;
       } else {
         examination = Examination(
           petugasId: _logic.selectedPetugas!.id!,
           petugasName: _logic.selectedPetugas!.name,
           metode: _logic.metodeController.text,
           deviceCalibrations: deviceCalibrations,
-          typeOfExaminationId: _logic.selectedExaminationType!.id,
           typeOfExaminationName: _logic.selectedExaminationType!.name,
-          typeOfExaminationDescription: _logic.selectedExaminationType!.description,
-          typeOfExaminationType: _logic.selectedExaminationType!.type,
         );
       }
 
@@ -90,53 +79,29 @@ class _AddOrUpdateExaminationPageState extends State<AddOrUpdateExaminationPage>
     }
   }
 
-  void _loadDropDown(List<ExaminationType> types) {
-    _logic.dropdownExaminationTypes.clear();
-
-    for (ExaminationType type in types) {
-      _logic.dropdownExaminationTypes.add(
-        DropdownMenuItem(
-          value: type,
-          child: Text(type.name.toCapitalize(), style: Theme.of(context).textTheme.titleSmall),
-        ),
-      );
-
-      if (widget.examination != null && widget.examination!.typeOfExaminationId == type.id) {
-        _logic.selectedExaminationType = type;
-      }
-    }
-
-    _logic.selectedExaminationType ??= types.first;
-  }
-
   Future<void> _loadExaminationTypes() async {
-    final ProgressDialog progressDialog = ProgressDialog(context, "Loading...", _logic.loadExaminationTypes());
+    List<ExaminationType> types = await ExaminationRepository().getExaminationTypes();
+    if (mounted) {
+      _logic.dropdownExaminationTypes.clear();
 
-    MasterMessage message = await progressDialog.show();
-    switch (message.response) {
-      case MasterResponseType.success:
-        if (!TextUtils.isEmpty(message.content)) {
-          List<ExaminationType> types = [];
-          Iterable iterable = jsonDecode(message.content!);
-          for (var element in iterable) {
-            ExaminationType type = ExaminationType.fromJson(element);
-            types.add(type);
-          }
-          _loadDropDown(types);
-          _logic.initialized = true;
-          setState(() {});
+      for (ExaminationType type in types) {
+        _logic.dropdownExaminationTypes.add(
+          DropdownMenuItem(
+            value: type,
+            child: Text(type.name.toCapitalize(), style: Theme.of(context).textTheme.titleSmall),
+          ),
+        );
+
+        if (widget.examination != null && widget.examination!.typeOfExaminationName == type.name) {
+          _logic.selectedExaminationType = type;
         }
-        break;
-      case MasterResponseType.notExist:
-      case MasterResponseType.invalidMessageFormat:
-        if (mounted) DialogUtils.handleInvalidMessageFormat(context);
-        break;
-      case MasterResponseType.noConnection:
-        if (mounted) DialogUtils.handleNoConnection(context);
-        break;
-      default:
-        if (mounted) DialogUtils.handleException(context);
+      }
+
+      _logic.selectedExaminationType ??= types.first;
+      _logic.initialized = true;
     }
+
+    setState(() {});
   }
 
   Widget _buildDeviceCalibrations() {
@@ -284,9 +249,11 @@ class _AddOrUpdateExaminationPageState extends State<AddOrUpdateExaminationPage>
     if (widget.examination != null) {
       _logic.metodeController.text = widget.examination!.metode;
       _logic.petugasController.text = widget.examination!.petugasName;
-      _logic.selectedPetugas = User(id: widget.examination!.petugasId, name: widget.examination!.petugasName, username: '', nip: '');
+      _logic.selectedPetugas =
+          User(id: widget.examination!.petugasId, name: widget.examination!.petugasName, username: '', nip: '');
       if (widget.examination!.analisId != null) {
-        _logic.selectedAnalis = User(id: widget.examination!.analisId, name: widget.examination!.analisName!, username: '', nip: '');
+        _logic.selectedAnalis =
+            User(id: widget.examination!.analisId, name: widget.examination!.analisName!, username: '', nip: '');
       }
       context.read<DeviceCalibrationCubit>().setDeviceCalibration(widget.examination!.deviceCalibrations);
     }
