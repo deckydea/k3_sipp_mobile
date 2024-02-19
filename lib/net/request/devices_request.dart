@@ -21,7 +21,7 @@ class CreateDeviceRequest extends MasterMessage {
   CreateDeviceRequest({
     required Device device,
     required super.token,
-  }) : super(request: MasterRequestType.managementAlat, content: jsonEncode(device), path: "devices/create-device");
+  }) : super(request: MasterRequestType.createDevice, content: jsonEncode(device), path: "devices/create-device");
 }
 
 class QueryDevicesRequest extends MasterMessage {
@@ -40,7 +40,7 @@ class GetDeviceRequest extends MasterMessage {
     required DeviceRequest deviceRequest,
     required super.token,
   }) : super(
-          request: MasterRequestType.managementAlat,
+          request: MasterRequestType.queryDevice,
           content: jsonEncode(deviceRequest),
           path: "devices/device",
         );
@@ -51,7 +51,7 @@ class UpdateDeviceRequest extends MasterMessage {
     required Device device,
     required super.token,
   }) : super(
-          request: MasterRequestType.managementAlat,
+          request: MasterRequestType.updateDevice,
           content: jsonEncode(device),
           path: "devices/update-device",
         );
@@ -62,7 +62,7 @@ class DeleteDeviceRequest extends MasterMessage {
     required DeviceRequest deviceRequest,
     required super.token,
   }) : super(
-          request: MasterRequestType.managementAlat,
+          request: MasterRequestType.deleteDevice,
           content: jsonEncode(deviceRequest),
           path: "devices/delete-device",
         );

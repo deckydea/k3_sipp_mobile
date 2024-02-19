@@ -14,21 +14,28 @@ class MenuPage extends StatefulWidget {
 
 class _MenuPageState extends State<MenuPage> {
   final Map<String, MenuItem> _menus = {
+    MasterRequestType.managementTemplate: MenuItem(
+      title: "Template Pengujian",
+      icon: Icons.assignment,
+      onTap: () => navigatorKey.currentState?.pushNamed("/manage_template"),
+    ),
     MasterRequestType.queryDevices: MenuItem(
       title: "Device/Tools",
       icon: Icons.devices,
+      backgroundColor: Colors.teal,
       onTap: () => navigatorKey.currentState?.pushNamed("/devices"),
     ),
     MasterRequestType.queryCompanies: MenuItem(
       title: "Perusahan",
       icon: Icons.account_balance,
+      backgroundColor: Colors.amber,
       onTap: () => navigatorKey.currentState?.pushNamed("/companies"),
     ),
     "Report": MenuItem(
       title: "Report",
       icon: Icons.pie_chart_outline,
       backgroundColor: Colors.deepOrangeAccent,
-      onTap: () => navigatorKey.currentState?.pushNamed("/create_assignment"),
+      onTap: () {},
     ),
     MasterRequestType.createUser: MenuItem(
       title: "User",

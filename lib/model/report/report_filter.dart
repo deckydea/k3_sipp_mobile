@@ -3,20 +3,20 @@ import 'package:k3_sipp_mobile/util/date_time_utils.dart';
 class ReportFilter {
   DateTime? startDate;
   DateTime? endDate;
-  int? upperBoundEpoch; //the last queried epoch
+  DateTime? upperBound; //the last queried epoch
   int? resultSize;
 
   ReportFilter({
     this.startDate,
     this.endDate,
-    this.upperBoundEpoch,
+    this.upperBound,
     this.resultSize,
   });
 
   Map<String, dynamic> toJson() => {
         if (startDate != null) 'startDate': DateTimeUtils.format(startDate!),
         if (endDate != null) 'endDate': DateTimeUtils.format(endDate!),
-        if (upperBoundEpoch != null) 'upperBoundEpoch': upperBoundEpoch,
+        if (upperBound != null) 'upperBound': DateTimeUtils.format(upperBound!),
         if (resultSize != null) 'resultSize': resultSize,
       };
 
@@ -24,7 +24,7 @@ class ReportFilter {
     return ReportFilter(
       startDate: json['startDate'] == null ? null : DateTime.parse(json['startDate']).toLocal(),
       endDate: json['endDate'] == null ? null : DateTime.parse(json['endDate']).toLocal(),
-      upperBoundEpoch: json['upperBoundEpoch'],
+      upperBound: json['upperBound'] == null ? null : DateTime.parse(json['upperBound']).toLocal(),
       resultSize: json['resultSize'],
     );
   }

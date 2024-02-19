@@ -39,7 +39,7 @@ class ColorResources {
   static const Color backgroundRevisionQc2 = Color(0xFFC5C4C2);
   static const Color backgroundInputLab = Color(0xFFD29FEC);
   static const Color backgroundRevisionInputLab = Color(0xFFB09B8A);
-  static const Color backgroundPendingSigned = Color(0xFFA8AC88);
+  static const Color backgroundPendingSigned = Color(0xFFD5D7BB);
   static const Color backgroundSigned = Color(0xFFD4F7F1);
   static const Color backgroundComplete = Color(0xFFA7C0A0);
 

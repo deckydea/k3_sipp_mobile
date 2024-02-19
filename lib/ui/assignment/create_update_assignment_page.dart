@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:k3_sipp_mobile/bloc/examination/examination_cubit.dart';
@@ -5,6 +7,8 @@ import 'package:k3_sipp_mobile/logic/examination/create_assignment_logic.dart';
 import 'package:k3_sipp_mobile/main.dart';
 import 'package:k3_sipp_mobile/model/company/company.dart';
 import 'package:k3_sipp_mobile/model/examination/examination.dart';
+import 'package:k3_sipp_mobile/model/examination/examination_status.dart';
+import 'package:k3_sipp_mobile/model/template/template.dart';
 import 'package:k3_sipp_mobile/net/master_message.dart';
 import 'package:k3_sipp_mobile/net/response/response_type.dart';
 import 'package:k3_sipp_mobile/repository/app_repository.dart';
@@ -20,14 +24,16 @@ import 'package:k3_sipp_mobile/widget/custom/custom_edit_text.dart';
 import 'package:k3_sipp_mobile/widget/examination/examination_row.dart';
 import 'package:k3_sipp_mobile/widget/progress_dialog.dart';
 
-class CreateAssignmentPage extends StatefulWidget {
-  const CreateAssignmentPage({super.key});
+class CreateOrUpdateAssignmentPage extends StatefulWidget {
+  final Template? template;
+
+  const CreateOrUpdateAssignmentPage({super.key, this.template});
 
   @override
-  State<CreateAssignmentPage> createState() => _CreateAssignmentPageState();
+  State<CreateOrUpdateAssignmentPage> createState() => _CreateOrUpdateAssignmentPageState();
 }
 
-class _CreateAssignmentPageState extends State<CreateAssignmentPage> {
+class _CreateOrUpdateAssignmentPageState extends State<CreateOrUpdateAssignmentPage> {
   final CreateAssignmentLogic _logic = CreateAssignmentLogic();
 
   Future<void> _selectCompany() async {
@@ -35,6 +41,39 @@ class _CreateAssignmentPageState extends State<CreateAssignmentPage> {
     if (result != null && result is Company) {
       _logic.selectedCompany = result;
       _logic.companyController.text = result.companyName ?? "";
+    }
+  }
+
+  Future<void> _queryTemplate() async {
+    final ProgressDialog progressDialog = ProgressDialog(context, "Loading", _logic.onQueryTemplate(widget.template!.id!));
+
+    MasterMessage message = await progressDialog.show();
+    if (!TextUtils.isEmpty(message.token)) await AppRepository().setToken(message.token!);
+    switch (message.response) {
+      case MasterResponseType.success:
+        if (!TextUtils.isEmpty(message.content)) {
+          Template template = Template.fromJson(jsonDecode(message.content!));
+          List<Examination> examinations = template.examinations ?? [];
+          for (Examination examination in examinations) {
+            if (mounted) context.read<ExaminationsCubit>().addOrUpdateExamination(examination);
+          }
+        }
+        break;
+      case MasterResponseType.invalidAccess:
+        if (mounted) DialogUtils.handleInvalidAccess(context);
+        break;
+      case MasterResponseType.notExist:
+      case MasterResponseType.invalidCredential:
+        if (mounted) DialogUtils.handleInvalidCredential(context);
+        break;
+      case MasterResponseType.invalidMessageFormat:
+        if (mounted) DialogUtils.handleInvalidMessageFormat(context);
+        break;
+      case MasterResponseType.noConnection:
+        if (mounted) DialogUtils.handleNoConnection(context);
+        break;
+      default:
+        if (mounted) DialogUtils.handleException(context);
     }
   }
 
@@ -58,6 +97,9 @@ class _CreateAssignmentPageState extends State<CreateAssignmentPage> {
           }
           navigatorKey.currentState?.pop();
         }
+        break;
+      case MasterResponseType.invalidAccess:
+        if (mounted) DialogUtils.handleInvalidAccess(context);
         break;
       case MasterResponseType.notExist:
       case MasterResponseType.invalidCredential:
@@ -88,7 +130,11 @@ class _CreateAssignmentPageState extends State<CreateAssignmentPage> {
     }
   }
 
-  Future<void> _deleteExamination(Examination examination) async{
+  Future<void> _navigateExaminationDetail(Examination examination) async {
+    var result = await navigatorKey.currentState?.pushNamed("/input_form", arguments: examination);
+  }
+
+  Future<void> _deleteExamination(Examination examination) async {
     var result = await DialogUtils.showAlertDialog(
       context,
       dismissible: false,
@@ -117,7 +163,9 @@ class _CreateAssignmentPageState extends State<CreateAssignmentPage> {
               Examination examination = examinations.elementAt(index);
               return ExaminationRow(
                 examination: examination,
-                onTap: () => _updateExamination(examination),
+                onTap: () => examination.status != null && examination.status != ExaminationStatus.PENDING
+                    ? _navigateExaminationDetail(examination)
+                    : _updateExamination(examination),
                 onLongPress: () => _deleteExamination(examination),
               );
             },
@@ -143,21 +191,22 @@ class _CreateAssignmentPageState extends State<CreateAssignmentPage> {
           children: [
             CustomEditText(
               width: double.infinity,
-              label: "Name",
-              controller: _logic.templateNameController,
-              validator: (value) => ValidatorUtils.validateNotEmpty(context, value),
-              textInputType: TextInputType.name,
-            ),
-            const SizedBox(height: Dimens.paddingSmall),
-            CustomEditText(
-              width: double.infinity,
-              label: "Company",
+              label: "Perusahaan",
               onTap: _selectCompany,
               readOnly: true,
               cursorVisible: false,
               controller: _logic.companyController,
               validator: (value) => ValidatorUtils.validateNotEmpty(context, value),
               textInputType: TextInputType.name,
+            ),
+            const SizedBox(height: Dimens.paddingSmall),
+            CustomEditText(
+              width: double.infinity,
+              label: "Catatan",
+              controller: _logic.templateNameController,
+              maxLines: 3,
+              validator: (value) => ValidatorUtils.validateInputLength(context, value, 0, 100),
+              textInputType: TextInputType.text,
             ),
             const SizedBox(height: Dimens.paddingLarge, child: Divider()),
             Row(
@@ -197,6 +246,19 @@ class _CreateAssignmentPageState extends State<CreateAssignmentPage> {
     );
   }
 
+  Future<void> _init() async {
+    if (widget.template != null) {
+      _logic.isUpdate = true;
+      _logic.templateNameController.text = widget.template!.templateName ?? "";
+      _logic.companyController.text = widget.template!.company!.companyName ?? "";
+      _logic.selectedCompany = widget.template!.company;
+
+      await _queryTemplate();
+      _logic.initialized = true;
+      setState(() {});
+    }
+  }
+
   @override
   void deactivate() {
     context.read<ExaminationsCubit>().clear();
@@ -205,11 +267,15 @@ class _CreateAssignmentPageState extends State<CreateAssignmentPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (!_logic.initialized) _init();
     return Scaffold(
       appBar: AppBar(
         iconTheme: const IconThemeData(color: ColorResources.primaryDark),
         backgroundColor: ColorResources.background,
-        title: Text("Register Pengujian", style: Theme.of(context).textTheme.headlineLarge),
+        title: Text(
+          _logic.isUpdate ? "Update Pengujian" : "Register Pengujian",
+          style: Theme.of(context).textTheme.headlineLarge,
+        ),
       ),
       body: _buildBody(),
     );

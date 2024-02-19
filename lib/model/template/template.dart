@@ -3,6 +3,10 @@ import 'package:k3_sipp_mobile/model/examination/examination.dart';
 import 'package:k3_sipp_mobile/util/date_time_utils.dart';
 
 class Template {
+  static Comparator<Template> get registerDateComparator => (a, b) {
+        return b.createdAt!.compareTo(a.createdAt!);
+      };
+
   int? id;
   String? templateName;
   Company? company;
@@ -52,16 +56,16 @@ class Template {
 
   // Convert the template to a JSON map
   Map<String, dynamic> toJson() => {
-        if (id != null) 'id': id,
-        if (templateName != null) 'templateName': templateName,
-        if (company != null) 'company': company,
-        if (examinations != null) 'examinations': examinations!.toList(),
-        if (createdById != null) 'createdById': createdById,
-        if (createdByName != null) 'createdByName': createdByName,
-        if (updateById != null) 'updateById': updateById,
-        if (updateByName != null) 'updateByName': updateByName,
-        if (createdAt != null) 'createdAt': DateTimeUtils.format(createdAt!),
-        if (updateAt != null) 'updatedAt': DateTimeUtils.format(updateAt!),
+        'id': id,
+        'templateName': templateName,
+        'company': company,
+        'examinations': examinations == null ? [] : examinations!.toList(),
+        'createdById': createdById,
+        'createdByName': createdByName,
+        'updateById': updateById,
+        'updateByName': updateByName,
+        'createdAt': createdAt == null ? null : DateTimeUtils.format(createdAt!),
+        'updatedAt': updateAt == null ? null : DateTimeUtils.format(updateAt!),
       };
 
   // Create a template from a JSON map
@@ -77,11 +81,11 @@ class Template {
     return Template(
       id: json['id'],
       templateName: json['templateName'],
-      company: Company.fromJson(json['company']),
+      company: json['company'] == null ? null : Company.fromJson(json['company']),
       examinations: examinations,
-      createdById: json['createdById'],
+      createdById: json['createdBy'],
       createdByName: json['createdByName'],
-      updateById: json['updateById'],
+      updateById: json['updateBy'],
       updateByName: json['updateByName'],
       createdAt: json['createdAt'] == null ? null : DateTime.parse(json['createdAt']).toLocal(),
       updateAt: json['updateAt'] == null ? null : DateTime.parse(json['updateAt']).toLocal(),

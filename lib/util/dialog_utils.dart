@@ -161,6 +161,18 @@ class DialogUtils {
       onNeutral: () => Navigator.of(context).pop(),
     );
   }
+  static Future<void> handleInvalidAccess(BuildContext context) async {
+    String title = AppLocalizations.of(context).translate("failed_access_denied_title");
+    String content = AppLocalizations.of(context).translate("failed_access_denied");
+    String neutralAction = AppLocalizations.of(context).translate("action_ok").toUpperCase();
+    await showAlertDialog(
+      context,
+      title: title,
+      content: content,
+      neutralAction: neutralAction,
+      onNeutral: () => Navigator.of(context).pop(),
+    );
+  }
 
   static Future<void> handleException(BuildContext context) async {
     String title = AppLocalizations.of(context).translate("failed_exception_title");
@@ -204,9 +216,9 @@ class DialogUtils {
   }
 
   static Future<void> handleAccessDenied(BuildContext context) async {
-    String title = AppLocalizations.of(context).translate("failed_access_denied_title");
-    String content = AppLocalizations.of(context).translate("failed_access_denied");
-    String neutralAction = AppLocalizations.of(context).translate("action_ok").toUpperCase();
+    String title = "Access Denied";
+    String content = "Anda tidak memiliki akses ke menu yang dipilih.";
+    String neutralAction = "OK";
     await showAlertDialog(
       context,
       title: title,

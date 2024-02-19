@@ -15,6 +15,8 @@ class CreateAssignmentLogic {
   final TextEditingController companyController = TextEditingController();
 
   Company? selectedCompany;
+  bool isUpdate = false;
+  bool initialized = false;
 
   Future<MasterMessage> onCreate({required List<Examination> examinations}) async {
     if (formKey.currentState!.validate()) {
@@ -26,5 +28,10 @@ class CreateAssignmentLogic {
       return await ConnectionUtils.sendRequest(message);
     }
     return MasterMessage(response: MasterResponseType.failed);
+  }
+
+  Future<MasterMessage> onQueryTemplate(int templateId) async {
+    String? token = await AppRepository().getToken();
+    return await ConnectionUtils.sendRequest(QueryTemplateRequest(token: token, templateId: templateId));
   }
 }

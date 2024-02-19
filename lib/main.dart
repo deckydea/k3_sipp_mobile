@@ -3,29 +3,36 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:k3_sipp_mobile/bloc/assignment/assignment_bloc.dart';
 import 'package:k3_sipp_mobile/bloc/examination/examination_cubit.dart';
 import 'package:k3_sipp_mobile/bloc/examination/device_calibration_cubit.dart';
 import 'package:k3_sipp_mobile/bloc/company/companies_bloc.dart';
 import 'package:k3_sipp_mobile/bloc/device/devices_bloc.dart';
 import 'package:k3_sipp_mobile/bloc/menu/menu_cubit.dart';
+import 'package:k3_sipp_mobile/bloc/template/template_bloc.dart';
 import 'package:k3_sipp_mobile/bloc/user/users_bloc.dart';
+import 'package:k3_sipp_mobile/model/company/company.dart';
 import 'package:k3_sipp_mobile/model/device/device.dart';
 import 'package:k3_sipp_mobile/model/examination/examination.dart';
+import 'package:k3_sipp_mobile/model/template/template.dart';
 import 'package:k3_sipp_mobile/model/user/user.dart';
 import 'package:k3_sipp_mobile/model/user/user_filter.dart';
 import 'package:k3_sipp_mobile/res/colors.dart';
 import 'package:k3_sipp_mobile/res/dimens.dart';
 import 'package:k3_sipp_mobile/res/localizations.dart';
 import 'package:k3_sipp_mobile/ui/assignment/add_update_examination_page.dart';
-import 'package:k3_sipp_mobile/ui/assignment/create_assignment_page.dart';
+import 'package:k3_sipp_mobile/ui/assignment/create_update_assignment_page.dart';
 import 'package:k3_sipp_mobile/ui/assignment/input/input_form_page.dart';
 import 'package:k3_sipp_mobile/ui/auth/login_page.dart';
 import 'package:k3_sipp_mobile/ui/company/companies_page.dart';
+import 'package:k3_sipp_mobile/ui/company/company_page.dart';
 import 'package:k3_sipp_mobile/ui/device/device_page.dart';
 import 'package:k3_sipp_mobile/ui/device/devices_page.dart';
 import 'package:k3_sipp_mobile/ui/launcher.dart';
 import 'package:k3_sipp_mobile/ui/main/assignment_page.dart';
 import 'package:k3_sipp_mobile/ui/main/main_menu_page.dart';
+import 'package:k3_sipp_mobile/ui/template/template_examinations_page.dart';
+import 'package:k3_sipp_mobile/ui/user/update_user_information_page.dart';
 import 'package:k3_sipp_mobile/ui/user/user_page.dart';
 import 'package:k3_sipp_mobile/ui/user/users_page.dart';
 
@@ -57,6 +64,8 @@ class MyApp extends StatelessWidget {
         BlocProvider<UsersBloc>(create: (context) => UsersBloc()),
         BlocProvider<DevicesBloc>(create: (context) => DevicesBloc()),
         BlocProvider<CompaniesBloc>(create: (context) => CompaniesBloc()),
+        BlocProvider<AssignmentBloc>(create: (context) => AssignmentBloc()),
+        BlocProvider<TemplateBloc>(create: (context) => TemplateBloc()),
       ],
       child: MaterialApp(
         navigatorObservers: [FlutterSmartDialog.observer],
@@ -84,7 +93,7 @@ class MyApp extends StatelessWidget {
             ),
           ),
           textTheme: const TextTheme(
-            bodySmall: TextStyle(fontSize: Dimens.fontXSmall, fontFamily: "Nunito", color: ColorResources.text),
+            bodySmall: TextStyle(fontSize: Dimens.fontSmall, fontFamily: "Nunito", color: ColorResources.text),
             bodyMedium: TextStyle(fontSize: Dimens.fontDefault, fontFamily: "Nunito", color: ColorResources.text),
             bodyLarge: TextStyle(fontSize: Dimens.fontLarge, fontFamily: "Nunito", color: ColorResources.text),
             headlineSmall: TextStyle(
@@ -153,13 +162,17 @@ class MyApp extends StatelessWidget {
 
             //Assignment
             "/assignment_page": (context) => const AssignmentPage(),
-            "/create_assignment": (context) => const CreateAssignmentPage(),
+            "/create_assignment": (context) => const CreateOrUpdateAssignmentPage(),
+            "/update_assignment": (context) =>  CreateOrUpdateAssignmentPage(template: settings.arguments as Template),
 
             //Examination
             "/add_examination_page": (context) => const AddOrUpdateExaminationPage(),
             "/update_examination_page": (context) =>
                 AddOrUpdateExaminationPage(examination: settings.arguments == null ? null : settings.arguments as Examination),
-            "/input_form": (context) => const InputFormPage(),
+            "/input_form": (context) => InputFormPage(examination: settings.arguments as Examination),
+
+            //Template
+            "/manage_template": (context) => const TemplateExaminationsPage(),
 
             //Device
             "/devices": (context) => const DevicesPage(pageMode: DevicesPageMode.deviceList),
@@ -170,6 +183,8 @@ class MyApp extends StatelessWidget {
             //Company
             "/companies": (context) => const CompaniesPage(pageMode: CompaniesPageMode.companyList),
             "/select_company": (context) => const CompaniesPage(pageMode: CompaniesPageMode.selectCompany),
+            "/create_company": (context) => const CompanyPage(),
+            "/update_company": (context) => CompanyPage(company: settings.arguments as Company),
 
             //User
             "/select_user": (context) => UsersPage(
@@ -178,6 +193,7 @@ class MyApp extends StatelessWidget {
                 pageMode: UsersPageMode.userList, filter: settings.arguments == null ? null : settings.arguments as UserFilter),
             "/create_user": (context) => const UserPage(),
             "/update_user": (context) => UserPage(user: settings.arguments as User),
+            "/update_information_profile": (context) => UpdateUserInformationPage(user: settings.arguments as User),
           };
           WidgetBuilder? builder = routes[settings.name];
           return MaterialPageRoute(builder: (context) => builder!(context));

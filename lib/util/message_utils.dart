@@ -65,19 +65,19 @@ class MessageUtils {
     navigatorKey.currentState?.pushNamedAndRemoveUntil("/", (route) => false);
   }
 
-  static void handleAccessDenied({required BuildContext context, required AppLocalizations localizations}) {
+  static void handleAccessDenied({required BuildContext context}) {
     if (context.mounted) {
       DialogUtils.handleAccessDenied(context);
     } else {
-      _showSnackbar(localizations.translate("failed_access_denied"));
+      _showSnackbar("Anda tidak memiliki akses ke menu yang dipilih.");
     }
   }
 
-  static void handlePermissionDenied({required BuildContext context, required AppLocalizations localizations}) {
+  static void handlePermissionDenied({required BuildContext context}) {
     if (context.mounted) {
       DialogUtils.handleAccessDenied(context);
     } else {
-      _showSnackbar(localizations.translate("failed_permission_denied"));
+      _showSnackbar("Izin tidak diberikan");
     }
   }
 

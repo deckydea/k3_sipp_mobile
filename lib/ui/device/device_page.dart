@@ -198,7 +198,7 @@ class _DevicePageState extends State<DevicePage> {
       appBar: AppBar(
         iconTheme: const IconThemeData(color: ColorResources.primaryDark),
         backgroundColor: ColorResources.background,
-        title: Text(_logic.isUpdate ? "${_logic.device!.name}" : "Create Device",
+        title: Text(_logic.isUpdate ? "${_logic.device!.name}" : "Register Device",
             style: Theme.of(context).textTheme.headlineLarge),
       ),
       body: _buildBody(),

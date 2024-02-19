@@ -1,6 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:k3_sipp_mobile/main.dart';
-import 'package:k3_sipp_mobile/model/examination/input/input_kebisingan.dart';
+import 'package:k3_sipp_mobile/model/examination/input/input_penerangan.dart';
 import 'package:k3_sipp_mobile/res/colors.dart';
 import 'package:k3_sipp_mobile/res/dimens.dart';
 import 'package:k3_sipp_mobile/util/dialog_utils.dart';
@@ -10,21 +12,22 @@ import 'package:k3_sipp_mobile/widget/custom/custom_button.dart';
 import 'package:k3_sipp_mobile/widget/custom/custom_dialog_title.dart';
 import 'package:k3_sipp_mobile/widget/custom/custom_edit_text.dart';
 
-class FormKebisingan extends StatefulWidget {
-  final Function(DataKebisinganLK)? onUpdate;
-  final Function(DataKebisinganLK)? onAdd;
-  final Function(DataKebisinganLK)? onDelete;
-  final DataKebisinganLK? data;
+class FormPenerangan extends StatefulWidget {
+  final Function(DataPenerangan)? onUpdate;
+  final Function(DataPenerangan)? onAdd;
+  final Function(DataPenerangan)? onDelete;
+  final DataPenerangan? data;
 
-  const FormKebisingan({super.key, this.data, this.onUpdate, this.onAdd, this.onDelete});
+  const FormPenerangan({super.key, this.data, this.onUpdate, this.onAdd, this.onDelete});
 
   @override
-  State<FormKebisingan> createState() => _FormKebisinganState();
+  State<FormPenerangan> createState() => _FormPeneranganState();
 }
 
-class _FormKebisinganState extends State<FormKebisingan> {
+class _FormPeneranganState extends State<FormPenerangan> {
   final GlobalKey<FormState> _formKey = GlobalKey();
   final TextEditingController _locationController = TextEditingController();
+  final TextEditingController _localLightingData = TextEditingController();
   final TextEditingController _value1Controller = TextEditingController();
   final TextEditingController _value2Controller = TextEditingController();
   final TextEditingController _value3Controller = TextEditingController();
@@ -32,7 +35,7 @@ class _FormKebisinganState extends State<FormKebisingan> {
   final TextEditingController _noteController = TextEditingController();
 
   TimeOfDay? _selectedTime;
-  DataKebisinganLK? _data;
+  DataPenerangan? _data;
 
   bool _initialized = false;
 
@@ -41,8 +44,8 @@ class _FormKebisinganState extends State<FormKebisingan> {
       var result = await DialogUtils.showAlertDialog(
         context,
         dismissible: false,
-        title: "Hapus Lokasio",
-        content: "Apakah Anda yakin akan menghapus lokasi ${_data!.location} ini?",
+        title: "Hapus Lokasi",
+        content: "Apakah Anda yakin akan menghapus lokasi ${_data!.localLightingData} ini?",
         neutralAction: "Tidak",
         onNeutral: () => navigatorKey.currentState?.pop(false),
         negativeAction: "Hapus",
@@ -59,14 +62,13 @@ class _FormKebisinganState extends State<FormKebisingan> {
   void _onUpdate() {
     if (_formKey.currentState!.validate()) {
       DateTime now = DateTime.now();
-      DataKebisinganLK input = _data!.copyWith(
+      DataPenerangan input = _data!.copyWith(
         location: _locationController.text,
-        value1: _value1Controller.text,
-        value2: _value2Controller.text,
-        value3: _value3Controller.text,
-        time: _selectedTime == null
-            ? null
-            : DateTime(now.year, now.month, now.day, _selectedTime!.hour, _selectedTime!.minute),
+        localLightingData: _localLightingData.text,
+        value1: double.parse(_value1Controller.text),
+        value2: double.parse(_value2Controller.text),
+        value3: double.parse(_value3Controller.text),
+        time: _selectedTime == null ? null : DateTime(now.year, now.month, now.day, _selectedTime!.hour, _selectedTime!.minute),
         note: _noteController.text,
       );
 
@@ -78,11 +80,12 @@ class _FormKebisinganState extends State<FormKebisingan> {
   void _onAdd() {
     if (_formKey.currentState!.validate()) {
       DateTime now = DateTime.now();
-      DataKebisinganLK input = DataKebisinganLK(
+      DataPenerangan input = DataPenerangan(
         location: _locationController.text,
-        value1: _value1Controller.text,
-        value2: _value2Controller.text,
-        value3: _value3Controller.text,
+        localLightingData: _localLightingData.text,
+        value1: double.parse(_value1Controller.text),
+        value2: double.parse(_value2Controller.text),
+        value3: double.parse(_value3Controller.text),
         time: _selectedTime == null ? null : DateTime(now.year, now.month, now.day, _selectedTime!.hour, _selectedTime!.minute),
         note: _noteController.text,
       );
@@ -104,13 +107,14 @@ class _FormKebisinganState extends State<FormKebisingan> {
     }
   }
 
-  void _init(){
+  void _init() {
     if (widget.data != null) {
       _data = widget.data!;
       _locationController.text = _data!.location;
-      _value1Controller.text = _data!.value1;
-      _value2Controller.text = _data!.value2;
-      _value3Controller.text = _data!.value3;
+      _localLightingData.text = _data!.localLightingData;
+      _value1Controller.text = "${_data!.value1}";
+      _value2Controller.text = "${_data!.value2}";
+      _value3Controller.text = "${_data!.value3}";
       if (!TextUtils.isEmpty(_data!.note)) _noteController.text = _data!.note!;
       if (_data!.time != null) {
         _selectedTime = TimeOfDay.fromDateTime(_data!.time!);
@@ -129,6 +133,7 @@ class _FormKebisinganState extends State<FormKebisingan> {
   @override
   void dispose() {
     _locationController.dispose();
+    _localLightingData.dispose();
     _value1Controller.dispose();
     _value2Controller.dispose();
     _value3Controller.dispose();
@@ -139,7 +144,7 @@ class _FormKebisinganState extends State<FormKebisingan> {
 
   @override
   Widget build(BuildContext context) {
-    if(!_initialized) _init();
+    if (!_initialized) _init();
     return Form(
       key: _formKey,
       child: SingleChildScrollView(
@@ -148,10 +153,20 @@ class _FormKebisinganState extends State<FormKebisingan> {
           child: Column(
             children: [
               CustomDialogTitle(
-                  titleWidget: Text("Form Kebisingan", style: Theme.of(context).textTheme.headlineLarge), withCloseButton: true),
+                titleWidget: Text("Form Kebisingan", style: Theme.of(context).textTheme.headlineLarge),
+                withCloseButton: true,
+              ),
               CustomEditText(
                 label: "Lokasi",
                 controller: _locationController,
+                width: double.infinity,
+                validator: (value) => ValidatorUtils.validateNotEmpty(context, value),
+                textInputType: TextInputType.text,
+              ),
+              const SizedBox(height: Dimens.paddingSmall),
+              CustomEditText(
+                label: "Data Penerangan Lokal",
+                controller: _localLightingData,
                 width: double.infinity,
                 validator: (value) => ValidatorUtils.validateNotEmpty(context, value),
                 textInputType: TextInputType.text,
@@ -203,6 +218,7 @@ class _FormKebisinganState extends State<FormKebisingan> {
                 onIconTap: !TextUtils.isEmpty(_timeController.text) ? () => _timeController.text = "" : null,
                 onTap: () => _selectTime(context),
                 textInputType: TextInputType.text,
+                validator: (value) => ValidatorUtils.validateNotEmpty(context, value),
               ),
               const SizedBox(height: Dimens.paddingSmall),
               CustomEditText(
@@ -210,7 +226,7 @@ class _FormKebisinganState extends State<FormKebisingan> {
                 controller: _noteController,
                 width: double.infinity,
                 validator: (value) => ValidatorUtils.validateInputLength(context, value, 0, 200),
-                textInputType: TextInputType.number,
+                textInputType: TextInputType.text,
               ),
               const SizedBox(height: Dimens.paddingMedium),
               Row(

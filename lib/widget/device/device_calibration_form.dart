@@ -11,10 +11,19 @@ class DeviceCalibrationForm extends StatefulWidget {
   final DeviceCalibration? deviceCalibration;
   final Function(DeviceCalibration)? onSave;
   final Function(DeviceCalibration)? onUpdate;
+  final bool needCalibrationInternal;
   final VoidCallback? onCancel;
   final bool? hide;
 
-  const DeviceCalibrationForm({super.key, this.deviceCalibration, this.onSave, this.onCancel, this.hide, this.onUpdate});
+  const DeviceCalibrationForm({
+    super.key,
+    this.deviceCalibration,
+    this.onSave,
+    this.onCancel,
+    this.hide,
+    this.onUpdate,
+    this.needCalibrationInternal = true,
+  });
 
   @override
   State<DeviceCalibrationForm> createState() => DeviceCalibrationFormState();
@@ -25,6 +34,7 @@ class DeviceCalibrationFormState extends State<DeviceCalibrationForm> {
   final TextEditingController _deviceController = TextEditingController();
   final TextEditingController _internalCalibrationController = TextEditingController();
   final TextEditingController _noteController = TextEditingController();
+  Device? _selectedDevice;
   int? _selectedDeviceId;
 
   bool _hideForm = true;
@@ -32,6 +42,7 @@ class DeviceCalibrationFormState extends State<DeviceCalibrationForm> {
   Future<void> _navigateSelectDevice() async {
     var result = await navigatorKey.currentState?.pushNamed("/select_device");
     if (result != null && result is Device) {
+      _selectedDevice = result;
       _selectedDeviceId = result.id;
       _deviceController.text = result.name ?? "";
     }
@@ -43,14 +54,22 @@ class DeviceCalibrationFormState extends State<DeviceCalibrationForm> {
       calibration.deviceId = _selectedDeviceId!;
       calibration.deviceName = _deviceController.text;
       calibration.name = _noteController.text;
-      calibration.internalCalibration = double.parse(_internalCalibrationController.text);
+      calibration.internalCalibration = double.tryParse(_internalCalibrationController.text);
+      calibration.device = _selectedDevice;
+      calibration.calibrationValue = _selectedDevice!.calibrationValue;
+      calibration.coverageFactor = _selectedDevice!.coverageFactor;
+      calibration.u95 = _selectedDevice!.u95;
       if (widget.onUpdate != null) widget.onUpdate!(calibration);
     } else {
       calibration = DeviceCalibration(
         deviceId: _selectedDeviceId!,
         deviceName: _deviceController.text,
         name: _noteController.text,
-        internalCalibration: double.parse(_internalCalibrationController.text),
+        internalCalibration: double.tryParse(_internalCalibrationController.text),
+        device: _selectedDevice,
+        calibrationValue: _selectedDevice!.calibrationValue,
+        coverageFactor: _selectedDevice!.coverageFactor,
+        u95:  _selectedDevice!.u95,
       );
       if (widget.onSave != null) widget.onSave!(calibration);
     }
@@ -72,10 +91,11 @@ class DeviceCalibrationFormState extends State<DeviceCalibrationForm> {
     super.initState();
     if (widget.hide != null) _hideForm = widget.hide!;
     if (widget.deviceCalibration != null) {
-      _selectedDeviceId = widget.deviceCalibration!.id;
-      _deviceController.text = widget.deviceCalibration!.deviceName;
+      _selectedDevice = widget.deviceCalibration!.device!;
+      _selectedDeviceId = widget.deviceCalibration!.deviceId;
+      _deviceController.text = widget.deviceCalibration!.deviceName ?? "";
       _internalCalibrationController.text = "${widget.deviceCalibration!.internalCalibration}";
-      _noteController.text = widget.deviceCalibration!.name;
+      _noteController.text = widget.deviceCalibration!.name ?? "";
     }
   }
 
@@ -89,6 +109,7 @@ class DeviceCalibrationFormState extends State<DeviceCalibrationForm> {
 
   @override
   Widget build(BuildContext context) {
+    print("widget.needCalibrationInternal: ${widget.needCalibrationInternal}");
     return _hideForm
         ? Container()
         : CustomCard(
@@ -116,16 +137,18 @@ class DeviceCalibrationFormState extends State<DeviceCalibrationForm> {
                           ),
                         ),
                         const SizedBox(width: Dimens.paddingGap),
-                        Expanded(
-                          flex: 2,
-                          child: CustomEditText(
-                            label: "Kalibrasi Internal",
-                            controller: _internalCalibrationController,
-                            width: double.infinity,
-                            validator: (value) => ValidatorUtils.validateNotEmpty(context, value),
-                            textInputType: TextInputType.number,
-                          ),
-                        ),
+                        widget.needCalibrationInternal
+                            ? Expanded(
+                                flex: 2,
+                                child: CustomEditText(
+                                  label: "Kalibrasi Internal",
+                                  controller: _internalCalibrationController,
+                                  width: double.infinity,
+                                  validator: (value) => ValidatorUtils.validateNotEmpty(context, value),
+                                  textInputType: TextInputType.number,
+                                ),
+                              )
+                            : Container(),
                       ],
                     ),
                     const SizedBox(height: Dimens.paddingGap),

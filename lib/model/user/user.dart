@@ -95,7 +95,7 @@ class User {
       phone: json['phone'],
       userGroupId: json['userGroupId'],
       userGroupName: json['userGroupName'],
-      userGroup: json['userGroup'] == null ? null : UserGroup.fromJson(jsonDecode(jsonEncode(json["userGroup"]))),
+      userGroup: json['userGroup'] == null ? null : UserGroup.fromJson(json["userGroup"]),
       createdAt: json['createdAt'] == null ? null : DateTime.parse(json['createdAt']).toLocal(),
       updatedAt: json['updatedAt'] == null ? null : DateTime.parse(json['updatedAt']).toLocal(),
     );

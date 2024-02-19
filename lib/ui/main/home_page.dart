@@ -112,6 +112,7 @@ class _HomePageState extends State<HomePage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
+            const SizedBox(width: Dimens.paddingWidget),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -131,7 +132,7 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       extendBody: true,
-      drawer: _buildDrawer(),
+      // drawer: _buildDrawer(),
       drawerScrimColor: ColorResources.backgroundDark,
       body: const Center(child: Text("Home")),
     );

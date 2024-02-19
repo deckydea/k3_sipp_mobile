@@ -11,15 +11,19 @@ import 'package:k3_sipp_mobile/model/user/user_filter.dart';
 import 'package:k3_sipp_mobile/repository/examination_repository.dart';
 import 'package:k3_sipp_mobile/res/colors.dart';
 import 'package:k3_sipp_mobile/res/dimens.dart';
+import 'package:k3_sipp_mobile/ui/other/date_picker.dart';
+import 'package:k3_sipp_mobile/util/date_time_utils.dart';
 import 'package:k3_sipp_mobile/util/message_utils.dart';
 import 'package:k3_sipp_mobile/util/text_utils.dart';
 import 'package:k3_sipp_mobile/util/validator_utils.dart';
 import 'package:k3_sipp_mobile/widget/custom/custom_button.dart';
 import 'package:k3_sipp_mobile/widget/custom/custom_card.dart';
+import 'package:k3_sipp_mobile/widget/custom/custom_dialog.dart';
 import 'package:k3_sipp_mobile/widget/custom/custom_dropdown_button.dart';
 import 'package:k3_sipp_mobile/widget/custom/custom_edit_text.dart';
 import 'package:k3_sipp_mobile/widget/device/device_calibration_form.dart';
 import 'package:k3_sipp_mobile/widget/device/device_calibration_row.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class AddOrUpdateExaminationPage extends StatefulWidget {
   final Examination? examination;
@@ -54,6 +58,7 @@ class _AddOrUpdateExaminationPageState extends State<AddOrUpdateExaminationPage>
         examination.metode = _logic.metodeController.text;
         examination.deviceCalibrations = deviceCalibrations;
         examination.typeOfExaminationName = _logic.selectedExaminationType!.name;
+        examination.deadlineDate = _logic.selectedDeadline;
       } else {
         examination = Examination(
           petugasId: _logic.selectedPetugas!.id!,
@@ -61,6 +66,7 @@ class _AddOrUpdateExaminationPageState extends State<AddOrUpdateExaminationPage>
           metode: _logic.metodeController.text,
           deviceCalibrations: deviceCalibrations,
           typeOfExaminationName: _logic.selectedExaminationType!.name,
+          deadlineDate: _logic.selectedDeadline,
         );
       }
 
@@ -88,20 +94,51 @@ class _AddOrUpdateExaminationPageState extends State<AddOrUpdateExaminationPage>
         _logic.dropdownExaminationTypes.add(
           DropdownMenuItem(
             value: type,
-            child: Text(type.name.toCapitalize(), style: Theme.of(context).textTheme.titleSmall),
+            enabled: type.name == ExaminationTypeName.kebisingan || type.name == ExaminationTypeName.penerangan,
+            child: Text(type.examinationTypeName, style: Theme.of(context).textTheme.titleSmall),
           ),
         );
 
-        if (widget.examination != null && widget.examination!.typeOfExaminationName == type.name) {
+        if (widget.examination != null && widget.examination!.typeOfExaminationName == type.name ) {
           _logic.selectedExaminationType = type;
         }
       }
 
-      _logic.selectedExaminationType ??= types.first;
+      _logic.selectedExaminationType ??= types.firstWhere((element) => element.name == ExaminationTypeName.kebisingan);
       _logic.initialized = true;
     }
 
     setState(() {});
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime now = DateTime.now().toLocal();
+    final DateTime maxDate = now.add(const Duration(days: 200 * 365));
+    final DateTime minDate = now;
+
+    DatePickerArgument argument = DatePickerArgument(
+      mode: DateRangePickerSelectionMode.single,
+      selectedDate: _logic.selectedDeadline,
+      minDate: minDate,
+      maxDate: maxDate,
+    );
+
+    var result = await showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) => CustomDialog(
+        width: Dimens.dialogWidthSmall,
+        height: Dimens.dialogWidthSmall,
+        child: DatePickerPage(argument: argument),
+      ),
+    );
+
+    if (result != null && result is DateTime) {
+      setState(() {
+        _logic.selectedDeadline = result;
+        _logic.deadlineController.text = DateTimeUtils.formatToDate(result);
+      });
+    }
   }
 
   Widget _buildDeviceCalibrations() {
@@ -135,6 +172,7 @@ class _AddOrUpdateExaminationPageState extends State<AddOrUpdateExaminationPage>
                   } else {
                     return DeviceCalibrationForm(
                       deviceCalibration: deviceCalibration,
+                      needCalibrationInternal: _logic.selectedExaminationType!.name != ExaminationTypeName.penerangan,
                       onCancel: () => insideState(() => isUpdate = false),
                       onSave: (calibration) {
                         context.read<DeviceCalibrationCubit>().addOrUpdateDeviceCalibration(calibration);
@@ -173,15 +211,11 @@ class _AddOrUpdateExaminationPageState extends State<AddOrUpdateExaminationPage>
               textInputType: TextInputType.text,
             ),
             const SizedBox(height: Dimens.paddingSmall),
-            StatefulBuilder(
-              builder: (BuildContext context, insideState) {
-                return CustomDropdownButton(
-                  items: _logic.dropdownExaminationTypes,
-                  value: _logic.selectedExaminationType,
-                  width: double.infinity,
-                  onChanged: (value) => value != null ? insideState(() => _logic.selectedExaminationType = value) : null,
-                );
-              },
+            CustomDropdownButton(
+              items: _logic.dropdownExaminationTypes,
+              value: _logic.selectedExaminationType,
+              width: double.infinity,
+              onChanged: (value) => value != null ? setState(() => _logic.selectedExaminationType = value) : null,
             ),
             const SizedBox(height: Dimens.paddingSmall),
             CustomEditText(
@@ -193,6 +227,18 @@ class _AddOrUpdateExaminationPageState extends State<AddOrUpdateExaminationPage>
               onTap: _navigateToSelectUser,
               readOnly: true,
               cursorVisible: false,
+            ),
+            const SizedBox(height: Dimens.paddingSmall),
+            CustomEditText(
+              label: "Deadline Pengujian",
+              width: double.infinity,
+              controller: _logic.deadlineController,
+              readOnly: true,
+              cursorVisible: false,
+              icon: Icon(TextUtils.isEmpty(_logic.deadlineController.text) ? Icons.calendar_month : Icons.cancel_outlined),
+              onIconTap: !TextUtils.isEmpty(_logic.deadlineController.text) ? () => _logic.deadlineController.text = "" : null,
+              onTap: () => _selectDate(context),
+              textInputType: TextInputType.text,
             ),
             const SizedBox(height: Dimens.paddingLarge, child: Divider()),
             Row(
@@ -220,6 +266,7 @@ class _AddOrUpdateExaminationPageState extends State<AddOrUpdateExaminationPage>
             const SizedBox(height: Dimens.paddingMedium),
             DeviceCalibrationForm(
               key: _addCalibrationFormKey,
+              needCalibrationInternal: _logic.selectedExaminationType!.name != ExaminationTypeName.penerangan,
               onCancel: () => _addCalibrationFormKey.currentState?.hide(true),
               onSave: (calibration) {
                 context.read<DeviceCalibrationCubit>().addOrUpdateDeviceCalibration(calibration);
@@ -255,8 +302,19 @@ class _AddOrUpdateExaminationPageState extends State<AddOrUpdateExaminationPage>
         _logic.selectedAnalis =
             User(id: widget.examination!.analisId, name: widget.examination!.analisName!, username: '', nip: '');
       }
+      if(widget.examination!.deadlineDate != null) {
+        _logic.selectedDeadline = widget.examination!.deadlineDate;
+        _logic.deadlineController.text = DateTimeUtils.formatToDate(widget.examination!.deadlineDate!);
+
+      }
       context.read<DeviceCalibrationCubit>().setDeviceCalibration(widget.examination!.deviceCalibrations);
     }
+  }
+
+  @override
+  void deactivate() {
+    context.read<DeviceCalibrationCubit>().clear();
+    super.deactivate();
   }
 
   @override

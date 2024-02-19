@@ -11,7 +11,10 @@ class MasterRequestType {
   static const String verifyVersion = "VERIFY_VERSION";
 
   //Tool / Device
-  static const String managementAlat = "MANAGEMENT_ALAT";
+  static const String createDevice = "CREATE_DEVICE";
+  static const String updateDevice = "UPDATE_DEVICE";
+  static const String deleteDevice = "DELETE_DEVICE";
+  static const String queryDevice = "QUERY_DEVICE";
   static const String queryDevices = "QUERY_DEVICES";
 
   //Company
@@ -20,6 +23,7 @@ class MasterRequestType {
   static const String createCompany = "CREATE_COMPANY";
   static const String updateCompany = "UPDATE_COMPANY";
   static const String deleteCompany = "DELETE_COMPANY";
+  static const String manajementCompany = "MANAJEMEN_COMPANY"; //Remove later after migration
 
   //User
   static const String queryUsers = "QUERY_USERS";
@@ -35,11 +39,14 @@ class MasterRequestType {
   //Examination
   static const String queryTypeExaminations = "QUERY_TYPE_EXAMINATIONS";
   static const String queryExaminations = "QUERY_EXAMINATIONS";
+  static const String queryExamination = "QUERY_EXAMINATION";
   static const String saveExaminationKebisinganLK = "SAVE_EXAMINATION_KEBISINGAN_LK";
-  static const String inputExaminationKebisinganLK = "INPUT_EXAMINATION_KEBISINGAN_LK";
-  static const String resultExaminationKebisinganLK = "RESULT_EXAMINATION_KEBISINGAN_LK";
-  static const String saveExaminationPencahayaan = "SAVE_EXAMINATION_PENCAHAYAAN";
-  static const String inputExaminationPencahayaan = "INPUT_EXAMINATION_PENCAHAYAAN";
-  static const String resultExaminationPencahayaan = "RESULT_EXAMINATION_PENCAHAYAAN";
+  static const String submitExaminationKebisinganLK = "SUBMIT_EXAMINATION_KEBISINGAN_LK";
+  static const String saveExaminationPenerangan = "SAVE_EXAMINATION_PENERANGAN";
+  static const String submitExaminationPenerangan = "SUBMIT_EXAMINATION_PENERANGAN";
   static const String approvalQC1 = "APPROVAL_QC1";
+  static const String approvalQC2 = "APPROVAL_QC2";
+  static const String approvalSigned = "APPROVAL_SIGNED";
+  static const String submitRevision = "REVISION_EXAMINATION";
+  static const String inputLab = "INPUT_LAB";
 }

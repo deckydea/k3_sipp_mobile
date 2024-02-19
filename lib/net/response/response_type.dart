@@ -18,6 +18,7 @@ class MasterResponseType {
 
   //For internal only
   static const String invalidFormat = "INVALID_FORMAT";
+  static const String invalidInput = "INVALID_INPUT";
 
   // Account
   static const String accountLocked = "ACCOUNT_LOCKED";

@@ -5,9 +5,9 @@ class DataKebisinganLK extends Equatable {
   final int? id;
   final String location;
   final DateTime? time;
-  final String value1;
-  final String value2;
-  final String value3;
+  final double value1;
+  final double value2;
+  final double value3;
   final String? note;
 
   //For request update purpose only
@@ -28,9 +28,9 @@ class DataKebisinganLK extends Equatable {
     int? id,
     String? location,
     DateTime? time,
-    String? value1,
-    String? value2,
-    String? value3,
+    double? value1,
+    double? value2,
+    double? value3,
     String? note,
   }) =>
       DataKebisinganLK(
@@ -71,11 +71,11 @@ class DataKebisinganLK extends Equatable {
       id: json['id'],
       location: json['location'],
       time: json['time'] == null ? null : DateTime.parse(json['time']).toLocal(),
-      value1: json['value1'],
-      value2: json['value2'],
-      value3: json['value3'],
+      value1: double.parse(json['value1'].toString()),
+      value2: double.parse(json['value2'].toString()),
+      value3: double.parse(json['value3'].toString()),
       note: json['note'],
-      isUpdate: json['isUpdate'],
+      isUpdate: json['isUpdate'] ?? false,
     );
   }
 

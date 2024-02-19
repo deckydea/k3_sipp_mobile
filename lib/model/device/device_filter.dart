@@ -9,7 +9,7 @@ class DeviceFilter extends ReportFilter{
     this.name,
     super.startDate,
     super.endDate,
-    super.upperBoundEpoch, //the last queried epoch
+    super.upperBound, //the last queried epoch
     super.resultSize,
   });
 
@@ -20,7 +20,7 @@ class DeviceFilter extends ReportFilter{
     //Parent
     if (startDate != null) 'startDate': DateTimeUtils.format(startDate!),
     if (endDate != null) 'endDate': DateTimeUtils.format(endDate!),
-    'upperBoundEpoch': upperBoundEpoch,
+    'upperBound': upperBound,
     'resultSize': resultSize,
   };
 
@@ -31,7 +31,7 @@ class DeviceFilter extends ReportFilter{
       //Parent
       startDate: json['startDate'] == null ? null : DateTime.parse(json['startDate']).toLocal(),
       endDate: json['endDate'] == null ? null : DateTime.parse(json['endDate']).toLocal(),
-      upperBoundEpoch: json['upperBoundEpoch'],
+      upperBound: json['upperBound'],
       resultSize: json['resultSize'],
     );
   }

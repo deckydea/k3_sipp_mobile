@@ -17,20 +17,20 @@ class AssignmentFilter extends ReportFilter{
     super.startDate,
     super.endDate,
     super.resultSize,
-    super.upperBoundEpoch,
+    super.upperBound,
   });
 
   @override
   Map<String, dynamic> toJson() => {
     if (statuses != null) "statuses": statuses!.map((element) => EnumToString.convertToString(element)).toList(),
-    if (date != null) 'date': DateTimeUtils.format(date!),
+    if (date != null) 'date': DateTimeUtils.formatToISODate(date!),
     if (petugasId != null) 'petugasId': petugasId,
     if (analisId != null) 'analisId': analisId,
 
     //Parent
     if (startDate != null) 'startDate': DateTimeUtils.format(startDate!),
     if (endDate != null) 'endDate': DateTimeUtils.format(endDate!),
-    if (upperBoundEpoch != null) 'upperBoundEpoch': upperBoundEpoch,
+    if (upperBound != null) 'upperBound': upperBound,
     if (resultSize != null) 'resultSize': resultSize,
   };
 
@@ -58,7 +58,7 @@ class AssignmentFilter extends ReportFilter{
       startDate: json['startDate'] == null ? null : DateTime.parse(json['startDate']).toLocal(),
       endDate: json['endDate'] == null ? null : DateTime.parse(json['endDate']).toLocal(),
       resultSize: json['resultSize'],
-      upperBoundEpoch: json['upperBoundEpoch'],
+      upperBound: json['upperBound'],
     );
   }
 }

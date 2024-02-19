@@ -12,7 +12,7 @@ class UsersLogic {
 
   Future<MasterMessage> queryUsers({String? query = "", UserFilter? filter}) async {
     String? token = await AppRepository().getToken();
-    filter ??= UserFilter(query: query, userAccessMenu: "", resultSize: null, upperBoundEpoch: null);
+    filter ??= UserFilter(query: query, userAccessMenu: "", resultSize: null, upperBound: null);
     filter.query = query;
     MasterMessage message = QueryUsersRequest(token: token, filter: filter);
     return await ConnectionUtils.sendRequest(message);

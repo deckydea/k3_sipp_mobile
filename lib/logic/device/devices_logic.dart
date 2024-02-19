@@ -13,7 +13,7 @@ class DevicesLogic {
   Future<MasterMessage> queryDevices({String? query}) async {
     String? token = await AppRepository().getToken();
     return await ConnectionUtils.sendRequest(
-        QueryDevicesRequest(token: token, filter: DeviceFilter(upperBoundEpoch: null, resultSize: null, name: query)));
+        QueryDevicesRequest(token: token, filter: DeviceFilter(upperBound: null, resultSize: null, name: query)));
   }
 
   Future<MasterMessage> onDeleteDevice(int deviceId) async {

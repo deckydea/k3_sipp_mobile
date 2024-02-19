@@ -12,7 +12,6 @@ import 'package:k3_sipp_mobile/net/response/response_type.dart';
 import 'package:k3_sipp_mobile/repository/app_repository.dart';
 import 'package:k3_sipp_mobile/res/colors.dart';
 import 'package:k3_sipp_mobile/res/dimens.dart';
-import 'package:k3_sipp_mobile/res/localizations.dart';
 import 'package:k3_sipp_mobile/ui/other/date_picker.dart';
 import 'package:k3_sipp_mobile/util/date_time_utils.dart';
 import 'package:k3_sipp_mobile/util/dialog_utils.dart';
@@ -116,7 +115,7 @@ class _UserPageState extends State<UserPage> {
   Future<void> _getPicture() async {
     String? encodedImage = await ImageSelectionUtils.getImage(context);
     if (TextUtils.equals(encodedImage, ImageSelectionUtils.permissionDenied)) {
-      if (mounted) MessageUtils.handlePermissionDenied(context: context, localizations: AppLocalizations.of(context));
+      if (mounted) MessageUtils.handlePermissionDenied(context: context);
       return;
     }
 

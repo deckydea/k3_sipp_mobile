@@ -21,14 +21,14 @@ class UserGroup extends Equatable{
   final String name;
   final DateTime createdAt;
   final DateTime updatedAt;
-  final Set<String> userAccessMenu;
+  final Set<String> userAccessMenus;
 
   const UserGroup({
     required this.id,
     required this.name,
     required this.createdAt,
     required this.updatedAt,
-    required this.userAccessMenu,
+    required this.userAccessMenus,
   });
 
   bool get isAdmin => TextUtils.equals(name, "ADMIN");
@@ -52,13 +52,13 @@ class UserGroup extends Equatable{
 
   UserGroup get replica {
     Set<String> userAccessMenuReplica = {};
-    userAccessMenuReplica.addAll(userAccessMenu);
+    userAccessMenuReplica.addAll(userAccessMenus);
     return UserGroup(
       id: id,
       name: name,
       createdAt: createdAt,
       updatedAt: updatedAt,
-      userAccessMenu: userAccessMenuReplica,
+      userAccessMenus: userAccessMenuReplica,
     );
   }
 
@@ -67,15 +67,15 @@ class UserGroup extends Equatable{
         "name": name,
         "createdAt": DateTimeUtils.format(createdAt),
         "updatedAt": DateTimeUtils.format(updatedAt),
-        "userAccessMenu": userAccessMenu.toList(),
+        "userAccessMenus": userAccessMenus.toList(),
       };
 
   factory UserGroup.fromJson(Map<String, dynamic> json) {
-    Set<String> userAccessMenu = {};
-    if (json["userAccessMenu"] != null) {
-      Iterable iterable = json["userAccessMenu"];
+    Set<String> userAccessMenus = {};
+    if (json["userAccessMenus"] != null) {
+      Iterable iterable = json["userAccessMenus"];
       for (var accessMenu in iterable) {
-        userAccessMenu.add(accessMenu);
+        userAccessMenus.add(accessMenu);
       }
     }
     return UserGroup(
@@ -83,10 +83,10 @@ class UserGroup extends Equatable{
       name: json["name"],
       createdAt: DateTime.parse(json['createdAt']).toLocal(),
       updatedAt: DateTime.parse(json['updatedAt']).toLocal(),
-      userAccessMenu: userAccessMenu,
+      userAccessMenus: userAccessMenus,
     );
   }
 
   @override
-  List<Object?> get props => [id, name, createdAt, updatedAt, userAccessMenu];
+  List<Object?> get props => [id, name, createdAt, updatedAt, userAccessMenus];
 }

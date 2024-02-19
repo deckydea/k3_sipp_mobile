@@ -75,6 +75,9 @@ dependencies:
   #Permission
   permission_handler: ^11.0.0
 
+  #pdf
+  pdf: ^3.10.7
+
   #other
   flutter_jailbreak_detection: ^1.10.0
   package_info_plus: ^5.0.1
@@ -84,6 +87,8 @@ dependencies:
   decimal: ^2.3.3
   enum_to_string: ^2.0.1
   crypto: ^3.0.3
+  universal_html: ^2.2.4
+  open_file: ^3.3.2
 
 
 dev_dependencies:

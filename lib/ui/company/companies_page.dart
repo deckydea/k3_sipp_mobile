@@ -31,7 +31,8 @@ class _CompaniesPageState extends State<CompaniesPage> {
         navigatorKey.currentState?.pop(company);
         return;
       case CompaniesPageMode.companyList:
-      // TODO: navigate to detail user
+        navigatorKey.currentState?.pushNamed("/update_company", arguments: company);
+      return;
     }
   }
 

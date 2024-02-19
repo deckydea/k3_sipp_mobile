@@ -13,6 +13,6 @@ class CompaniesLogic{
   Future<MasterMessage> queryCompanies({String? query}) async {
     String? token = await AppRepository().getToken();
     return await ConnectionUtils.sendRequest(
-        QueryCompaniesRequest(token: token, filter: CompanyFilter(upperBoundEpoch: null, resultSize: null, query: query)));
+        QueryCompaniesRequest(token: token, filter: CompanyFilter(upperBound: null, resultSize: null, query: query)));
   }
 }

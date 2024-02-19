@@ -10,15 +10,14 @@ class AssignmentLogic {
   Future<MasterMessage> queryExaminations({required DateTime date}) async {
     String? token = await AppRepository().getToken();
     User? user = await AppRepository().getUser();
+    Set<ExaminationStatus> statuses = AppRepository().getStatusesAccess();
     return await ConnectionUtils.sendRequest(
       QueryExaminationsRequest(
         token: token,
         filter: AssignmentFilter(
           date: date,
           petugasId: user!.id,
-          analisId: user.id,
-          //TODO: Implement later
-          statuses: {ExaminationStatus.PENDING},
+          statuses: statuses,
         ),
       ),
     );

@@ -9,15 +9,18 @@ class AddExaminationLogic {
 
   final TextEditingController petugasController = TextEditingController();
   final TextEditingController metodeController = TextEditingController();
+  final TextEditingController deadlineController = TextEditingController();
 
   ExaminationType? selectedExaminationType;
   User? selectedPetugas;
   User? selectedAnalis;
+  DateTime? selectedDeadline;
 
   bool initialized = false;
 
   void dispose() {
     petugasController.dispose();
     metodeController.dispose();
+    deadlineController.dispose();
   }
 }

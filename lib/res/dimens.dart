@@ -31,6 +31,7 @@ class Dimens {
   static const double logoSizePdf = 25;
   static const double logoXSizeSmall = 40.0;
   static const double logoSizeXLarge = 150.0;
+  static const double logoSizeBackground = 250.0;
 
   // Icon
   static const double iconSize = 22.0;
@@ -84,9 +85,12 @@ class Dimens {
   // Font
   static const double fontButton = 14;
   static const double fontDefault = 13;
-  static const double fontXSmall = 10;
+  static const double fontXXXSmall = 7;
+  static const double fontXXSmall = 8;
+  static const double fontXSmall = 9;
   static const double fontSmall = 12;
   static const double fontLarge = 16;
+  static const double fontMedium = 14;
   static const double fontToolbar = 16;
   static const double headlineSmall = 13;
   static const double headlineMedium = 14;
@@ -101,7 +105,6 @@ class Dimens {
   static const double bottomSheetPillWidth = 50;
   static const double bottomSheetPillHeight = 5;
 
-
   // Chart
   static const double chartPaddingLeft = 36.0;
   static const double chartPaddingTop = 30.0;
@@ -115,4 +118,7 @@ class Dimens {
 
   //Bottom Bar
   static const double bottomBarIcon = 25;
+
+  //Table Input Form
+  static const double cellWidth = 50;
 }

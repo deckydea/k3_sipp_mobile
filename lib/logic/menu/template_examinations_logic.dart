@@ -1,9 +1,13 @@
+import 'dart:convert';
+
+import 'package:flutter/material.dart';
 import 'package:k3_sipp_mobile/model/examination/examination_status.dart';
+import 'package:k3_sipp_mobile/model/template/template.dart';
 import 'package:k3_sipp_mobile/model/template/template_filter.dart';
 import 'package:k3_sipp_mobile/net/master_message.dart';
 import 'package:k3_sipp_mobile/net/request/template_request.dart';
 import 'package:k3_sipp_mobile/repository/app_repository.dart';
-import 'package:k3_sipp_mobile/ui/main/template_examinations_page.dart';
+import 'package:k3_sipp_mobile/ui/template/template_examinations_page.dart';
 import 'package:k3_sipp_mobile/util/connection_utils.dart';
 
 class TemplateExaminationsLogic {
@@ -29,9 +33,18 @@ class TemplateExaminationsLogic {
     ],
   };
 
-  Future<MasterMessage> queryTemplates({String? query}) async {
+  final Set<ExaminationStatus> selectedStatuses = {};
+  final List<Template> templates = [];
+  final ScrollController scrollController = ScrollController();
+
+  bool hasMore = true;
+  bool loading = false;
+
+  int maxQuerySize = 15;
+
+  Future<MasterMessage> queryTemplates({required TemplateFilter filter}) async {
     String? token = await AppRepository().getToken();
     return await ConnectionUtils.sendRequest(
-        QueryTemplatesRequest(token: token, filter: TemplateFilter(upperBoundEpoch: null, resultSize: null, query: query)));
+        QueryTemplatesRequest(token: token, filter: filter));
   }
 }

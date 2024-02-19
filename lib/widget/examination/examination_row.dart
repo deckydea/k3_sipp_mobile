@@ -40,7 +40,7 @@ class ExaminationRow extends StatelessWidget {
                       Text(examination.metode, style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Colors.blueGrey)),
                       Text(
                           examination.implementationDate != null
-                              ? DateTimeUtils.format(examination.implementationDate!)
+                              ? DateTimeUtils.formatToDate(examination.implementationDate!)
                               : "Not Implemented",
                           style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Colors.blueGrey)),
                     ],

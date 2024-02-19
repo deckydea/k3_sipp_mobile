@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:k3_sipp_mobile/logic/assignment/assignment_logic.dart';
@@ -52,6 +51,7 @@ class AssignmentBloc extends Bloc<AssignmentEvent, AssignmentState> {
           emit(AssignmentErrorState());
         }
       } catch (_) {
+        print("___: $_");
         emit(AssignmentErrorState());
       }
     });
