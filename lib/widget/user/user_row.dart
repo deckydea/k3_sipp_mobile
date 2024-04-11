@@ -8,15 +8,25 @@ class UserRow extends StatelessWidget {
   final GestureLongPressCallback? onLongPress;
   final VoidCallback? onTap;
   final User user;
+  final Widget? description;
+  final bool isSelected;
+  final bool hideGroup;
 
-  const UserRow({super.key, required this.user, this.onTap, this.onLongPress});
+  const UserRow(
+      {super.key,
+      required this.user,
+      this.onTap,
+      this.onLongPress,
+      this.isSelected = false,
+      this.description,
+      this.hideGroup = false});
 
   @override
   Widget build(BuildContext context) {
     return CustomCard(
       onTap: onTap,
       onLongPress: onLongPress,
-      color: Colors.white,
+      color: isSelected ? ColorResources.backgroundPending : Colors.white,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: Dimens.paddingPage),
         child: ListTile(
@@ -27,8 +37,12 @@ class UserRow extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(user.name, style: Theme.of(context).textTheme.headlineMedium),
-              Text(user.userGroup?.name ?? "",
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(color: ColorResources.primaryLight))
+              description == null
+                  ? hideGroup
+                      ? Container()
+                      : Text(user.userGroup?.name ?? "",
+                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(color: ColorResources.primaryLight))
+                  : description!,
             ],
           ),
           subtitle: Text(user.nip, style: Theme.of(context).textTheme.titleSmall),

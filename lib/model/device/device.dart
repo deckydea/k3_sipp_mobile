@@ -1,3 +1,5 @@
+import 'package:k3_sipp_mobile/util/date_time_utils.dart';
+
 class Device {
   int? id;
   String? name;
@@ -6,6 +8,10 @@ class Device {
   double? u95;
   double? coverageFactor;
   String? note;
+  String? nomorSeriAlat;
+  String? negaraPembuat;
+  String? instansiPengkalibrasi;
+  DateTime? tanggalKalibrasiEksternalTerakhir;
 
   Device({
     this.id,
@@ -15,6 +21,10 @@ class Device {
     this.u95,
     this.coverageFactor,
     this.note,
+    this.nomorSeriAlat,
+    this.negaraPembuat,
+    this.instansiPengkalibrasi,
+    this.tanggalKalibrasiEksternalTerakhir,
   });
 
   // Create a replica (clone) of the Tool instance
@@ -26,17 +36,26 @@ class Device {
         u95: u95,
         coverageFactor: coverageFactor,
         note: note,
+        nomorSeriAlat: nomorSeriAlat,
+        negaraPembuat: negaraPembuat,
+        instansiPengkalibrasi: instansiPengkalibrasi,
+        tanggalKalibrasiEksternalTerakhir: tanggalKalibrasiEksternalTerakhir,
       );
 
   // Convert a Tool instance to a JSON object
   Map<String, dynamic> toJson() => {
-        if(id != null) 'id': id,
-        if(name != null) 'name': name,
-        if(description != null) 'description': description,
-        if(calibrationValue != null) 'calibrationValue': calibrationValue,
-        if(u95 != null) 'u95': u95,
-        if(coverageFactor != null) 'coverageFactor': coverageFactor,
-        if(note != null) 'note': note,
+        'id': id,
+        'name': name,
+        'description': description,
+        'calibrationValue': calibrationValue,
+        'u95': u95,
+        'coverageFactor': coverageFactor,
+        'note': note,
+        'nomorSeriAlat': nomorSeriAlat,
+        'negaraPembuat': negaraPembuat,
+        'instansiPengkalibrasi': instansiPengkalibrasi,
+        'tanggalKalibrasiEksternalTerakhir':
+            tanggalKalibrasiEksternalTerakhir == null ? null : DateTimeUtils.format(tanggalKalibrasiEksternalTerakhir!),
       };
 
   // Create a Tool instance from a JSON object
@@ -49,6 +68,12 @@ class Device {
       u95: json['u95']?.toDouble(),
       coverageFactor: json['coverageFactor']?.toDouble(),
       note: json['note'],
+      nomorSeriAlat: json['nomorSeriAlat'],
+      negaraPembuat: json['negaraPembuat'],
+      instansiPengkalibrasi: json['instansiPengkalibrasi'],
+      tanggalKalibrasiEksternalTerakhir: json['tanggalKalibrasiEksternalTerakhir'] == null
+          ? null
+          : DateTime.parse(json['tanggalKalibrasiEksternalTerakhir']).toLocal(),
     );
   }
 }

@@ -28,7 +28,7 @@ class _LoginPageState extends State<LoginPage> {
   final LoginLogic _logic = LoginLogic();
 
   Future<void> _actionLogin() async {
-    final ProgressDialog progressDialog = ProgressDialog(context, "Memproses Login", _logic.loginWithUsernamePassword());
+    final ProgressDialog progressDialog = ProgressDialog("Memproses Login", _logic.loginWithUsernamePassword());
 
     MasterMessage message = await progressDialog.show();
     if(!TextUtils.isEmpty(message.token)) await AppRepository().setToken(message.token!);

@@ -33,7 +33,7 @@ class LauncherState extends State<Launcher> {
     // Check for jailbreak.
     bool jailbroken = await FlutterJailbreakDetection.jailbroken;
     if (jailbroken) {
-      if (context.mounted) {
+      if (mounted) {
         await MessageUtils.showMessage(
           context: context,
           title: _localizations.translate("failed_jailbroken_title"),
@@ -48,7 +48,7 @@ class LauncherState extends State<Launcher> {
     if (kReleaseMode && Platform.isAndroid) {
       bool developerMode = await FlutterJailbreakDetection.developerMode;
       if (developerMode) {
-        if (context.mounted) {
+        if (mounted) {
           await MessageUtils.showMessage(
             context: context,
             title: _localizations.translate("failed_developer_mode_title"),
@@ -98,7 +98,7 @@ class LauncherState extends State<Launcher> {
           // }
           break;
         case MasterResponseType.noConnection:
-          if (context.mounted) {
+          if (mounted) {
             await MessageUtils.showMessage(
               context: context,
               title: _localizations.translate("failed_no_connection_title"),

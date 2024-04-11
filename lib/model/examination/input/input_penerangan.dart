@@ -1,6 +1,38 @@
-
 import 'package:equatable/equatable.dart';
+import 'package:k3_sipp_mobile/model/device/device_calibration.dart';
 import 'package:k3_sipp_mobile/util/date_time_utils.dart';
+
+enum SumberCahaya { alami, buatan, alamiBuatan }
+
+extension SumberCahayaExtension on SumberCahaya {
+  String get label {
+    switch (this) {
+      case SumberCahaya.alami:
+        return "Alami";
+      case SumberCahaya.buatan:
+        return "Buatan";
+      case SumberCahaya.alamiBuatan:
+        return "Alami dan Buatan";
+      default:
+        return "-";
+    }
+  }
+}
+
+enum JenisPengukuran { lokal, umum }
+
+extension JenisPengukuranExtension on JenisPengukuran {
+  String get label {
+    switch (this) {
+      case JenisPengukuran.lokal:
+        return "Lokal";
+      case JenisPengukuran.umum:
+        return "Umum";
+      default:
+        return "-";
+    }
+  }
+}
 
 class DataPenerangan extends Equatable {
   final int? id;
@@ -11,6 +43,10 @@ class DataPenerangan extends Equatable {
   final double value2;
   final double value3;
   final String? note;
+  final int jumlahTK;
+  final SumberCahaya? sumberCahaya;
+  final JenisPengukuran? jenisPengukuran;
+  final DeviceCalibration? deviceCalibration;
 
   //For request update purpose only
   final bool isUpdate;
@@ -24,6 +60,10 @@ class DataPenerangan extends Equatable {
     required this.value2,
     required this.value3,
     this.note,
+    this.jumlahTK = 0,
+    this.sumberCahaya,
+    this.jenisPengukuran,
+    this.deviceCalibration,
     this.isUpdate = false,
   });
 
@@ -36,6 +76,10 @@ class DataPenerangan extends Equatable {
     double? value2,
     double? value3,
     String? note,
+    int? jumlahTK,
+    SumberCahaya? sumberCahaya,
+    JenisPengukuran? jenisPengukuran,
+    DeviceCalibration? deviceCalibration,
   }) =>
       DataPenerangan(
         id: id ?? this.id,
@@ -45,6 +89,11 @@ class DataPenerangan extends Equatable {
         value1: value1 ?? this.value1,
         value2: value2 ?? this.value2,
         value3: value3 ?? this.value3,
+        note: note ?? this.note,
+        jumlahTK: jumlahTK ?? this.jumlahTK,
+        sumberCahaya: sumberCahaya ?? this.sumberCahaya,
+        jenisPengukuran: jenisPengukuran ?? this.jenisPengukuran,
+        deviceCalibration: deviceCalibration ?? this.deviceCalibration,
       );
 
   DataPenerangan replica() {
@@ -57,21 +106,29 @@ class DataPenerangan extends Equatable {
       value2: value2,
       value3: value3,
       note: note,
+      jumlahTK: jumlahTK,
+      sumberCahaya: sumberCahaya,
+      jenisPengukuran: jenisPengukuran,
+      deviceCalibration: deviceCalibration,
       isUpdate: isUpdate,
     );
   }
 
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'location': location,
-    'localLightingData': localLightingData,
-    if (time != null) 'time': DateTimeUtils.format(time!),
-    'value1': value1,
-    'value2': value2,
-    'value3': value3,
-    'note': note,
-    'isUpdate': isUpdate,
-  };
+        'id': id,
+        'location': location,
+        'localLightingData': localLightingData,
+        if (time != null) 'time': DateTimeUtils.format(time!),
+        'value1': value1,
+        'value2': value2,
+        'value3': value3,
+        'note': note,
+        'jumlahTK': jumlahTK,
+        'sumberCahaya': sumberCahaya?.label,
+        'jenisPengukuran': jenisPengukuran?.label,
+        'deviceCalibrations': deviceCalibration,
+        'isUpdate': isUpdate,
+      };
 
   factory DataPenerangan.fromJson(Map<String, dynamic> json) {
     return DataPenerangan(
@@ -83,6 +140,10 @@ class DataPenerangan extends Equatable {
       value2: double.parse(json['value2'].toString()),
       value3: double.parse(json['value3'].toString()),
       note: json['note'],
+      jumlahTK: json['jumlahTK'],
+      sumberCahaya: json['sumberCahaya'] == null ? null : SumberCahaya.values.firstWhere((element) => element.label == json['sumberCahaya']),
+      jenisPengukuran: json['jenisPengukuran'] == null ? null : JenisPengukuran.values.firstWhere((element) => element.label == json['jenisPengukuran']),
+      deviceCalibration: json['deviceCalibrations'] == null ? null : DeviceCalibration.fromJson(json['deviceCalibrations']),
       isUpdate: json['isUpdate'] ?? false,
     );
   }
@@ -110,9 +171,9 @@ class InputPenerangan {
   }
 
   Map<String, dynamic> toJson() => {
-    'examinationId': examinationId,
-    'dataPenerangan': dataPenerangan.toList(),
-  };
+        'examinationId': examinationId,
+        'dataPenerangan': dataPenerangan.toList(),
+      };
 
   factory InputPenerangan.fromJson(Map<String, dynamic> json) {
     List<DataPenerangan> dataPenerangan = [];

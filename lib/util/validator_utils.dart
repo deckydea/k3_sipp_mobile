@@ -44,6 +44,12 @@ class ValidatorUtils {
         : "${AppLocalizations.of(context).translate("invalid_value")}: $lowerBound <= value <= $upperBound.";
   }
 
+  static String? validateNumericValue(BuildContext context, double value, double lowerBound, double upperBound) {
+    return value >= lowerBound && value <= upperBound
+        ? null
+        : "${AppLocalizations.of(context).translate("invalid_value")}: $lowerBound <= value <= $upperBound.";
+  }
+
   static String? validateIntegerValueNotEmpty(BuildContext context, int? value, int lowerBound, int upperBound) {
     return value == null
         ? AppLocalizations.of(context).translate("invalid_input_required")
@@ -172,11 +178,11 @@ class ValidatorUtils {
     return null;
   }
 
-  static String? validatePositive(BuildContext context, String value, {bool required = false}) {
+  static String? validatePositive(BuildContext context, String? value, {bool required = false}) {
     if (TextUtils.isEmpty(value) && !required) return null;
 
-    Decimal? amount = Decimal.tryParse(value);
-    return amount == null || amount <= Decimal.zero ? AppLocalizations.of(context).translate("invalid_greater_zero") : null;
+    Decimal? amount = Decimal.tryParse(value!);
+    return amount == null || amount <= Decimal.zero ? "Harus lebih besar dari 0" : null;
   }
 
   static String? validateNonNegative(BuildContext context, String value, bool required) {

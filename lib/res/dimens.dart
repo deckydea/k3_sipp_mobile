@@ -18,6 +18,7 @@ class Dimens {
   static const double cardRadiusSmall = 4.0;
   static const double cardRadiusLarge = 16.0;
   static const double cardRadiusXLarge = 30.0;
+  static const double cardStepRadius = 20.0;
   static const double cardElevation = 0.5;
   static const double cardBorderWidth = 0.1;
   static const double cardGroupHeight = 120;
@@ -36,12 +37,14 @@ class Dimens {
   // Icon
   static const double iconSize = 22.0;
   static const double iconSizeThumbnail = 8.0;
+  static const double iconSizeEdit = 10.0;
   static const double iconSizeTitle = 15.0;
   static const double iconSizeSmall = 16.0;
   static const double iconSizeMedium = 32;
   static const double iconSizeAppbar = 28;
   static const double iconWeightAppbar = 900;
   static const double iconSizeLarge = 42.0;
+  static const double iconBigSize = 250.0;
   static const double iconSizeMenu = 25.0;
 
   // Padding
@@ -121,4 +124,7 @@ class Dimens {
 
   //Table Input Form
   static const double cellWidth = 50;
+
+  //Step
+  static const double stepWidth = 90;
 }

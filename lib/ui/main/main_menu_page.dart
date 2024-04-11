@@ -9,6 +9,7 @@ import 'package:k3_sipp_mobile/ui/main/assignment_page.dart';
 import 'package:k3_sipp_mobile/ui/main/home_page.dart';
 import 'package:k3_sipp_mobile/ui/main/menu_page.dart';
 import 'package:k3_sipp_mobile/ui/main/profile_page.dart';
+import 'package:k3_sipp_mobile/ui/main/template_pengujian_page.dart';
 
 class MainMenuPage extends StatefulWidget {
   final User user;
@@ -61,7 +62,7 @@ class _MainMenuPageState extends State<MainMenuPage> {
                 index: state,
                 children: [
                   HomePage(user: widget.user),
-                  const AssignmentPage(),
+                  const TemplatePengujianPage(),
                   const MenuPage(),
                   const ProfilePage(),
                 ],

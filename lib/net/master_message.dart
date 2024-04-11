@@ -40,4 +40,9 @@ class MasterMessage {
       token: json["token"],
     );
   }
+
+  @override
+  String toString() {
+    return 'MasterMessage{id: $id, version: $version, request: $request, response: $response, content: $content, path: $path}';
+  }
 }

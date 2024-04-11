@@ -7,8 +7,9 @@ import 'package:k3_sipp_mobile/logic/examination/create_assignment_logic.dart';
 import 'package:k3_sipp_mobile/main.dart';
 import 'package:k3_sipp_mobile/model/company/company.dart';
 import 'package:k3_sipp_mobile/model/examination/examination.dart';
-import 'package:k3_sipp_mobile/model/examination/examination_status.dart';
 import 'package:k3_sipp_mobile/model/template/template.dart';
+import 'package:k3_sipp_mobile/model/user/user.dart';
+import 'package:k3_sipp_mobile/model/user/user_filter.dart';
 import 'package:k3_sipp_mobile/net/master_message.dart';
 import 'package:k3_sipp_mobile/net/response/response_type.dart';
 import 'package:k3_sipp_mobile/repository/app_repository.dart';
@@ -17,12 +18,12 @@ import 'package:k3_sipp_mobile/res/dimens.dart';
 import 'package:k3_sipp_mobile/util/dialog_utils.dart';
 import 'package:k3_sipp_mobile/util/message_utils.dart';
 import 'package:k3_sipp_mobile/util/text_utils.dart';
-import 'package:k3_sipp_mobile/util/validator_utils.dart';
 import 'package:k3_sipp_mobile/widget/custom/custom_button.dart';
 import 'package:k3_sipp_mobile/widget/custom/custom_card.dart';
-import 'package:k3_sipp_mobile/widget/custom/custom_edit_text.dart';
+import 'package:k3_sipp_mobile/widget/custom/custom_form_input.dart';
 import 'package:k3_sipp_mobile/widget/examination/examination_row.dart';
 import 'package:k3_sipp_mobile/widget/progress_dialog.dart';
+import 'package:k3_sipp_mobile/widget/user/user_row.dart';
 
 class CreateOrUpdateAssignmentPage extends StatefulWidget {
   final Template? template;
@@ -33,19 +34,29 @@ class CreateOrUpdateAssignmentPage extends StatefulWidget {
   State<CreateOrUpdateAssignmentPage> createState() => _CreateOrUpdateAssignmentPageState();
 }
 
-class _CreateOrUpdateAssignmentPageState extends State<CreateOrUpdateAssignmentPage> {
+class _CreateOrUpdateAssignmentPageState extends State<CreateOrUpdateAssignmentPage> with SingleTickerProviderStateMixin {
   final CreateAssignmentLogic _logic = CreateAssignmentLogic();
+
+  late TabController _tabController;
+
+  Future<void> _navigateToSelectUser() async {
+    var result = await navigatorKey.currentState?.pushNamed("/select_user", arguments: UserFilter());
+    if (result != null && result is User) {
+      _logic.selectedUsers.add(result);
+      setState(() {});
+    }
+  }
 
   Future<void> _selectCompany() async {
     var result = await navigatorKey.currentState?.pushNamed("/select_company");
     if (result != null && result is Company) {
       _logic.selectedCompany = result;
-      _logic.companyController.text = result.companyName ?? "";
+      _logic.companyInput.setValue(result.companyName);
     }
   }
 
   Future<void> _queryTemplate() async {
-    final ProgressDialog progressDialog = ProgressDialog(context, "Loading", _logic.onQueryTemplate(widget.template!.id!));
+    final ProgressDialog progressDialog = ProgressDialog("Loading", _logic.onQueryTemplate(widget.template!.id!));
 
     MasterMessage message = await progressDialog.show();
     if (!TextUtils.isEmpty(message.token)) await AppRepository().setToken(message.token!);
@@ -53,10 +64,13 @@ class _CreateOrUpdateAssignmentPageState extends State<CreateOrUpdateAssignmentP
       case MasterResponseType.success:
         if (!TextUtils.isEmpty(message.content)) {
           Template template = Template.fromJson(jsonDecode(message.content!));
-          List<Examination> examinations = template.examinations ?? [];
+          List<Examination> examinations = template.examinations;
+          if(mounted) context.read<ExaminationsCubit>().clear();
           for (Examination examination in examinations) {
             if (mounted) context.read<ExaminationsCubit>().addOrUpdateExamination(examination);
           }
+
+          _logic.initTemplate(template);
         }
         break;
       case MasterResponseType.invalidAccess:
@@ -78,8 +92,8 @@ class _CreateOrUpdateAssignmentPageState extends State<CreateOrUpdateAssignmentP
   }
 
   Future<void> _actionCreate() async {
-    final ProgressDialog progressDialog = ProgressDialog(
-        context, "Mendaftarkan...", _logic.onCreate(examinations: context.read<ExaminationsCubit>().state.examinations));
+    final ProgressDialog progressDialog =
+        ProgressDialog("Mendaftarkan...", _logic.onCreate(examinations: context.read<ExaminationsCubit>().state.examinations));
 
     MasterMessage message = await progressDialog.show();
     if (!TextUtils.isEmpty(message.token)) await AppRepository().setToken(message.token!);
@@ -116,10 +130,16 @@ class _CreateOrUpdateAssignmentPageState extends State<CreateOrUpdateAssignmentP
     }
   }
 
-  Future<void> _addExamination() async {
-    var result = await navigatorKey.currentState?.pushNamed("/add_examination_page");
-    if (result != null && result is Examination) {
-      if (mounted) context.read<ExaminationsCubit>().addOrUpdateExamination(result);
+  Future<void> _actionAdd() async {
+    if (_tabController.index == 0) {
+      _navigateToSelectUser();
+    } else if (_tabController.index == 1) {
+      var result = await navigatorKey.currentState?.pushNamed("/select_examination");
+      if (result != null && result is List<Examination>) {
+        for(Examination examination in result){
+          if (mounted) context.read<ExaminationsCubit>().addOrUpdateExamination(examination);
+        }
+      }
     }
   }
 
@@ -156,24 +176,24 @@ class _CreateOrUpdateAssignmentPageState extends State<CreateOrUpdateAssignmentP
       builder: (context, state) {
         List<Examination> examinations = state.examinations;
         if (examinations.isNotEmpty) {
-          return ListView.builder(
-            itemCount: examinations.length,
-            shrinkWrap: true,
-            itemBuilder: (context, index) {
-              Examination examination = examinations.elementAt(index);
-              return ExaminationRow(
-                examination: examination,
-                onTap: () => examination.status != null && examination.status != ExaminationStatus.PENDING
-                    ? _navigateExaminationDetail(examination)
-                    : _updateExamination(examination),
-                onLongPress: () => _deleteExamination(examination),
-              );
-            },
+          return Padding(
+            padding: const EdgeInsets.only(top: Dimens.paddingSmall, right: Dimens.paddingPage, left: Dimens.paddingPage),
+            child: ListView.builder(
+              itemCount: examinations.length,
+              shrinkWrap: true,
+              itemBuilder: (context, index) {
+                Examination examination = examinations.elementAt(index);
+                return ExaminationRow(
+                  examination: examination,
+                  onTap: () => _deleteExamination(examination),
+                );
+              },
+            ),
           );
         } else {
           return Center(
             child: Text(
-              "Tidak pengujian, silahkan tambah pengujian.",
+              "Tidak ada pengujian, silahkan tambah pengujian.",
               style: Theme.of(context).textTheme.labelLarge?.copyWith(color: Colors.deepOrange),
             ),
           );
@@ -182,87 +202,134 @@ class _CreateOrUpdateAssignmentPageState extends State<CreateOrUpdateAssignmentP
     );
   }
 
-  Widget _buildBody() {
+  Widget _buildPetugas() {
     return Padding(
-      padding: const EdgeInsets.all(Dimens.paddingPage),
-      child: Form(
-        key: _logic.formKey,
-        child: Column(
-          children: [
-            CustomEditText(
-              width: double.infinity,
-              label: "Perusahaan",
-              onTap: _selectCompany,
-              readOnly: true,
-              cursorVisible: false,
-              controller: _logic.companyController,
-              validator: (value) => ValidatorUtils.validateNotEmpty(context, value),
-              textInputType: TextInputType.name,
+      padding: const EdgeInsets.only(top: Dimens.paddingSmall, right: Dimens.paddingPage, left: Dimens.paddingPage),
+      child: _logic.selectedUsers.isNotEmpty
+          ? ListView.builder(
+              itemCount: _logic.selectedUsers.length,
+              itemBuilder: (context, index) {
+                User user = _logic.selectedUsers[index];
+                bool isSelected = _logic.userPJ == null ? false : user.id == _logic.userPJ!.id;
+                return UserRow(
+                  user: user,
+                  onTap: () => setState(() => _logic.userPJ = user),
+                  hideGroup: true,
+                  isSelected: isSelected,
+                  description: isSelected
+                      ? Text(
+                          "Penanggungjawab",
+                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(color: ColorResources.primaryLight),
+                        )
+                      : null,
+                );
+              },
+            )
+          : Center(
+              child: Text(
+                "Tidak ada petugas, silahkan tambah petugas.",
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(color: Colors.deepOrange),
+              ),
             ),
-            const SizedBox(height: Dimens.paddingSmall),
-            CustomEditText(
-              width: double.infinity,
-              label: "Catatan",
-              controller: _logic.templateNameController,
-              maxLines: 3,
-              validator: (value) => ValidatorUtils.validateInputLength(context, value, 0, 100),
-              textInputType: TextInputType.text,
-            ),
-            const SizedBox(height: Dimens.paddingLarge, child: Divider()),
-            Row(
-              children: [
-                Expanded(
-                    child: Text("Pengujian",
-                        style: Theme.of(context).textTheme.headlineLarge?.copyWith(color: ColorResources.primaryDark))),
-                CustomCard(
-                  color: ColorResources.primary,
-                  borderRadius: Dimens.cardRadiusXLarge,
-                  onTap: _addExamination,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: Dimens.paddingWidget, horizontal: Dimens.paddingPage),
-                    child: Row(
-                      children: [
-                        Text("Tambah", style: Theme.of(context).textTheme.headlineSmall?.copyWith(color: Colors.white)),
-                        const SizedBox(width: Dimens.paddingGap),
-                        GestureDetector(child: const Icon(Icons.add, size: Dimens.iconSizeSmall, color: Colors.white)),
-                      ],
-                    ),
+    );
+  }
+
+  Widget _buildBody() {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(Dimens.paddingPage),
+          child: CustomFormInput(key: _logic.formKey, dataInputs: _logic.inputs),
+        ),
+        const SizedBox(height: Dimens.paddingLarge),
+        Padding(
+          padding: const EdgeInsets.all(Dimens.paddingPage),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              TabBar(
+                controller: _tabController,
+                isScrollable: true,
+                tabAlignment: TabAlignment.start,
+                tabs: [
+                  Tab(
+                    child: Text("Petugas", style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+                  ),
+                  Tab(
+                    child:
+                        Text("Pengujian", style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+                  ),
+                ],
+              ),
+              CustomCard(
+                color: ColorResources.primary,
+                borderRadius: Dimens.cardRadiusXLarge,
+                onTap: _actionAdd,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: Dimens.paddingWidget, horizontal: Dimens.paddingPage),
+                  child: Row(
+                    children: [
+                      Text("Tambah", style: Theme.of(context).textTheme.headlineSmall?.copyWith(color: Colors.white)),
+                      const SizedBox(width: Dimens.paddingGap),
+                      GestureDetector(child: const Icon(Icons.add, size: Dimens.iconSizeSmall, color: Colors.white)),
+                    ],
                   ),
                 ),
-              ],
-            ),
-            const SizedBox(height: Dimens.paddingSmall),
-            Expanded(child: _buildExaminations()),
-            const SizedBox(height: Dimens.paddingMedium),
-            CustomButton(
-              minimumSize: const Size(double.infinity, Dimens.buttonHeightSmall),
-              label: Text("Daftar", style: Theme.of(context).textTheme.titleMedium!.copyWith(color: Colors.white)),
-              backgroundColor: ColorResources.primaryDark,
-              onPressed: _actionCreate,
-            ),
-          ],
+              ),
+            ],
+          ),
         ),
-      ),
+        Expanded(
+          child: TabBarView(
+            controller: _tabController,
+            children: [
+              _buildPetugas(),
+              _buildExaminations(),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(Dimens.paddingPage),
+          child: CustomButton(
+            minimumSize: const Size(double.infinity, Dimens.buttonHeightSmall),
+            label: Text("Daftar", style: Theme.of(context).textTheme.titleMedium!.copyWith(color: Colors.white)),
+            backgroundColor: ColorResources.primaryDark,
+            onPressed: _actionCreate,
+          ),
+        ),
+      ],
     );
   }
 
   Future<void> _init() async {
-    if (widget.template != null) {
-      _logic.isUpdate = true;
-      _logic.templateNameController.text = widget.template!.templateName ?? "";
-      _logic.companyController.text = widget.template!.company!.companyName ?? "";
-      _logic.selectedCompany = widget.template!.company;
+    _logic.initInput(() => _selectCompany());
 
+    if(mounted) context.read<ExaminationsCubit>().clear();
+
+    if (widget.template != null) {
       await _queryTemplate();
-      _logic.initialized = true;
-      setState(() {});
     }
+
+    _logic.initialized = true;
+    setState(() {});
   }
 
   @override
   void deactivate() {
     context.read<ExaminationsCubit>().clear();
     super.deactivate();
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(vsync: this, length: 2);
   }
 
   @override

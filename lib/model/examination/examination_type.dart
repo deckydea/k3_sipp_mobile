@@ -15,14 +15,17 @@ class ExaminationTypeName {
   static const sinarUV = "SINAR_UV";
   static const gelombangElektroMagnet = "GELOMBANG_ELEKTROMAGNET";
   static const kebisinganAmbient = "KEBISINGAN_AMBIENT";
+  static const kebisinganFrekuensi = "KEBISINGAN_FREKUENSI";
+  static const noiseDose = "NOISE_DOSE";
 }
 
 class ExaminationType {
   final String name;
   final String description;
   final MasterExaminationType type;
+  final String metode;
 
-  ExaminationType({required this.name, required this.description, required this.type});
+  ExaminationType({required this.name, required this.description, required this.type, required this.metode});
 
   String get examinationTypeName {
     return EnumTranslationUtils.examinationType(name);
@@ -42,6 +45,7 @@ class ExaminationType {
     return {
       'name': name,
       'description': description,
+      'metode': metode,
       'type': EnumToString.convertToString(type),
     };
   }
@@ -50,6 +54,7 @@ class ExaminationType {
     return ExaminationType(
       name: json['name'],
       description: json['description'],
+      metode: json['metode'],
       type: MasterExaminationType.values.firstWhere((element) => element.name == json['type']),
     );
   }

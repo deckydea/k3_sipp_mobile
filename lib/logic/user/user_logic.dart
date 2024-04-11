@@ -23,6 +23,7 @@ class UserLogic {
 
   final TextEditingController nameController = TextEditingController();
   final TextEditingController nipController = TextEditingController();
+  final TextEditingController noSkpController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController birthDateController = TextEditingController();
@@ -44,6 +45,7 @@ class UserLogic {
         password: md5.convert(utf8.encode(passwordController.text.trim())).toString(),
         name: nameController.text,
         nip: nipController.text,
+        noSKP: noSkpController.text,
         email: emailController.text,
         phone: phoneController.text,
         dateOfBirth: birthDate,
@@ -67,6 +69,7 @@ class UserLogic {
       user.password = md5.convert(utf8.encode(passwordController.text.trim())).toString();
       user.name = nameController.text;
       user.nip = nipController.text;
+      user.noSKP = noSkpController.text;
       user.email = emailController.text;
       user.phone = phoneController.text;
       user.dateOfBirth = birthDate;

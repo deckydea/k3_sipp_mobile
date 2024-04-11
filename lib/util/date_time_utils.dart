@@ -20,6 +20,10 @@ class DateTimeUtils {
     return formatDate(dateTime.toLocal(), [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn, ':', ss, ' ', z]);
   }
 
+  static String formatDateOnly(DateTime dateTime) {
+    return formatDate(dateTime.toLocal(), [yyyy, '-', mm, '-', dd]);
+  }
+
   static String formatToDayDateTime(DateTime dateTime) {
     return formatDate(dateTime.toLocal(), [DD, ' ', d, ' ', M, ' ', yyyy, ' ', HH, ':', nn]);
   }

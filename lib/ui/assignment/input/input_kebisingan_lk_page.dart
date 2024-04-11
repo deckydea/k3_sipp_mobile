@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:k3_sipp_mobile/logic/examination/input_form_logic.dart';
 import 'package:k3_sipp_mobile/model/examination/examination_status.dart';
-import 'package:k3_sipp_mobile/model/examination/input/input_kebisingan.dart';
+import 'package:k3_sipp_mobile/model/examination/input/input_kebisingan_lk.dart';
 import 'package:k3_sipp_mobile/model/examination/result/result_kebisingan_lk.dart';
 import 'package:k3_sipp_mobile/res/colors.dart';
 import 'package:k3_sipp_mobile/res/dimens.dart';
 import 'package:k3_sipp_mobile/ui/assignment/input/input_form_page.dart';
 import 'package:k3_sipp_mobile/widget/custom/custom_card.dart';
-import 'package:k3_sipp_mobile/widget/examination/input/kebisingan/form_kebisingan.dart';
-import 'package:k3_sipp_mobile/widget/examination/input/kebisingan/input_kebisingan_row.dart';
-
+import 'package:k3_sipp_mobile/widget/examination/input/kebisingan_lk/form_kebisingan_lk.dart';
+import 'package:k3_sipp_mobile/widget/examination/input/kebisingan_lk/input_kebisingan_lk_row.dart';
 
 class InputKebisinganLKPage extends StatefulWidget {
   final InputFormLogic logic;
@@ -24,6 +23,8 @@ class InputKebisinganLKPageState extends State<InputKebisinganLKPage> {
   InputView _view = InputView.tableView;
 
   Future<void> _addOrUpdateRow({DataKebisinganLK? data}) async {
+    if(!widget.logic.examination.canUpdateInput) return;
+
     await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -32,7 +33,7 @@ class InputKebisinganLKPageState extends State<InputKebisinganLKPage> {
         return SafeArea(
           child: Padding(
             padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-            child: FormKebisingan(
+            child: FormKebisinganLK(
               data: data,
               onUpdate: (input) {
                 if (data != input) {
@@ -59,8 +60,8 @@ class InputKebisinganLKPageState extends State<InputKebisinganLKPage> {
   }
 
   Widget _buildTableView() {
-    TextStyle? headerStyle = Theme.of(context).textTheme.titleSmall?.copyWith(color: Colors.white, fontWeight: FontWeight.bold);
-    TextStyle? bodyStyle = Theme.of(context).textTheme.bodySmall;
+    TextStyle? headerStyle = Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.white, fontWeight: FontWeight.bold);
+    TextStyle? bodyStyle = Theme.of(context).textTheme.labelSmall;
 
     List<TableRow> rows = [];
     rows.add(
@@ -157,7 +158,7 @@ class InputKebisinganLKPageState extends State<InputKebisinganLKPage> {
       resultMap[result.id] = result;
     }
     for (DataKebisinganLK input in widget.logic.examination.userInput) {
-      widgets.add(InputKebisinganRow(input: input, result: resultMap[input.id]));
+      widgets.add(InputKebisinganLKRow(input: input, result: resultMap[input.id]));
     }
 
     return Column(children: widgets);
@@ -183,49 +184,55 @@ class InputKebisinganLKPageState extends State<InputKebisinganLKPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const SizedBox(height: Dimens.paddingWidget),
-        Row(
-          children: [
-            IconButton(
-              onPressed: () => setState(() => _view = _changeView()),
-              icon: Icon(_view == InputView.tableView ? Icons.grid_view : Icons.table_chart, size: Dimens.iconSize),
-            ),
-            Expanded(
-              child: Text("Pengujian",
-                  style: Theme.of(context).textTheme.headlineLarge?.copyWith(color: ColorResources.primaryDark)),
-            ),
-            widget.logic.examination.status == ExaminationStatus.PENDING ||
-                    widget.logic.examination.status == ExaminationStatus.REVISION_QC1
-                ? CustomCard(
-                    color: ColorResources.primary,
-                    borderRadius: Dimens.cardRadiusXLarge,
-                    onTap: _addOrUpdateRow,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: Dimens.paddingWidget, horizontal: Dimens.paddingPage),
-                      child: Row(
-                        children: [
-                          Text("Tambah", style: Theme.of(context).textTheme.headlineSmall?.copyWith(color: Colors.white)),
-                          const SizedBox(width: Dimens.paddingGap),
-                          GestureDetector(child: const Icon(Icons.add, size: Dimens.iconSizeSmall, color: Colors.white)),
-                        ],
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          const SizedBox(height: Dimens.paddingWidget),
+          Row(
+            children: [
+              IconButton(
+                onPressed: () => setState(() => _view = _changeView()),
+                icon: Icon(_view == InputView.tableView ? Icons.grid_view : Icons.table_chart, size: Dimens.iconSize),
+              ),
+              Expanded(
+                child: Text("Pengujian",
+                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(color: ColorResources.primaryDark)),
+              ),
+              widget.logic.examination.status == ExaminationStatus.PENDING ||
+                      widget.logic.examination.status == ExaminationStatus.REVISION_QC1
+                  ? CustomCard(
+                      color: ColorResources.primary,
+                      borderRadius: Dimens.cardRadiusXLarge,
+                      onTap: _addOrUpdateRow,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: Dimens.paddingWidget, horizontal: Dimens.paddingPage),
+                        child: Row(
+                          children: [
+                            Text("Tambah",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelSmall
+                                    ?.copyWith(color: Colors.white, fontWeight: FontWeight.bold)),
+                            const SizedBox(width: Dimens.paddingGap),
+                            GestureDetector(child: const Icon(Icons.add, size: Dimens.iconSizeTitle, color: Colors.white)),
+                          ],
+                        ),
                       ),
-                    ),
-                  )
-                : Container(),
-          ],
-        ),
-        const SizedBox(height: Dimens.paddingWidget),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: Dimens.paddingWidget),
-          child: widget.logic.examination.userInput.isEmpty
-              ? _buildNoData()
-              : _view == InputView.tableView
-                  ? _buildTableView()
-                  : _buildListView(),
-        ),
-      ],
+                    )
+                  : Container(),
+            ],
+          ),
+          const SizedBox(height: Dimens.paddingWidget),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: Dimens.paddingWidget),
+            child: widget.logic.examination.userInput.isEmpty
+                ? _buildNoData()
+                : _view == InputView.tableView
+                    ? _buildTableView()
+                    : _buildListView(),
+          ),
+        ],
+      ),
     );
   }
 }

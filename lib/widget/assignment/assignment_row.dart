@@ -31,7 +31,7 @@ class AssignmentRow extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       const SizedBox(height: Dimens.paddingSmall),
-                      Text(examination.metode, style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Colors.blueGrey)),
+                      Text(examination.metode ?? "", style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Colors.blueGrey)),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -4,11 +4,10 @@ import 'package:k3_sipp_mobile/net/master_message.dart';
 import 'package:k3_sipp_mobile/net/response/response_type.dart';
 
 class ProgressDialog {
-  final BuildContext context;
   final String title;
   final Future<MasterMessage> logic;
 
-  ProgressDialog(this.context, this.title, this.logic);
+  ProgressDialog(this.title, this.logic);
 
   Future<MasterMessage> show({bool showDialog = true}) async {
     MasterMessage message;

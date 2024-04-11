@@ -41,7 +41,7 @@ class _UserPageState extends State<UserPage> {
   final UserLogic _logic = UserLogic();
 
   Future<void> _actionCreate() async {
-    final ProgressDialog progressDialog = ProgressDialog(context, "Memperbarui...", _logic.onCreate());
+    final ProgressDialog progressDialog = ProgressDialog("Memperbarui...", _logic.onCreate());
 
     MasterMessage message = await progressDialog.show();
     if (!TextUtils.isEmpty(message.token)) await AppRepository().setToken(message.token!);
@@ -76,7 +76,7 @@ class _UserPageState extends State<UserPage> {
   }
 
   Future<void> _actionUpdate() async {
-    final ProgressDialog progressDialog = ProgressDialog(context, "Memperbarui...", _logic.onUpdate(widget.user!));
+    final ProgressDialog progressDialog = ProgressDialog("Memperbarui...", _logic.onUpdate(widget.user!));
 
     MasterMessage message = await progressDialog.show();
     if (!TextUtils.isEmpty(message.token)) await AppRepository().setToken(message.token!);
@@ -258,6 +258,15 @@ class _UserPageState extends State<UserPage> {
               const SizedBox(height: Dimens.paddingSmall),
               CustomEditText(
                 width: double.infinity,
+                label: "No. SKP",
+                controller: _logic.noSkpController,
+                icon: const Icon(Icons.remember_me, color: ColorResources.primaryDark, size: Dimens.iconSize),
+                validator: (value) => ValidatorUtils.validateInputLength(context, value, 0, 255),
+                textInputType: TextInputType.text,
+              ),
+              const SizedBox(height: Dimens.paddingSmall),
+              CustomEditText(
+                width: double.infinity,
                 label: "Tanggal Lahir",
                 controller: _logic.birthDateController,
                 readOnly: true,
@@ -341,6 +350,7 @@ class _UserPageState extends State<UserPage> {
       _logic.usernameController.text = widget.user!.username;
       _logic.nameController.text = widget.user!.name;
       _logic.nipController.text = widget.user!.nip;
+      _logic.noSkpController.text = widget.user!.noSKP ?? "";
       _logic.emailController.text = widget.user!.email ?? "";
       _logic.phoneController.text = widget.user!.phone ?? "";
       if (widget.user!.dateOfBirth != null) {
@@ -359,6 +369,7 @@ class _UserPageState extends State<UserPage> {
     _logic.usernameController.dispose();
     _logic.nameController.dispose();
     _logic.nipController.dispose();
+    _logic.noSkpController.dispose();
     _logic.phoneController.dispose();
     _logic.emailController.dispose();
     _logic.birthDateController.dispose();

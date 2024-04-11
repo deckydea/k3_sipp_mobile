@@ -1,7 +1,7 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:k3_sipp_mobile/main.dart';
+import 'package:k3_sipp_mobile/model/device/device.dart';
+import 'package:k3_sipp_mobile/model/device/device_calibration.dart';
 import 'package:k3_sipp_mobile/model/examination/input/input_penerangan.dart';
 import 'package:k3_sipp_mobile/res/colors.dart';
 import 'package:k3_sipp_mobile/res/dimens.dart';
@@ -10,6 +10,7 @@ import 'package:k3_sipp_mobile/util/text_utils.dart';
 import 'package:k3_sipp_mobile/util/validator_utils.dart';
 import 'package:k3_sipp_mobile/widget/custom/custom_button.dart';
 import 'package:k3_sipp_mobile/widget/custom/custom_dialog_title.dart';
+import 'package:k3_sipp_mobile/widget/custom/custom_dropdown_button.dart';
 import 'package:k3_sipp_mobile/widget/custom/custom_edit_text.dart';
 
 class FormPenerangan extends StatefulWidget {
@@ -33,7 +34,14 @@ class _FormPeneranganState extends State<FormPenerangan> {
   final TextEditingController _value3Controller = TextEditingController();
   final TextEditingController _timeController = TextEditingController();
   final TextEditingController _noteController = TextEditingController();
+  final TextEditingController _deviceController = TextEditingController();
+  final TextEditingController _jumlahTKController = TextEditingController();
+  final List<DropdownMenuItem<SumberCahaya>> _dropdownSumberCahaya = [];
+  final List<DropdownMenuItem<JenisPengukuran>> _dropdownJenisPengukuran = [];
 
+  SumberCahaya? _selectedSumberCahaya;
+  JenisPengukuran? _selectedJenisPengukuran;
+  Device? _selectedDevice;
   TimeOfDay? _selectedTime;
   DataPenerangan? _data;
 
@@ -60,8 +68,11 @@ class _FormPeneranganState extends State<FormPenerangan> {
   }
 
   void _onUpdate() {
-    if (_formKey.currentState!.validate()) {
+    if (_formKey.currentState!.validate() && _selectedDevice != null) {
       DateTime now = DateTime.now();
+
+      DeviceCalibration deviceCalibration = DeviceCalibration(deviceId: _selectedDevice!.id!, name: "");
+
       DataPenerangan input = _data!.copyWith(
         location: _locationController.text,
         localLightingData: _localLightingData.text,
@@ -70,6 +81,10 @@ class _FormPeneranganState extends State<FormPenerangan> {
         value3: double.parse(_value3Controller.text),
         time: _selectedTime == null ? null : DateTime(now.year, now.month, now.day, _selectedTime!.hour, _selectedTime!.minute),
         note: _noteController.text,
+        jumlahTK: int.tryParse(_jumlahTKController.text),
+        deviceCalibration: deviceCalibration,
+        sumberCahaya: _selectedSumberCahaya,
+        jenisPengukuran: _selectedJenisPengukuran,
       );
 
       if (widget.onUpdate != null) widget.onUpdate!(input);
@@ -80,6 +95,8 @@ class _FormPeneranganState extends State<FormPenerangan> {
   void _onAdd() {
     if (_formKey.currentState!.validate()) {
       DateTime now = DateTime.now();
+      DeviceCalibration deviceCalibration = DeviceCalibration(deviceId: _selectedDevice!.id!);
+
       DataPenerangan input = DataPenerangan(
         location: _locationController.text,
         localLightingData: _localLightingData.text,
@@ -88,6 +105,10 @@ class _FormPeneranganState extends State<FormPenerangan> {
         value3: double.parse(_value3Controller.text),
         time: _selectedTime == null ? null : DateTime(now.year, now.month, now.day, _selectedTime!.hour, _selectedTime!.minute),
         note: _noteController.text,
+        jumlahTK: int.parse(_jumlahTKController.text),
+        deviceCalibration: deviceCalibration,
+        sumberCahaya: _selectedSumberCahaya,
+        jenisPengukuran: _selectedJenisPengukuran,
       );
       if (widget.onAdd != null) widget.onAdd!(input);
       Navigator.of(context).pop();
@@ -107,6 +128,14 @@ class _FormPeneranganState extends State<FormPenerangan> {
     }
   }
 
+  Future<void> _navigateSelectDevice() async {
+    var result = await navigatorKey.currentState?.pushNamed("/select_device");
+    if (result != null && result is Device) {
+      _selectedDevice = result;
+      _deviceController.text = _selectedDevice!.name ?? "";
+    }
+  }
+
   void _init() {
     if (widget.data != null) {
       _data = widget.data!;
@@ -115,19 +144,35 @@ class _FormPeneranganState extends State<FormPenerangan> {
       _value1Controller.text = "${_data!.value1}";
       _value2Controller.text = "${_data!.value2}";
       _value3Controller.text = "${_data!.value3}";
+      _jumlahTKController.text = "${_data!.jumlahTK}";
+      _deviceController.text = _data!.deviceCalibration != null ? "${_data!.deviceCalibration!.deviceName}" : "";
       if (!TextUtils.isEmpty(_data!.note)) _noteController.text = _data!.note!;
       if (_data!.time != null) {
         _selectedTime = TimeOfDay.fromDateTime(_data!.time!);
         _timeController.text = _selectedTime!.format(context);
       }
+
+      _selectedJenisPengukuran = _data!.jenisPengukuran;
+      _selectedSumberCahaya = _data!.sumberCahaya;
     }
 
-    _initialized = true;
-  }
+    for (SumberCahaya sumberCahaya in SumberCahaya.values) {
+      _dropdownSumberCahaya.add(DropdownMenuItem(
+        value: sumberCahaya,
+        child: Text(sumberCahaya.label),
+      ));
+    }
+    _selectedSumberCahaya = _selectedSumberCahaya ?? SumberCahaya.alami;
 
-  @override
-  void initState() {
-    super.initState();
+    for (JenisPengukuran jenisPengukuran in JenisPengukuran.values) {
+      _dropdownJenisPengukuran.add(DropdownMenuItem(
+        value: jenisPengukuran,
+        child: Text(jenisPengukuran.label),
+      ));
+    }
+    _selectedJenisPengukuran = _selectedJenisPengukuran ?? JenisPengukuran.lokal;
+
+    _initialized = true;
   }
 
   @override
@@ -139,6 +184,8 @@ class _FormPeneranganState extends State<FormPenerangan> {
     _value3Controller.dispose();
     _timeController.dispose();
     _noteController.dispose();
+    _jumlahTKController.dispose();
+    _deviceController.dispose();
     super.dispose();
   }
 
@@ -153,9 +200,23 @@ class _FormPeneranganState extends State<FormPenerangan> {
           child: Column(
             children: [
               CustomDialogTitle(
-                titleWidget: Text("Form Kebisingan", style: Theme.of(context).textTheme.headlineLarge),
+                titleWidget: Text("Form Penerangan", style: Theme.of(context).textTheme.headlineLarge),
                 withCloseButton: true,
               ),
+              const SizedBox(height: Dimens.paddingSmall),
+              CustomEditText(
+                label: "Alat",
+                controller: _deviceController,
+                width: double.infinity,
+                validator: (value) => ValidatorUtils.validateNotEmpty(context, value),
+                textInputType: TextInputType.text,
+                readOnly: true,
+                cursorVisible: false,
+                onTap: _navigateSelectDevice,
+              ),
+              const SizedBox(height: Dimens.paddingSmall),
+              const Divider(color: Colors.grey),
+              const SizedBox(height: Dimens.paddingSmall),
               CustomEditText(
                 label: "Lokasi",
                 controller: _locationController,
@@ -219,6 +280,36 @@ class _FormPeneranganState extends State<FormPenerangan> {
                 onTap: () => _selectTime(context),
                 textInputType: TextInputType.text,
                 validator: (value) => ValidatorUtils.validateNotEmpty(context, value),
+              ),
+              const SizedBox(height: Dimens.paddingSmall),
+              StatefulBuilder(
+                builder: (BuildContext context, insideState) {
+                  return CustomDropdownButton(
+                    items: _dropdownJenisPengukuran,
+                    value: _selectedJenisPengukuran,
+                    width: double.infinity,
+                    onChanged: (value) => value != null ? insideState(() => _selectedJenisPengukuran = value) : null,
+                  );
+                },
+              ),
+              const SizedBox(height: Dimens.paddingSmall),
+              StatefulBuilder(
+                builder: (BuildContext context, insideState) {
+                  return CustomDropdownButton(
+                    items: _dropdownSumberCahaya,
+                    value: _selectedSumberCahaya,
+                    width: double.infinity,
+                    onChanged: (value) => value != null ? insideState(() => _selectedSumberCahaya = value) : null,
+                  );
+                },
+              ),
+              const SizedBox(height: Dimens.paddingSmall),
+              CustomEditText(
+                label: "Jumlah Tenaga Kerja yang terpapar",
+                controller: _jumlahTKController,
+                width: double.infinity,
+                validator: (value) => ValidatorUtils.validateInputLength(context, value, 0, 200),
+                textInputType: TextInputType.text,
               ),
               const SizedBox(height: Dimens.paddingSmall),
               CustomEditText(

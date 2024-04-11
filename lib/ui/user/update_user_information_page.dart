@@ -40,7 +40,7 @@ class _UpdateUserInformationPageState extends State<UpdateUserInformationPage> {
   final UpdateUserInformationLogic _logic = UpdateUserInformationLogic();
 
   Future<void> _actionUpdate() async {
-    final ProgressDialog progressDialog = ProgressDialog(context, "Memperbarui...", _logic.onUpdate(widget.user!));
+    final ProgressDialog progressDialog = ProgressDialog("Memperbarui...", _logic.onUpdate(widget.user!));
 
     MasterMessage message = await progressDialog.show();
     if (!TextUtils.isEmpty(message.token)) await AppRepository().setToken(message.token!);
@@ -158,6 +158,15 @@ class _UpdateUserInformationPageState extends State<UpdateUserInformationPage> {
                 icon: const Icon(Icons.card_membership, color: ColorResources.primaryDark, size: Dimens.iconSize),
                 validator: (value) => ValidatorUtils.validateNotEmpty(context, value),
                 textInputType: TextInputType.number,
+              ),
+              const SizedBox(height: Dimens.paddingSmall),
+              CustomEditText(
+                width: double.infinity,
+                label: "No. SKP",
+                controller: _logic.noSkpController,
+                icon: const Icon(Icons.remember_me, color: ColorResources.primaryDark, size: Dimens.iconSize),
+                validator: (value) => ValidatorUtils.validateNotEmpty(context, value),
+                textInputType: TextInputType.text,
               ),
               const SizedBox(height: Dimens.paddingSmall),
               CustomEditText(

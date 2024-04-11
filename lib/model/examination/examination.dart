@@ -4,10 +4,13 @@ import 'package:k3_sipp_mobile/model/company/company.dart';
 import 'package:k3_sipp_mobile/model/device/device_calibration.dart';
 import 'package:k3_sipp_mobile/model/examination/examination_status.dart';
 import 'package:k3_sipp_mobile/model/examination/examination_type.dart';
-import 'package:k3_sipp_mobile/model/examination/input/input_kebisingan.dart';
+import 'package:k3_sipp_mobile/model/examination/input/input_iklim_kerja.dart';
+import 'package:k3_sipp_mobile/model/examination/input/input_kebisingan_frekuensi.dart';
+import 'package:k3_sipp_mobile/model/examination/input/input_kebisingan_lk.dart';
 import 'package:k3_sipp_mobile/model/examination/input/input_penerangan.dart';
 import 'package:k3_sipp_mobile/model/examination/result/result_kebisingan_lk.dart';
 import 'package:k3_sipp_mobile/model/examination/result/result_penerangan.dart';
+import 'package:k3_sipp_mobile/model/user/user.dart';
 import 'package:k3_sipp_mobile/repository/examination_repository.dart';
 import 'package:k3_sipp_mobile/res/colors.dart';
 import 'package:k3_sipp_mobile/res/dimens.dart';
@@ -17,14 +20,12 @@ class Examination {
   int? id;
   int? templateId;
   String typeOfExaminationName;
-  DateTime? implementationDate;
-  DateTime? deadlineDate;
   Company? company;
-  int petugasId;
-  String petugasName;
+  User? petugasExaminations;
   int? analisId;
   String? analisName;
-  String metode;
+  String? metode;
+  String? lokasi;
   int? qc1By;
   String? qc1ByName;
   DateTime? qc1Datetime;
@@ -34,8 +35,10 @@ class Examination {
   int? signedBy;
   String? signedByName;
   DateTime? signedDatetime;
+  DateTime? implementationTimeStart;
+  DateTime? implementationTimeEnd;
   ExaminationStatus? status;
-  List<DeviceCalibration> deviceCalibrations;
+  List<DeviceCalibration>? deviceCalibrations;
 
   dynamic examinationResult;
   dynamic userInput;
@@ -47,14 +50,12 @@ class Examination {
     this.id,
     this.templateId,
     required this.typeOfExaminationName,
-    this.implementationDate,
-    this.deadlineDate,
     this.company,
-    required this.petugasId,
-    required this.petugasName,
+    this.petugasExaminations,
     this.analisId,
     this.analisName,
-    required this.metode,
+    this.metode,
+    this.lokasi,
     this.qc1By,
     this.qc1ByName,
     this.qc1Datetime,
@@ -64,8 +65,10 @@ class Examination {
     this.signedBy,
     this.signedByName,
     this.signedDatetime,
+    this.implementationTimeStart,
+    this.implementationTimeEnd,
     this.status,
-    required this.deviceCalibrations,
+    this.deviceCalibrations,
     this.examinationResult,
     this.userInput,
   });
@@ -226,22 +229,22 @@ class Examination {
 
   Examination replica() {
     List<DeviceCalibration> deviceCalibrationsReplica = [];
-    for (var element in deviceCalibrations) {
-      deviceCalibrationsReplica.add(element.replica());
+    if (deviceCalibrations != null) {
+      for (var element in deviceCalibrations!) {
+        deviceCalibrationsReplica.add(element.replica());
+      }
     }
 
     return Examination(
       id: id,
       templateId: templateId,
       typeOfExaminationName: typeOfExaminationName,
-      implementationDate: implementationDate,
-      deadlineDate: deadlineDate,
       company: company?.replica(),
-      petugasId: petugasId,
-      petugasName: petugasName,
+      petugasExaminations: petugasExaminations?.replica,
       analisId: analisId,
       analisName: analisName,
       metode: metode,
+      lokasi: lokasi,
       qc1By: qc1By,
       qc1ByName: qc1ByName,
       qc1Datetime: qc1Datetime,
@@ -251,6 +254,8 @@ class Examination {
       signedBy: signedBy,
       signedByName: signedByName,
       signedDatetime: signedDatetime,
+      implementationTimeStart: implementationTimeStart,
+      implementationTimeEnd: implementationTimeEnd,
       status: status,
       deviceCalibrations: deviceCalibrationsReplica,
       examinationResult: examinationResult,
@@ -263,14 +268,12 @@ class Examination {
       'id': id,
       'templateId': templateId,
       'typeOfExaminationName': typeOfExaminationName,
-      'implementationDate': implementationDate == null ? null : DateTimeUtils.format(implementationDate!),
-      'deadlineDate': deadlineDate == null ? null : DateTimeUtils.formatToISODate(deadlineDate!),
       'company': company,
-      'petugasId': petugasId,
-      'petugasName': petugasName,
+      'petugasExaminations': petugasExaminations,
       'analisId': analisId,
       'analisName': analisName,
       'metode': metode,
+      'lokasi': lokasi,
       'qc1_by': qc1By,
       'qc1Name': qc1ByName,
       "qc1_datetime": qc1Datetime == null ? null : DateTimeUtils.format(qc1Datetime!),
@@ -280,8 +283,10 @@ class Examination {
       'signed_by': signedBy,
       'signedByName': signedByName,
       "signed_datetime": signedDatetime == null ? null : DateTimeUtils.format(signedDatetime!),
+      "implementationTimeStart": implementationTimeStart == null ? null : DateTimeUtils.format(implementationTimeStart!),
+      "implementationTimeEnd": implementationTimeEnd == null ? null : DateTimeUtils.format(implementationTimeEnd!),
       'status': status == null ? null : EnumToString.convertToString(status),
-      'deviceCalibrations': deviceCalibrations.toList(),
+      'deviceCalibrations': deviceCalibrations == null ? [] : deviceCalibrations?.toList(),
       'userInput': userInput,
       'examinationResult': examinationResult,
     };
@@ -315,6 +320,22 @@ class Examination {
           }
           examinationResult = results;
           break;
+        case ExaminationTypeName.kebisinganFrekuensi:
+          Iterable iterable = json["examinationResult"];
+          List<DataKebisinganFrekuensi> results = [];
+          for (var result in iterable) {
+            results.add(DataKebisinganFrekuensi.fromJson(result));
+          }
+          examinationResult = results;
+          break;
+        case ExaminationTypeName.iklimKerja:
+          Iterable iterable = json["examinationResult"];
+          List<DataIklimKerja> results = [];
+          for (var result in iterable) {
+            results.add(DataIklimKerja.fromJson(result));
+          }
+          examinationResult = results;
+          break;
       }
     }
 
@@ -337,6 +358,22 @@ class Examination {
           }
           userInput = userInputs;
           break;
+        case ExaminationTypeName.kebisinganFrekuensi:
+          Iterable iterable = json["userInput"];
+          List<DataKebisinganFrekuensi> userInputs = [];
+          for (var userInput in iterable) {
+            userInputs.add(DataKebisinganFrekuensi.fromJson(userInput));
+          }
+          userInput = userInputs;
+          break;
+        case ExaminationTypeName.iklimKerja:
+          Iterable iterable = json["userInput"];
+          List<DataIklimKerja> userInputs = [];
+          for (var userInput in iterable) {
+            userInputs.add(DataIklimKerja.fromJson(userInput));
+          }
+          userInput = userInputs;
+          break;
       }
     }
 
@@ -344,14 +381,14 @@ class Examination {
       id: json['id'],
       templateId: json['templateId'],
       typeOfExaminationName: json['typeOfExaminationName'],
-      implementationDate: json['implementationDate'] == null ? null : DateTime.parse(json['implementationDate']).toLocal(),
-      deadlineDate: json['deadlineDate'] == null ? null : DateTime.parse(json['deadlineDate']).toLocal(),
       company: json['template'] == null ? null : Company.fromJson(json['template']['company']),
-      petugasId: json['petugasId'] ?? (json['Petugas'] == null ? null : json['Petugas']['id']),
-      petugasName: json['PetugasName'] ?? (json['Petugas'] == null ? null : json['Petugas']['name']),
+      petugasExaminations: json['petugasExaminations'] == null || json['petugasExaminations'].isEmpty
+          ? null
+          : User.fromJson(json['petugasExaminations'][0]['Petugas']),
       analisId: json['analisId'] ?? (json['Analis'] == null ? null : json['Analis']['id']),
       analisName: json['Analis'] == null ? null : json['Analis']['name'],
       metode: json['metode'],
+      lokasi: json['lokasi'],
       qc1By: json['qc1_by'],
       qc1ByName: json['qc1ByName'],
       qc1Datetime: json['qc1_datetime'] == null ? null : DateTime.parse(json['qc1_datetime']).toLocal(),
@@ -361,6 +398,10 @@ class Examination {
       signedBy: json['signed_by'],
       signedByName: json['signedByName'],
       signedDatetime: json['signed_datetime'] == null ? null : DateTime.parse(json['signed_datetime']).toLocal(),
+      implementationTimeStart:
+          json['implementationTimeStart'] == null ? null : DateTime.parse(json['implementationTimeStart']).toLocal(),
+      implementationTimeEnd:
+          json['implementationTimeEnd'] == null ? null : DateTime.parse(json['implementationTimeEnd']).toLocal(),
       status: ExaminationStatus.values.firstWhere((element) => element.name == json['status']),
       deviceCalibrations: deviceCalibrations,
       userInput: userInput,

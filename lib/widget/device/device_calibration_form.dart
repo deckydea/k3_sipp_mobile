@@ -109,7 +109,6 @@ class DeviceCalibrationFormState extends State<DeviceCalibrationForm> {
 
   @override
   Widget build(BuildContext context) {
-    print("widget.needCalibrationInternal: ${widget.needCalibrationInternal}");
     return _hideForm
         ? Container()
         : CustomCard(

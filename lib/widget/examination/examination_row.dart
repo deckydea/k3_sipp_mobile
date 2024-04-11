@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:k3_sipp_mobile/model/examination/examination.dart';
 import 'package:k3_sipp_mobile/res/dimens.dart';
-import 'package:k3_sipp_mobile/util/date_time_utils.dart';
+import 'package:k3_sipp_mobile/util/enum_translation_utils.dart';
 import 'package:k3_sipp_mobile/widget/custom/custom_card.dart';
 
 class ExaminationRow extends StatelessWidget {
@@ -37,19 +37,22 @@ class ExaminationRow extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(examination.metode, style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Colors.blueGrey)),
-                      Text(
-                          examination.implementationDate != null
-                              ? DateTimeUtils.formatToDate(examination.implementationDate!)
-                              : "Not Implemented",
-                          style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Colors.blueGrey)),
+                      Text(examination.metode ?? "", style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.blueGrey)),
+                      // Text(
+                      //     examination.implementationDate != null
+                      //         ? DateTimeUtils.formatToDate(examination.implementationDate!)
+                      //         : "Not Implemented",
+                      //     style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.blueGrey)),
+                      // Text(
+                      //     examination.statusString,
+                      //     style: Theme.of(context).textTheme.bodySmall?.copyWith(color: examination.statusString)),
+                      examination.statusBadge,
                     ],
                   ),
-                  const SizedBox(height: Dimens.paddingSmallGap),
-                  Text(examination.typeOfExaminationName, style: Theme.of(context).textTheme.headlineMedium),
+                  Text(EnumTranslationUtils.examinationType(examination.typeOfExaminationName), style: Theme.of(context).textTheme.headlineMedium),
                   const SizedBox(height: Dimens.paddingSmallGap),
                   Text(examination.examinationType != null ? examination.examinationType!.description : "",
-                      style: Theme.of(context).textTheme.labelMedium),
+                      style: Theme.of(context).textTheme.labelSmall),
                 ],
               ),
             ),

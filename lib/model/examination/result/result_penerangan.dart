@@ -1,20 +1,26 @@
+import 'package:k3_sipp_mobile/model/device/device_calibration.dart';
+import 'package:k3_sipp_mobile/model/examination/input/input_penerangan.dart';
 import 'package:k3_sipp_mobile/util/date_time_utils.dart';
 
 class ResultPenerangan {
-  int id;
-  String location;
-  String localLightingData;
-  double average;
-  double standardDeviation;
-  double upresisi;
-  double ukalibrasi;
-  double ugabungan;
-  double u95;
-  double ketidakpastian;
-  double rsu;
-  double toleransi;
-  double batasKeterimaan;
-  DateTime time;
+  final int id;
+  final String location;
+  final String localLightingData;
+  final double average;
+  final double standardDeviation;
+  final double upresisi;
+  final double ukalibrasi;
+  final double ugabungan;
+  final double u95;
+  final double ketidakpastian;
+  final double rsu;
+  final double toleransi;
+  final double batasKeterimaan;
+  final DateTime time;
+  final int jumlahTK;
+  final SumberCahaya sumberCahaya;
+  final JenisPengukuran jenisPengukuran;
+  final DeviceCalibration? deviceCalibration;
 
   ResultPenerangan({
     required this.id,
@@ -31,6 +37,10 @@ class ResultPenerangan {
     required this.toleransi,
     required this.batasKeterimaan,
     required this.time,
+    required this.jumlahTK,
+    required this.sumberCahaya,
+    required this.jenisPengukuran,
+    this.deviceCalibration,
   });
 
   Map<String, dynamic> toJson() => {
@@ -48,6 +58,10 @@ class ResultPenerangan {
     'toleransi': toleransi,
     'batasKeterimaan': batasKeterimaan,
     'time': DateTimeUtils.format(time),
+    'jumlahTK': jumlahTK,
+    'sumberCahaya': sumberCahaya.label,
+    'jenisPengukuran': jenisPengukuran.label,
+    'deviceCalibration': deviceCalibration,
   };
 
   static ResultPenerangan fromJson(Map<String, dynamic> json) {
@@ -66,6 +80,10 @@ class ResultPenerangan {
       toleransi: double.parse(json['toleransi'].toString()),
       batasKeterimaan: double.parse(json['batasKeterimaan'].toString()),
       time: DateTime.parse(json['time']).toLocal(),
+      jumlahTK: json['jumlahTK'],
+      sumberCahaya: SumberCahaya.values.firstWhere((element) => element.label == json['sumberCahaya']),
+      jenisPengukuran: JenisPengukuran.values.firstWhere((element) => element.label == json['jenisPengukuran']),
+      deviceCalibration: json['deviceCalibration'] == null ? null : DeviceCalibration.fromJson(json['deviceCalibration']),
     );
   }
 }

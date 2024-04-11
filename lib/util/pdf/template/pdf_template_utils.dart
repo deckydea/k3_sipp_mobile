@@ -27,6 +27,7 @@ class PdfHelperUtils {
     final kanLogo = MemoryImage((await rootBundle.load("assets/drawable/kan.png")).buffer.asUint8List());
 
     return Container(
+      margin: const EdgeInsets.only(bottom: Dimens.paddingMedium),
       padding: const EdgeInsets.only(bottom: Dimens.paddingWidget),
       decoration: const BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: PdfColors.black))),
       child: Row(
@@ -133,20 +134,42 @@ class PdfHelperUtils {
     );
   }
 
+  static Widget titleValue({required Widget title, required Widget value}) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Expanded(flex: 3, child: title),
+        SizedBox(width: Dimens.paddingSmall),
+        Text(": ", style: smallStyle),
+        Expanded(flex: 3, child: value),
+      ],
+    );
+  }
+
   static Widget signatureWidget(
-      {required DateTime date, required String title, required String name, required String nip, Uint8List? signature}) {
+      {DateTime? date, required String title, required String name, required String nip, Uint8List? signature}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
+        date == null
+            ? Container()
+            : Text(
+                "Bandung, ${DateTimeUtils.formatToDate(date)}",
+                style: PdfHelperUtils.smallStyle,
+                textAlign: TextAlign.center,
+              ),
         Text(
-          "Bandung, ${DateTimeUtils.formatToDate(date)}\n$title,",
+          "$title,",
           style: PdfHelperUtils.smallStyle,
           textAlign: TextAlign.center,
         ),
+        SizedBox(height: Dimens.paddingSmallGap),
         signature == null
             ? SizedBox(height: Dimens.paddingLarge)
             : Image(MemoryImage(signature), fit: BoxFit.contain, height: Dimens.iconSizeMedium, width: Dimens.iconSizeMedium),
+        SizedBox(height: Dimens.paddingSmallGap),
         RichText(
           textAlign: TextAlign.center,
           text: TextSpan(
@@ -164,7 +187,7 @@ class PdfHelperUtils {
     );
   }
 
-  static Widget bulletWidget({required Text text}) {
+  static Widget bulletWidget({required Widget text}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: Dimens.paddingSmallGap),
       child: Row(

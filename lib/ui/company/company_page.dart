@@ -15,7 +15,7 @@ import 'package:k3_sipp_mobile/util/dialog_utils.dart';
 import 'package:k3_sipp_mobile/util/message_utils.dart';
 import 'package:k3_sipp_mobile/util/text_utils.dart';
 import 'package:k3_sipp_mobile/widget/custom/custom_button.dart';
-import 'package:k3_sipp_mobile/widget/custom/custom_form_inputs.dart';
+import 'package:k3_sipp_mobile/widget/custom/custom_form_input.dart';
 import 'package:k3_sipp_mobile/widget/progress_dialog.dart';
 
 class CompanyPage extends StatefulWidget {
@@ -31,7 +31,7 @@ class _CompanyPageState extends State<CompanyPage> {
   final CompanyLogic _logic = CompanyLogic();
 
   Future<void> _actionUpdate() async {
-    final ProgressDialog progressDialog = ProgressDialog(context, "Memperbarui...", _logic.onUpdateCompany());
+    final ProgressDialog progressDialog = ProgressDialog("Memperbarui...", _logic.onUpdateCompany());
 
     MasterMessage message = await progressDialog.show();
     if (!TextUtils.isEmpty(message.token)) await AppRepository().setToken(message.token!);
@@ -45,7 +45,7 @@ class _CompanyPageState extends State<CompanyPage> {
             await MessageUtils.showMessage(
               context: context,
               title: "Berhasil",
-              content: "${company.companyName ?? ""} berhasil diperbarui",
+              content: "${company.companyName} berhasil diperbarui",
             );
           }
           navigatorKey.currentState?.pop();
@@ -73,7 +73,7 @@ class _CompanyPageState extends State<CompanyPage> {
   }
 
   Future<void> _actionCreate() async {
-    final ProgressDialog progressDialog = ProgressDialog(context, "Mendaftarkan...", _logic.onCreateCompany());
+    final ProgressDialog progressDialog = ProgressDialog("Mendaftarkan...", _logic.onCreateCompany());
 
     MasterMessage message = await progressDialog.show();
     if (!TextUtils.isEmpty(message.token)) await AppRepository().setToken(message.token!);
@@ -87,7 +87,7 @@ class _CompanyPageState extends State<CompanyPage> {
             await MessageUtils.showMessage(
               context: context,
               title: "Berhasil",
-              content: "${company.companyName ?? ""} berhasil ditambahkan",
+              content: "${company.companyName} berhasil ditambahkan",
             );
           }
           navigatorKey.currentState?.pop(company);
@@ -119,8 +119,8 @@ class _CompanyPageState extends State<CompanyPage> {
       padding: const EdgeInsets.all(Dimens.paddingPage),
       child: Column(
         children: [
-          CustomFormInputs(
-            formKey: _logic.formKey,
+          CustomFormInput(
+            key: _logic.formKey,
             dataInputs: _logic.inputs,
           ),
           const SizedBox(height: Dimens.paddingMedium),
@@ -144,12 +144,17 @@ class _CompanyPageState extends State<CompanyPage> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         iconTheme: const IconThemeData(color: ColorResources.primaryDark),
         backgroundColor: ColorResources.background,
-        title: Text(_logic.isUpdate ? "${_logic.company!.companyName}" : "Register Perusahaan",
+        title: Text(_logic.isUpdate ? _logic.company!.companyName : "Register Perusahaan",
             style: Theme.of(context).textTheme.headlineLarge),
       ),
       body: _buildBody(),

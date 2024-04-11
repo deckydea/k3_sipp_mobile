@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:k3_sipp_mobile/model/group/user_group.dart';
 import 'package:k3_sipp_mobile/util/date_time_utils.dart';
 import 'package:k3_sipp_mobile/util/text_utils.dart';
@@ -15,6 +13,7 @@ class User {
   String? password;
   String name;
   String nip;
+  String? noSKP;
   String? signature;
   DateTime? dateOfBirth;
   String? email;
@@ -33,6 +32,7 @@ class User {
     this.password,
     required this.name,
     required this.nip,
+    this.noSKP,
     this.signature,
     this.dateOfBirth,
     this.email,
@@ -54,6 +54,7 @@ class User {
         password: password,
         name: name,
         nip: nip,
+        noSKP: noSKP,
         signature: signature,
         dateOfBirth: dateOfBirth,
         email: email,
@@ -71,6 +72,7 @@ class User {
         if (password != null) 'password': password,
         'name': name,
         'nip': nip,
+        'noSKP': noSKP,
         if (signature != null) 'signature': signature,
         if (dateOfBirth != null) 'dateOfBirth': DateTimeUtils.format(dateOfBirth!),
         if (email != null) 'email': email,
@@ -85,10 +87,11 @@ class User {
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
       id: json['id'],
-      username: json['username'],
+      username: json['username'] ?? "",
       password: json['password'],
       name: json['name'],
       nip: json['nip'],
+      noSKP: json['noSKP'],
       signature: json['signature'],
       dateOfBirth: json['dateOfBirth'] == null ? null : DateTime.parse(json['dateOfBirth']).toLocal(),
       email: json['email'],

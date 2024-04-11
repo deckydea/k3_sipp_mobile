@@ -1,18 +1,16 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:k3_sipp_mobile/model/examination/input/input_kebisingan.dart';
+import 'package:k3_sipp_mobile/model/examination/input/input_kebisingan_lk.dart';
 import 'package:k3_sipp_mobile/model/examination/result/result_kebisingan_lk.dart';
 import 'package:k3_sipp_mobile/res/colors.dart';
 import 'package:k3_sipp_mobile/res/dimens.dart';
 import 'package:k3_sipp_mobile/util/date_time_utils.dart';
 import 'package:k3_sipp_mobile/widget/custom/custom_card.dart';
 
-class InputKebisinganRow extends StatelessWidget {
+class InputKebisinganLKRow extends StatelessWidget {
   final DataKebisinganLK input;
   final ResultKebisinganLK? result;
 
-  const InputKebisinganRow({super.key, required this.input, this.result});
+  const InputKebisinganLKRow({super.key, required this.input, this.result});
 
   @override
   Widget build(BuildContext context) {
@@ -28,10 +26,10 @@ class InputKebisinganRow extends StatelessWidget {
           children: [
             Text(
               key,
-              style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w500),
+              style: theme.textTheme.labelSmall?.copyWith(fontWeight: FontWeight.w500),
             ),
             Text(value,
-                style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold, wordSpacing: 2, color: valueColor)),
+                style: theme.textTheme.labelSmall?.copyWith(fontWeight: FontWeight.bold, wordSpacing: 2, color: valueColor)),
           ],
         ),
       );
@@ -113,7 +111,7 @@ class InputKebisinganRow extends StatelessWidget {
           collapsedShape: const Border.fromBorderSide(BorderSide.none),
           title: Text(
             input.location,
-            style: theme.textTheme.titleMedium?.copyWith(color: ColorResources.primaryDark, fontWeight: FontWeight.bold),
+            style: theme.textTheme.titleSmall?.copyWith(color: ColorResources.primaryDark, fontWeight: FontWeight.bold),
           ),
           children: [
             keyValue(

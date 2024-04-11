@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:k3_sipp_mobile/res/colors.dart';
 import 'package:k3_sipp_mobile/res/dimens.dart';
 
@@ -27,7 +28,9 @@ class CustomEditText extends StatelessWidget {
   final bool withBorder;
   final FocusNode? focusNode;
   final GestureTapCallback? onIconTap;
-  final List<TextInputFormatter>? inputFormatters;
+
+  // Add isCurrencyInput property to determine if currency input is enabled
+  final bool isCurrencyInput;
 
   const CustomEditText({
     super.key,
@@ -53,15 +56,16 @@ class CustomEditText extends StatelessWidget {
     this.fontSize = Dimens.fontDefault,
     this.focusNode,
     this.onIconTap,
-    this.inputFormatters,
     this.padding,
+
+    // Initialize isCurrencyInput with default value false
+    this.isCurrencyInput = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: width,
-      // height: height,
       child: TextFormField(
         scrollPadding: EdgeInsets.zero,
         keyboardType: textInputType,
@@ -75,13 +79,22 @@ class CustomEditText extends StatelessWidget {
         onChanged: onChanged,
         initialValue: initialValue,
         readOnly: readOnly,
-        autocorrect: false,
+
+        // Conditionally apply CurrencyInputFormatter based on isCurrencyInput
+        inputFormatters: isCurrencyInput
+            ? [
+                FilteringTextInputFormatter.digitsOnly, // Allow only digits
+                CurrencyInputFormatter(), // Format input as currency
+              ]
+            : null,
+
         textAlign: textAlign,
-        inputFormatters: inputFormatters,
+
         focusNode: focusNode,
+
         decoration: InputDecoration(
           isDense: true,
-          contentPadding:  const EdgeInsets.symmetric(vertical: Dimens.textBoxHeightSmall, horizontal: Dimens.paddingWidget),
+          contentPadding: const EdgeInsets.symmetric(vertical: Dimens.textBoxHeightSmall, horizontal: Dimens.paddingSmall),
           filled: true,
           fillColor: enabled ? Colors.white : Colors.grey[50],
           labelText: label,
@@ -114,10 +127,45 @@ class CustomEditText extends StatelessWidget {
           errorMaxLines: 5,
           errorStyle: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.red),
         ),
+
         style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: enabled ? ColorResources.text : Colors.grey),
+
         maxLength: maxLength,
+
         maxLines: maxLines ?? (textInputType == TextInputType.multiline ? 3 : 1),
       ),
+    );
+  }
+}
+
+// CurrencyInputFormatter class for formatting currency input
+class CurrencyInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+    if (newValue.selection.baseOffset == newValue.selection.extentOffset) {
+      if (newValue.text.startsWith('0') && newValue.text.length > 1) {
+        return newValue.copyWith(
+          text: newValue.text.substring(0, newValue.text.length - 1),
+          selection: TextSelection.collapsed(offset: newValue.text.length - 1),
+        );
+      }
+    }
+
+    String newText = newValue.text.replaceAll(RegExp(r'[^0-9]'), '');
+
+    if (newText.isEmpty) {
+      return const TextEditingValue();
+    }
+
+    int value = int.parse(newText);
+
+    final moneyMask = NumberFormat("#,##0", "en_US");
+
+    String newTextFormatted = moneyMask.format(value);
+
+    return TextEditingValue(
+      text: newTextFormatted,
+      selection: TextSelection.collapsed(offset: newTextFormatted.length),
     );
   }
 }

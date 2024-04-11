@@ -14,9 +14,8 @@ import 'package:k3_sipp_mobile/res/dimens.dart';
 import 'package:k3_sipp_mobile/util/dialog_utils.dart';
 import 'package:k3_sipp_mobile/util/message_utils.dart';
 import 'package:k3_sipp_mobile/util/text_utils.dart';
-import 'package:k3_sipp_mobile/util/validator_utils.dart';
 import 'package:k3_sipp_mobile/widget/custom/custom_button.dart';
-import 'package:k3_sipp_mobile/widget/custom/custom_edit_text.dart';
+import 'package:k3_sipp_mobile/widget/custom/custom_form_input.dart';
 import 'package:k3_sipp_mobile/widget/progress_dialog.dart';
 
 class DevicePage extends StatefulWidget {
@@ -32,7 +31,7 @@ class _DevicePageState extends State<DevicePage> {
   final DeviceLogic _logic = DeviceLogic();
 
   Future<void> _actionUpdate() async {
-    final ProgressDialog progressDialog = ProgressDialog(context, "Memperbarui...", _logic.onUpdateDevice());
+    final ProgressDialog progressDialog = ProgressDialog("Memperbarui...", _logic.onUpdateDevice());
 
     MasterMessage message = await progressDialog.show();
     if(!TextUtils.isEmpty(message.token)) await AppRepository().setToken(message.token!);
@@ -68,7 +67,7 @@ class _DevicePageState extends State<DevicePage> {
   }
 
   Future<void> _actionCreate() async {
-    final ProgressDialog progressDialog = ProgressDialog(context, "Mendaftarkan...", _logic.onCreateDevice());
+    final ProgressDialog progressDialog = ProgressDialog("Mendaftarkan...", _logic.onCreateDevice());
 
     MasterMessage message = await progressDialog.show();
     if(!TextUtils.isEmpty(message.token)) await AppRepository().setToken(message.token!);
@@ -106,53 +105,13 @@ class _DevicePageState extends State<DevicePage> {
   Widget _buildBody() {
     return Padding(
       padding: const EdgeInsets.all(Dimens.paddingPage),
-      child: Form(
-        key: _logic.formKey,
+      child: SingleChildScrollView(
+        physics: const ClampingScrollPhysics(),
         child: Column(
           children: [
-            CustomEditText(
-              width: double.infinity,
-              label: "Nama Alat",
-              controller: _logic.nameController,
-              icon: const Icon(Icons.monitor, color: Colors.black, size: Dimens.iconSize),
-              validator: (value) => ValidatorUtils.validateNotEmpty(context, value),
-              textInputType: TextInputType.name,
-            ),
-            const SizedBox(height: Dimens.paddingSmall),
-            CustomEditText(
-              width: double.infinity,
-              label: "Deskripsi",
-              controller: _logic.descriptionController,
-              icon: const Icon(Icons.description, color: Colors.black, size: Dimens.iconSize),
-              validator: (value) => ValidatorUtils.validateInputLength(context, value, 0, 200),
-              textInputType: TextInputType.name,
-            ),
-            const SizedBox(height: Dimens.paddingSmall),
-            CustomEditText(
-              width: double.infinity,
-              label: "Value Kalibrasi",
-              controller: _logic.calibrationValueController,
-              icon: const Icon(Icons.confirmation_number_outlined, color: Colors.black, size: Dimens.iconSize),
-              validator: (value) => ValidatorUtils.validateNotEmpty(context, value),
-              textInputType: TextInputType.number,
-            ),
-            const SizedBox(height: Dimens.paddingSmall),
-            CustomEditText(
-              width: double.infinity,
-              label: "U95",
-              icon: const Icon(Icons.numbers_outlined, color: Colors.black, size: Dimens.iconSize),
-              controller: _logic.u95Controller,
-              validator: (value) => ValidatorUtils.validateNotEmpty(context, value),
-              textInputType: TextInputType.number,
-            ),
-            const SizedBox(height: Dimens.paddingSmall),
-            CustomEditText(
-              width: double.infinity,
-              label: "K (Coverage Factor)",
-              controller: _logic.coverageFactorController,
-              icon: const Icon(Icons.landscape_outlined, color: Colors.black, size: Dimens.iconSize),
-              validator: (value) => ValidatorUtils.validateNotEmpty(context, value),
-              textInputType: TextInputType.number,
+            CustomFormInput(
+              key: _logic.formKey,
+              dataInputs: _logic.inputs,
             ),
             const SizedBox(height: Dimens.paddingMedium),
             CustomButton(
@@ -171,25 +130,7 @@ class _DevicePageState extends State<DevicePage> {
   @override
   void initState() {
     super.initState();
-
     _logic.initRegisterUpdate(device: widget.device);
-    if (_logic.isUpdate) {
-      _logic.nameController.text = widget.device!.name!;
-      _logic.descriptionController.text = widget.device!.description!;
-      _logic.calibrationValueController.text = widget.device!.calibrationValue!.toString();
-      _logic.u95Controller.text = widget.device!.u95!.toString();
-      _logic.coverageFactorController.text = widget.device!.coverageFactor!.toString();
-    }
-  }
-
-  @override
-  void dispose() {
-    _logic.nameController.dispose();
-    _logic.coverageFactorController.dispose();
-    _logic.calibrationValueController.dispose();
-    _logic.u95Controller.dispose();
-    _logic.descriptionController.dispose();
-    super.dispose();
   }
 
   @override

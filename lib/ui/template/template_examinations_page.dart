@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -39,7 +38,7 @@ class _TemplateExaminationsPageState extends State<TemplateExaminationsPage> {
       query: "",
       companyId: null,
       upperBound: upperBound,
-      resultSize: _logic.maxQuerySize,
+      resultSize: null,
     );
 
     if (clear) _logic.templates.clear();
@@ -133,11 +132,11 @@ class _TemplateExaminationsPageState extends State<TemplateExaminationsPage> {
               padding: const EdgeInsets.symmetric(horizontal: Dimens.paddingPage),
               child: ListTile(
                 title: Text(
-                  template.company!.companyName!,
+                  template.company.companyName,
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
                 ),
                 subtitle: Text(
-                  template.company!.companyAddress!,
+                  template.company.companyAddress!,
                   style: Theme.of(context).textTheme.titleSmall,
                 ),
               ),

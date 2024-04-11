@@ -37,11 +37,14 @@ class MasterRequestType {
   static const String managementTemplate = "MANAGEMENT_TEMPLATE";
 
   //Examination
+  static const String assignExamination = "ASSIGN_EXAMINATION";
   static const String queryTypeExaminations = "QUERY_TYPE_EXAMINATIONS";
   static const String queryExaminations = "QUERY_EXAMINATIONS";
   static const String queryExamination = "QUERY_EXAMINATION";
   static const String saveExaminationKebisinganLK = "SAVE_EXAMINATION_KEBISINGAN_LK";
   static const String submitExaminationKebisinganLK = "SUBMIT_EXAMINATION_KEBISINGAN_LK";
+  static const String saveExaminationKebisinganFrekuensi = "SAVE_EXAMINATION_KEBISINGAN_FREKUENSI";
+  static const String submitExaminationKebisinganFrekuensi = "SUBMIT_EXAMINATION_KEBISINGAN_FREKUENSI";
   static const String saveExaminationPenerangan = "SAVE_EXAMINATION_PENERANGAN";
   static const String submitExaminationPenerangan = "SUBMIT_EXAMINATION_PENERANGAN";
   static const String approvalQC1 = "APPROVAL_QC1";

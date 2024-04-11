@@ -24,6 +24,7 @@ class UpdateUserInformationLogic {
 
   final TextEditingController nameController = TextEditingController();
   final TextEditingController nipController = TextEditingController();
+  final TextEditingController noSkpController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController birthDateController = TextEditingController();
@@ -44,6 +45,7 @@ class UpdateUserInformationLogic {
       user.password = md5.convert(utf8.encode(passwordController.text.trim())).toString();
       user.name = nameController.text;
       user.nip = nipController.text;
+      user.noSKP = noSkpController.text;
       user.email = emailController.text;
       user.phone = phoneController.text;
       user.dateOfBirth = birthDate;
@@ -51,8 +53,7 @@ class UpdateUserInformationLogic {
       if (signatureImage != null) user.signature = ImageUtils.encodeImage(signatureImage!);
 
       String? token = await AppRepository().getToken();
-      MasterMessage message = CreateUserRequest(user: user, token: token);
-      return await ConnectionUtils.sendRequest(message);
+      return await ConnectionUtils.sendRequest(UpdateUserRequest(user: user, token: token));
     }
 
     return MasterMessage(response: MasterResponseType.invalidFormat);

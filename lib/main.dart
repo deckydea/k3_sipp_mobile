@@ -13,16 +13,16 @@ import 'package:k3_sipp_mobile/bloc/template/template_bloc.dart';
 import 'package:k3_sipp_mobile/bloc/user/users_bloc.dart';
 import 'package:k3_sipp_mobile/model/company/company.dart';
 import 'package:k3_sipp_mobile/model/device/device.dart';
-import 'package:k3_sipp_mobile/model/examination/examination.dart';
+import 'package:k3_sipp_mobile/model/examination/examination_type.dart';
 import 'package:k3_sipp_mobile/model/template/template.dart';
 import 'package:k3_sipp_mobile/model/user/user.dart';
 import 'package:k3_sipp_mobile/model/user/user_filter.dart';
 import 'package:k3_sipp_mobile/res/colors.dart';
 import 'package:k3_sipp_mobile/res/dimens.dart';
 import 'package:k3_sipp_mobile/res/localizations.dart';
-import 'package:k3_sipp_mobile/ui/assignment/add_update_examination_page.dart';
 import 'package:k3_sipp_mobile/ui/assignment/create_update_assignment_page.dart';
 import 'package:k3_sipp_mobile/ui/assignment/input/input_form_page.dart';
+import 'package:k3_sipp_mobile/ui/assignment/select_examination_page.dart';
 import 'package:k3_sipp_mobile/ui/auth/login_page.dart';
 import 'package:k3_sipp_mobile/ui/company/companies_page.dart';
 import 'package:k3_sipp_mobile/ui/company/company_page.dart';
@@ -31,6 +31,8 @@ import 'package:k3_sipp_mobile/ui/device/devices_page.dart';
 import 'package:k3_sipp_mobile/ui/launcher.dart';
 import 'package:k3_sipp_mobile/ui/main/assignment_page.dart';
 import 'package:k3_sipp_mobile/ui/main/main_menu_page.dart';
+import 'package:k3_sipp_mobile/ui/main/template_pengujian_page.dart';
+import 'package:k3_sipp_mobile/ui/template/template_detail_page.dart';
 import 'package:k3_sipp_mobile/ui/template/template_examinations_page.dart';
 import 'package:k3_sipp_mobile/ui/user/update_user_information_page.dart';
 import 'package:k3_sipp_mobile/ui/user/user_page.dart';
@@ -93,7 +95,7 @@ class MyApp extends StatelessWidget {
             ),
           ),
           textTheme: const TextTheme(
-            bodySmall: TextStyle(fontSize: Dimens.fontSmall, fontFamily: "Nunito", color: ColorResources.text),
+            bodySmall: TextStyle(fontSize: Dimens.fontXSmall, fontFamily: "Nunito", color: ColorResources.text),
             bodyMedium: TextStyle(fontSize: Dimens.fontDefault, fontFamily: "Nunito", color: ColorResources.text),
             bodyLarge: TextStyle(fontSize: Dimens.fontLarge, fontFamily: "Nunito", color: ColorResources.text),
             headlineSmall: TextStyle(
@@ -162,17 +164,18 @@ class MyApp extends StatelessWidget {
 
             //Assignment
             "/assignment_page": (context) => const AssignmentPage(),
+            "/assignment_template_page": (context) => const TemplatePengujianPage(),
             "/create_assignment": (context) => const CreateOrUpdateAssignmentPage(),
-            "/update_assignment": (context) =>  CreateOrUpdateAssignmentPage(template: settings.arguments as Template),
+            "/update_assignment": (context) => CreateOrUpdateAssignmentPage(template: settings.arguments as Template),
 
             //Examination
-            "/add_examination_page": (context) => const AddOrUpdateExaminationPage(),
-            "/update_examination_page": (context) =>
-                AddOrUpdateExaminationPage(examination: settings.arguments == null ? null : settings.arguments as Examination),
-            "/input_form": (context) => InputFormPage(examination: settings.arguments as Examination),
+            "/input_form": (context) => InputFormPage(arguments: settings.arguments as InputFormArgument),
+            "/select_examination": (context) => SelectExaminationPage(
+                selectedExaminationType: settings.arguments == null ? null : settings.arguments as Map<ExaminationType, int>),
 
             //Template
             "/manage_template": (context) => const TemplateExaminationsPage(),
+            "/template_detail": (context) => TemplateDetailPage(template: settings.arguments as Template),
 
             //Device
             "/devices": (context) => const DevicesPage(pageMode: DevicesPageMode.deviceList),
@@ -189,6 +192,9 @@ class MyApp extends StatelessWidget {
             //User
             "/select_user": (context) => UsersPage(
                 pageMode: UsersPageMode.selectUser, filter: settings.arguments == null ? null : settings.arguments as UserFilter),
+            "/select_user_multiple": (context) => UsersPage(
+                pageMode: UsersPageMode.multipleSelect,
+                filter: settings.arguments == null ? null : settings.arguments as UserFilter),
             "/users": (context) => UsersPage(
                 pageMode: UsersPageMode.userList, filter: settings.arguments == null ? null : settings.arguments as UserFilter),
             "/create_user": (context) => const UserPage(),

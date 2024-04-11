@@ -2,9 +2,11 @@ import 'dart:convert';
 
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:k3_sipp_mobile/model/assignment/assignment_filter.dart';
+import 'package:k3_sipp_mobile/model/examination/assign_examination.dart';
 import 'package:k3_sipp_mobile/model/examination/examination.dart';
 import 'package:k3_sipp_mobile/model/examination/examination_status.dart';
-import 'package:k3_sipp_mobile/model/examination/input/input_kebisingan.dart';
+import 'package:k3_sipp_mobile/model/examination/input/input_kebisingan_frekuensi.dart';
+import 'package:k3_sipp_mobile/model/examination/input/input_kebisingan_lk.dart';
 import 'package:k3_sipp_mobile/model/examination/input/input_penerangan.dart';
 import 'package:k3_sipp_mobile/net/master_message.dart';
 import 'package:k3_sipp_mobile/net/request/request_type.dart';
@@ -66,7 +68,16 @@ class QueryExaminationRequest extends MasterMessage {
       : super(request: MasterRequestType.queryExamination, content: jsonEncode(filter), path: "examinations/get-pengujian");
 }
 
-//Kebisingan
+//Assign
+class AssignExaminationRequest extends MasterMessage {
+  AssignExaminationRequest({required super.token, required AssignExamination assignExamination})
+      : super(
+            request: MasterRequestType.assignExamination,
+            content: jsonEncode(assignExamination),
+            path: "examinations/assign-examination");
+}
+
+//Kebisingan LK
 class SaveExaminationKebisinganLKRequest extends MasterMessage {
   SaveExaminationKebisinganLKRequest({required super.token, required InputKebisinganLK inputKebisinganLK})
       : super(
@@ -83,21 +94,38 @@ class SubmitExaminationKebisinganLKRequest extends MasterMessage {
             path: "examinations/submit-pengujian/kebisingan-lk");
 }
 
+//Kebisingan Freqkuensi
+class SaveExaminationKebisinganFrekuensiRequest extends MasterMessage {
+  SaveExaminationKebisinganFrekuensiRequest({required super.token, required InputKebisinganFrekuensi inputKebisingan})
+      : super(
+            request: MasterRequestType.saveExaminationKebisinganFrekuensi,
+            content: jsonEncode(inputKebisingan),
+            path: "examinations/save-pengujian/kebisingan-frekuensi");
+}
+
+class SubmitExaminationKebisinganFrekuensiRequest extends MasterMessage {
+  SubmitExaminationKebisinganFrekuensiRequest({required super.token, required InputKebisinganFrekuensi inputKebisingan})
+      : super(
+            request: MasterRequestType.submitExaminationKebisinganFrekuensi,
+            content: jsonEncode(inputKebisingan),
+            path: "examinations/submit-pengujian/kebisingan-frekuensi");
+}
+
 //Penerangan
 class SaveExaminationPeneranganRequest extends MasterMessage {
   SaveExaminationPeneranganRequest({required super.token, required InputPenerangan inputPenerangan})
       : super(
-      request: MasterRequestType.saveExaminationPenerangan,
-      content: jsonEncode(inputPenerangan),
-      path: "examinations/save-pengujian/penerangan");
+            request: MasterRequestType.saveExaminationPenerangan,
+            content: jsonEncode(inputPenerangan),
+            path: "examinations/save-pengujian/penerangan");
 }
 
 class SubmitExaminationPeneranganRequest extends MasterMessage {
   SubmitExaminationPeneranganRequest({required super.token, required InputPenerangan inputPenerangan})
       : super(
-      request: MasterRequestType.submitExaminationPenerangan,
-      content: jsonEncode(inputPenerangan),
-      path: "examinations/submit-pengujian/penerangan");
+            request: MasterRequestType.submitExaminationPenerangan,
+            content: jsonEncode(inputPenerangan),
+            path: "examinations/submit-pengujian/penerangan");
 }
 
 class ApprovalQC1ExaminationRequest extends MasterMessage {
@@ -127,7 +155,7 @@ class ApprovalSignedExaminationRequest extends MasterMessage {
 class SubmitRevisionExaminationRequest extends MasterMessage {
   SubmitRevisionExaminationRequest({required super.token, required Examination examination})
       : super(
-      request: MasterRequestType.submitRevision,
-      content: jsonEncode(examination),
-      path: "examinations/revision-examination");
+            request: MasterRequestType.submitRevision,
+            content: jsonEncode(examination),
+            path: "examinations/revision-examination");
 }

@@ -183,49 +183,51 @@ class _InputPeneranganPageState extends State<InputPeneranganPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const SizedBox(height: Dimens.paddingWidget),
-        Row(
-          children: [
-            IconButton(
-              onPressed: () => setState(() => _view = _changeView()),
-              icon: Icon(_view == InputView.tableView ? Icons.grid_view : Icons.table_chart, size: Dimens.iconSize),
-            ),
-            Expanded(
-              child: Text("Pengujian",
-                  style: Theme.of(context).textTheme.headlineLarge?.copyWith(color: ColorResources.primaryDark)),
-            ),
-            widget.logic.examination.status == ExaminationStatus.PENDING ||
-                    widget.logic.examination.status == ExaminationStatus.REVISION_QC1
-                ? CustomCard(
-                    color: ColorResources.primary,
-                    borderRadius: Dimens.cardRadiusXLarge,
-                    onTap: _addOrUpdateRow,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: Dimens.paddingWidget, horizontal: Dimens.paddingPage),
-                      child: Row(
-                        children: [
-                          Text("Tambah", style: Theme.of(context).textTheme.headlineSmall?.copyWith(color: Colors.white)),
-                          const SizedBox(width: Dimens.paddingGap),
-                          GestureDetector(child: const Icon(Icons.add, size: Dimens.iconSizeSmall, color: Colors.white)),
-                        ],
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          const SizedBox(height: Dimens.paddingWidget),
+          Row(
+            children: [
+              IconButton(
+                onPressed: () => setState(() => _view = _changeView()),
+                icon: Icon(_view == InputView.tableView ? Icons.grid_view : Icons.table_chart, size: Dimens.iconSize),
+              ),
+              Expanded(
+                child: Text("Pengujian",
+                    style: Theme.of(context).textTheme.headlineLarge?.copyWith(color: ColorResources.primaryDark)),
+              ),
+              widget.logic.examination.status == ExaminationStatus.PENDING ||
+                      widget.logic.examination.status == ExaminationStatus.REVISION_QC1
+                  ? CustomCard(
+                      color: ColorResources.primary,
+                      borderRadius: Dimens.cardRadiusXLarge,
+                      onTap: _addOrUpdateRow,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: Dimens.paddingWidget, horizontal: Dimens.paddingPage),
+                        child: Row(
+                          children: [
+                            Text("Tambah", style: Theme.of(context).textTheme.headlineSmall?.copyWith(color: Colors.white)),
+                            const SizedBox(width: Dimens.paddingGap),
+                            GestureDetector(child: const Icon(Icons.add, size: Dimens.iconSizeSmall, color: Colors.white)),
+                          ],
+                        ),
                       ),
-                    ),
-                  )
-                : Container(),
-          ],
-        ),
-        const SizedBox(height: Dimens.paddingWidget),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: Dimens.paddingWidget),
-          child: widget.logic.examination.userInput.isEmpty
-              ? _buildNoData()
-              : _view == InputView.tableView
-                  ? _buildTableView()
-                  : _buildListView(),
-        ),
-      ],
+                    )
+                  : Container(),
+            ],
+          ),
+          const SizedBox(height: Dimens.paddingWidget),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: Dimens.paddingWidget),
+            child: widget.logic.examination.userInput.isEmpty
+                ? _buildNoData()
+                : _view == InputView.tableView
+                    ? _buildTableView()
+                    : _buildListView(),
+          ),
+        ],
+      ),
     );
   }
 }

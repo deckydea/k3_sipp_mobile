@@ -36,21 +36,25 @@ class EnumTranslationUtils{
   static String examinationType(String type) {
     switch (type) {
       case ExaminationTypeName.kebisingan:
-        return "KEBISINGAN";
+        return "Kebisingan Lingkungan Kerja";
       case ExaminationTypeName.penerangan:
-        return "PENERANGAN";
+        return "Penerangan";
       case ExaminationTypeName.iklimKerja:
-        return "IKLIM KERJA";
+        return "Iklim Kerja";
       case ExaminationTypeName.getaranLengan:
-        return "GETARAN LENGAN";
+        return "Getaran Hand Arm";
       case ExaminationTypeName.getaranWholeBody:
-        return "GETARAN WHOLE BODY";
+        return "Getaran Whole Body";
       case ExaminationTypeName.sinarUV:
-        return "SINAR UV";
+        return "Radiasi Ultra Violet";
       case ExaminationTypeName.gelombangElektroMagnet:
-        return "GELOMBANG ELEKTROMAGNET";
+        return "Gelombang Mikro dan Magnet Statis";
       case ExaminationTypeName.kebisinganAmbient:
-        return "KEBISINGAN AMBIENT";
+        return "Kebisingan Ambient";
+      case ExaminationTypeName.kebisinganFrekuensi:
+        return "Kebisingan Frekuensi";
+      case ExaminationTypeName.noiseDose:
+        return "Noise Dose";
       default:
         return "-";
     }

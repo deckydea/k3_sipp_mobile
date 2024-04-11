@@ -19,7 +19,7 @@ class DeviceCalibration {
     this.examinationId,
     required this.deviceId,
     this.deviceName,
-    this.name,
+    this.name = "",
     this.internalCalibration,
     this.device,
     this.calibrationValue,
@@ -66,8 +66,7 @@ class DeviceCalibration {
       };
 
   factory DeviceCalibration.fromJson(Map<String, dynamic> json) {
-    print("jsonjsonjsonjson");
-    print(json);
+
     return DeviceCalibration(
       id: json['id'],
       examinationId: json['examinationId'],

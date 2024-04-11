@@ -11,7 +11,6 @@ import 'package:k3_sipp_mobile/util/text_utils.dart';
 
 class ExaminationRepository {
   static const String _examinationTypeKey = "EXAMINATION_TYPE";
-  static const String _inputExaminationSavedKey = "INPUT_EXAMINATION_SAVED";
 
   static final ExaminationRepository _instance = ExaminationRepository._internal();
 

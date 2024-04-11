@@ -35,7 +35,7 @@ class CompanyRow extends StatelessWidget {
           contentPadding: const EdgeInsets.symmetric(horizontal: Dimens.paddingPage),
           focusColor: Colors.red,
           leading: const Icon(Icons.apartment, size: Dimens.iconSize),
-          title: Text(company.companyName ?? "", style: Theme.of(context).textTheme.headlineSmall),
+          title: Text(company.companyName, style: Theme.of(context).textTheme.headlineSmall),
           subtitle: Text(company.companyAddress ?? "", style: Theme.of(context).textTheme.labelSmall),
         ),
       ),

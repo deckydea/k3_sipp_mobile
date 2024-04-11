@@ -3,9 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:k3_sipp_mobile/bloc/assignment/assignment_bloc.dart';
 import 'package:k3_sipp_mobile/main.dart';
 import 'package:k3_sipp_mobile/model/examination/examination.dart';
+import 'package:k3_sipp_mobile/model/template/template.dart';
 import 'package:k3_sipp_mobile/res/colors.dart';
 import 'package:k3_sipp_mobile/res/dimens.dart';
-import 'package:k3_sipp_mobile/widget/assignment/assignment_row.dart';
 import 'package:k3_sipp_mobile/widget/custom/custom_date_timeline.dart';
 import 'package:k3_sipp_mobile/widget/custom/custom_shimmer.dart';
 
@@ -62,22 +62,23 @@ class _AssignmentPageState extends State<AssignmentPage> {
     );
   }
 
-  Widget _buildData(List<Examination> examinations) {
-    return Container(
-      color: Colors.white,
-      child: ListView.separated(
-        padding: const EdgeInsets.symmetric(horizontal: Dimens.paddingPage, vertical: Dimens.paddingMedium),
-        itemCount: examinations.length,
-        itemBuilder: (context, index) {
-          Examination examination = examinations.elementAt(index);
-          return AssignmentRow(
-            examination: examination,
-            onTap: () => _navigateExaminationDetail(examination),
-          );
-        },
-        separatorBuilder: (BuildContext context, int index) => const SizedBox(height: Dimens.paddingGap),
-      ),
-    );
+  Widget _buildData(List<Template> templates) {
+    return Container();
+    // return Container(
+    //   color: Colors.white,
+    //   child: ListView.separated(
+    //     padding: const EdgeInsets.symmetric(horizontal: Dimens.paddingPage, vertical: Dimens.paddingMedium),
+    //     itemCount: examinations.length,
+    //     itemBuilder: (context, index) {
+    //       Examination examination = examinations.elementAt(index);
+    //       return AssignmentRow(
+    //         examination: examination,
+    //         onTap: () => _navigateExaminationDetail(examination),
+    //       );
+    //     },
+    //     separatorBuilder: (BuildContext context, int index) => const SizedBox(height: Dimens.paddingGap),
+    //   ),
+    // );
   }
 
   Widget _buildBody() {
@@ -95,8 +96,8 @@ class _AssignmentPageState extends State<AssignmentPage> {
               if (state is AssignmentLoadingState) {
                 return _buildShimmer();
               } else if (state is AssignmentLoadedState) {
-                if (state.examinations.isNotEmpty) {
-                  return _buildData(state.examinations);
+                if (state.templates.isNotEmpty) {
+                  return _buildData(state.templates);
                 } else {
                   return _buildNoData();
                 }

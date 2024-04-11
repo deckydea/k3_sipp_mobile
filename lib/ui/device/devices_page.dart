@@ -63,7 +63,7 @@ class _DevicesPageState extends State<DevicesPage> {
     if (result == null || !result) return;
 
     if (mounted) {
-      final ProgressDialog progressDialog = ProgressDialog(context, "Loading", _logic.onDeleteDevice(device.id!));
+      final ProgressDialog progressDialog = ProgressDialog("Loading", _logic.onDeleteDevice(device.id!));
       MasterMessage message = await progressDialog.show();
       switch (message.response) {
         case MasterResponseType.success:

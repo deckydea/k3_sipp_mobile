@@ -18,7 +18,7 @@ import 'package:k3_sipp_mobile/widget/custom/custom_shimmer.dart';
 import 'package:k3_sipp_mobile/widget/progress_dialog.dart';
 import 'package:k3_sipp_mobile/widget/user/user_row.dart';
 
-enum UsersPageMode { selectUser, userList }
+enum UsersPageMode { selectUser, userList, multipleSelect }
 
 class UsersPage extends StatefulWidget {
   final UsersPageMode pageMode;
@@ -41,6 +41,10 @@ class _UsersPageState extends State<UsersPage> {
       case UsersPageMode.userList:
         navigatorKey.currentState?.pushNamed("/update_user", arguments: user);
         return;
+      case UsersPageMode.multipleSelect:
+        _logic.selectedUsers.add(user);
+        setState(() {});
+        return;
     }
   }
 
@@ -61,7 +65,7 @@ class _UsersPageState extends State<UsersPage> {
     if (result == null || !result) return;
 
     if (mounted) {
-      final ProgressDialog progressDialog = ProgressDialog(context, "Loading", _logic.onDeleteUser(user.id!));
+      final ProgressDialog progressDialog = ProgressDialog("Loading", _logic.onDeleteUser(user.id!));
       MasterMessage message = await progressDialog.show();
       switch (message.response) {
         case MasterResponseType.success:
@@ -179,6 +183,7 @@ class _UsersPageState extends State<UsersPage> {
                         itemBuilder: (context, index) {
                           User user = state.users.elementAt(index);
                           return UserRow(
+                            isSelected: _logic.selectedUsers.contains(user),
                             user: user,
                             onTap: () => _navigateTo(user),
                             onLongPress: () => _deleteUser(user),
@@ -229,6 +234,14 @@ class _UsersPageState extends State<UsersPage> {
         iconTheme: const IconThemeData(color: ColorResources.primaryDark),
         backgroundColor: ColorResources.background,
         title: Text("Pengguna", style: Theme.of(context).textTheme.headlineLarge),
+        actions: [
+          widget.pageMode == UsersPageMode.multipleSelect
+              ? TextButton(
+                  onPressed: () => navigatorKey.currentState?.pop(_logic.selectedUsers),
+                  child: Text("Simpan", style: Theme.of(context).textTheme.labelLarge),
+                )
+              : Container(),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => navigatorKey.currentState!.pushNamed("/create_user"),

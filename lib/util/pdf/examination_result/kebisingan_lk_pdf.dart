@@ -130,7 +130,7 @@ class KebisinganLKResultPdf {
           children: [
             _cell(widget: Text("$i", textAlign: TextAlign.center, style: PdfHelperUtils.smallStyle)),
             _cell(widget: Text(result.location, style: PdfHelperUtils.smallStyle)),
-            _cell(widget: Text("13:40", textAlign: TextAlign.center, style: PdfHelperUtils.smallStyle)),
+            _cell(widget: Text(DateTimeUtils.formatToTime(result.time), textAlign: TextAlign.center, style: PdfHelperUtils.smallStyle)),
             _cell(widget: Text("dBA", textAlign: TextAlign.center, style: PdfHelperUtils.smallStyle)),
             _cell(widget: Text(result.average.toStringAsFixed(2), textAlign: TextAlign.center, style: PdfHelperUtils.smallStyle)),
           ],
@@ -232,13 +232,15 @@ class KebisinganLKResultPdf {
   }
 
   static Widget _buildInfo(Examination examination) {
-    String devices = examination.deviceCalibrations.map((e) => e.device!.name).join(',');
+    List<ResultKebisinganLK> result = examination.examinationResult;
+    // String devices = result.map((e) => e.deviceCalibration!.name).join(',');
+    String devices = result.first.deviceCalibration!.device!.name ?? "";
 
     List<Widget> widgets = [
       PdfHelperUtils.keyValueSeparated(
         title: Text("Nama Perusahaan", style: PdfHelperUtils.smallStyle),
         value:
-            Text("${examination.company!.companyName}", style: PdfHelperUtils.smallStyle.copyWith(fontWeight: FontWeight.bold)),
+            Text(examination.company!.companyName, style: PdfHelperUtils.smallStyle.copyWith(fontWeight: FontWeight.bold)),
       ),
       PdfHelperUtils.keyValueSeparated(
         title: Text("Alamat", style: PdfHelperUtils.smallStyle),
@@ -246,7 +248,7 @@ class KebisinganLKResultPdf {
       ),
       PdfHelperUtils.keyValueSeparated(
         title: Text("Tanggal Pelaksanaan", style: PdfHelperUtils.smallStyle),
-        value: Text(DateTimeUtils.formatToDate(examination.implementationDate!), style: PdfHelperUtils.smallStyle),
+        value: Text(DateTimeUtils.formatToDate(examination.implementationTimeStart!), style: PdfHelperUtils.smallStyle),
       ),
       PdfHelperUtils.keyValueSeparated(
         title: Text("Jenis Pengujian", style: PdfHelperUtils.smallStyle),
@@ -254,7 +256,7 @@ class KebisinganLKResultPdf {
       ),
       PdfHelperUtils.keyValueSeparated(
         title: Text("Metode", style: PdfHelperUtils.smallStyle),
-        value: Text(examination.metode, style: PdfHelperUtils.smallStyle),
+        value: Text(examination.metode!, style: PdfHelperUtils.smallStyle),
       ),
       PdfHelperUtils.keyValueSeparated(
         title: Text("Peralatan", style: PdfHelperUtils.smallStyle),

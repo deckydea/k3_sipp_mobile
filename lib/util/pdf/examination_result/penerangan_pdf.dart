@@ -271,13 +271,13 @@ class PeneranganResultPdf {
   }
 
   static Widget _buildInfo(Examination examination) {
-    String devices = examination.deviceCalibrations.map((e) => e.device!.name).join(',');
+    String devices = examination.deviceCalibrations!.map((e) => e.device!.name).join(',');
 
     List<Widget> widgets = [
       PdfHelperUtils.keyValueSeparated(
         title: Text("Nama Perusahaan", style: PdfHelperUtils.smallStyle),
         value:
-            Text("${examination.company!.companyName}", style: PdfHelperUtils.smallStyle.copyWith(fontWeight: FontWeight.bold)),
+            Text(examination.company!.companyName, style: PdfHelperUtils.smallStyle.copyWith(fontWeight: FontWeight.bold)),
       ),
       PdfHelperUtils.keyValueSeparated(
         title: Text("Alamat", style: PdfHelperUtils.smallStyle),
@@ -285,7 +285,7 @@ class PeneranganResultPdf {
       ),
       PdfHelperUtils.keyValueSeparated(
         title: Text("Tanggal Pelaksanaan", style: PdfHelperUtils.smallStyle),
-        value: Text(DateTimeUtils.formatToDate(examination.implementationDate!), style: PdfHelperUtils.smallStyle),
+        value: Text(DateTimeUtils.formatToDate(examination.implementationTimeStart!), style: PdfHelperUtils.smallStyle),
       ),
       PdfHelperUtils.keyValueSeparated(
         title: Text("Jenis Pengujian", style: PdfHelperUtils.smallStyle),
@@ -293,7 +293,7 @@ class PeneranganResultPdf {
       ),
       PdfHelperUtils.keyValueSeparated(
         title: Text("Metode", style: PdfHelperUtils.smallStyle),
-        value: Text(examination.metode, style: PdfHelperUtils.smallStyle),
+        value: Text(examination.metode!, style: PdfHelperUtils.smallStyle),
       ),
       PdfHelperUtils.keyValueSeparated(
         title: Text("Peralatan", style: PdfHelperUtils.smallStyle),
