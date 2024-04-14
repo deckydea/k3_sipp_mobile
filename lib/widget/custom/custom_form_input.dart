@@ -6,10 +6,11 @@ import 'package:k3_sipp_mobile/util/date_time_utils.dart';
 import 'package:k3_sipp_mobile/util/text_utils.dart';
 import 'package:k3_sipp_mobile/util/validator_utils.dart';
 import 'package:k3_sipp_mobile/widget/custom/custom_dialog.dart';
+import 'package:k3_sipp_mobile/widget/custom/custom_dropdown_button.dart';
 import 'package:k3_sipp_mobile/widget/custom/custom_edit_text.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
-enum InputType { text, number, numeric, password, phone, email, currency, textArea, date, time, inputGroup }
+enum InputType { text, number, numeric, password, phone, email, currency, textArea, date, time, groupInput, dropdown }
 
 class CustomFormInput extends StatefulWidget {
   final Widget? title;
@@ -46,11 +47,12 @@ class CustomFormInputState extends State<CustomFormInput> {
     var result = await showDialog(
       context: context,
       barrierDismissible: true,
-      builder: (context) => CustomDialog(
-        width: Dimens.dialogWidthSmall,
-        height: Dimens.dialogWidthSmall,
-        child: DatePickerPage(argument: argument),
-      ),
+      builder: (context) =>
+          CustomDialog(
+            width: Dimens.dialogWidthSmall,
+            height: Dimens.dialogWidthSmall,
+            child: DatePickerPage(argument: argument),
+          ),
     );
 
     if (result != null && result is DateTime) {
@@ -70,7 +72,8 @@ class CustomFormInputState extends State<CustomFormInput> {
     );
 
     if (timeInput.selectedTime != null) {
-      setState(() => timeInput.controller.text =
+      setState(() =>
+      timeInput.controller.text =
           DateTimeUtils.formatToTime(DateTime(1999, 01, 01, timeInput.selectedTime!.hour, timeInput.selectedTime!.minute)));
     }
   }
@@ -112,8 +115,9 @@ class CustomFormInputState extends State<CustomFormInput> {
       maxLines: dataInput.maxLines,
       icon: dataInput.icon,
       enabled: dataInput.enable,
-      validator: (value) => ValidatorUtils.validateInputLength(context, value, dataInput.minLength, dataInput.maxLength,
-          required: dataInput.required),
+      validator: (value) =>
+          ValidatorUtils.validateInputLength(context, value, dataInput.minLength, dataInput.maxLength,
+              required: dataInput.required),
       textInputType: TextInputType.text,
     );
   }
@@ -195,8 +199,9 @@ class CustomFormInputState extends State<CustomFormInput> {
       icon: dataInput.icon,
       enabled: dataInput.enable,
       onChanged: dataInput.onChanged,
-      validator: (value) => ValidatorUtils.validateInputLength(context, value, dataInput.minLength, dataInput.maxLength,
-          required: dataInput.required),
+      validator: (value) =>
+          ValidatorUtils.validateInputLength(context, value, dataInput.minLength, dataInput.maxLength,
+              required: dataInput.required),
       textInputType: TextInputType.text,
     );
   }
@@ -239,6 +244,19 @@ class CustomFormInputState extends State<CustomFormInput> {
     });
   }
 
+  Widget _buildDropdownInput(DropdownInput dataInput) {
+    return StatefulBuilder(
+      builder: (BuildContext context, insideState) {
+        return CustomDropdownButton(
+          items: dataInput.dropdown,
+          value: dataInput.selected,
+          width: double.infinity,
+          onChanged: (value) => value != null ? insideState(() => dataInput.selected = value) : null,
+        );
+      },
+    );
+  }
+
   List<Widget> _getInputs(List<DataInput> dataInputs) {
     List<Widget> inputs = [];
     for (DataInput dataInput in dataInputs) {
@@ -274,8 +292,11 @@ class CustomFormInputState extends State<CustomFormInput> {
         case InputType.time:
           inputs.add(_buildTimeInput(dataInput as TimeInput));
           break;
-        case InputType.inputGroup:
-          InputGroup input = dataInput as InputGroup;
+        case InputType.dropdown:
+          inputs.add(_buildDropdownInput(dataInput as DropdownInput));
+          break;
+        case InputType.groupInput:
+          GroupInput input = dataInput as GroupInput;
           if (input.title != null) {
             inputs.add(input.title!);
           }
@@ -285,13 +306,14 @@ class CustomFormInputState extends State<CustomFormInput> {
             Row(
               children: widgets
                   .map(
-                    (e) => Expanded(
+                    (e) =>
+                    Expanded(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: Dimens.paddingGap),
                         child: e,
                       ),
                     ),
-                  )
+              )
                   .toList(),
             ),
           );
@@ -314,11 +336,12 @@ class CustomFormInputState extends State<CustomFormInput> {
     return Column(
       children: inputs
           .map(
-            (input) => Padding(
+            (input) =>
+            Padding(
               padding: const EdgeInsets.symmetric(vertical: Dimens.paddingWidget),
               child: input,
             ),
-          )
+      )
           .toList(),
     );
   }

@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:k3_sipp_mobile/model/examination/examination.dart';
-import 'package:k3_sipp_mobile/model/examination/result/result_kebisingan_lk.dart';
+import 'package:k3_sipp_mobile/model/examination/result/result_iklim_kerja.dart';
 import 'package:k3_sipp_mobile/res/dimens.dart';
 import 'package:k3_sipp_mobile/util/date_time_utils.dart';
 import 'package:k3_sipp_mobile/util/pdf/template/pdf_template_utils.dart';
@@ -105,6 +105,24 @@ class AkreditasiIklimKerjaPdf {
 
   static Widget _buildTable(Examination examination) {
     List<TableRow> tableContent = [];
+
+    Widget cellResult(String text) {
+      return _cellNumber(
+        widget: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(height: Dimens.paddingSmallGap),
+            Text(
+              text,
+              textAlign: TextAlign.center,
+              style: PdfHelperUtils.smallStyle.copyWith(fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+      );
+    }
+
     //Header
     tableContent.add(
       TableRow(
@@ -117,14 +135,49 @@ class AkreditasiIklimKerjaPdf {
               widget: Text("Lokasi",
                   textAlign: TextAlign.center, style: PdfHelperUtils.smallStyle.copyWith(fontWeight: FontWeight.bold))),
           _cell(
-              widget: Text("Waktu Pengukuran",
+              widget: Text("Jam",
                   textAlign: TextAlign.center, style: PdfHelperUtils.smallStyle.copyWith(fontWeight: FontWeight.bold))),
-          _cell(
-              widget: Text("Satuan",
-                  textAlign: TextAlign.center, style: PdfHelperUtils.smallStyle.copyWith(fontWeight: FontWeight.bold))),
-          _cell(
-            widget: Text("Hasil Pengukuran",
-                textAlign: TextAlign.center, style: PdfHelperUtils.smallStyle.copyWith(fontWeight: FontWeight.bold)),
+          Container(
+            decoration: BoxDecoration(border: Border.all(width: 1)),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                SizedBox(height: Dimens.paddingGap),
+                Text("Hasil Pengukuran",
+                    textAlign: TextAlign.center, style: PdfHelperUtils.smallStyle.copyWith(fontWeight: FontWeight.bold)),
+                SizedBox(height: Dimens.paddingGap),
+                Container(
+                  decoration: BoxDecoration(border: Border.all(width: 1)),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      _cellNumber(
+                        widget: Text("Ta\n°C",
+                            textAlign: TextAlign.center, style: PdfHelperUtils.smallStyle.copyWith(fontWeight: FontWeight.bold)),
+                      ),
+                      _cellNumber(
+                        widget: Text("Tw\n°C",
+                            textAlign: TextAlign.center, style: PdfHelperUtils.smallStyle.copyWith(fontWeight: FontWeight.bold)),
+                      ),
+                      _cellNumber(
+                        widget: Text("Tg\n°C",
+                            textAlign: TextAlign.center, style: PdfHelperUtils.smallStyle.copyWith(fontWeight: FontWeight.bold)),
+                      ),
+                      _cellNumber(
+                        widget: Text("RH\n%",
+                            textAlign: TextAlign.center, style: PdfHelperUtils.smallStyle.copyWith(fontWeight: FontWeight.bold)),
+                      ),
+                      _cellNumber(
+                        widget: Text("ISBB\n°C",
+                            textAlign: TextAlign.center, style: PdfHelperUtils.smallStyle.copyWith(fontWeight: FontWeight.bold)),
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
           ),
         ],
       ),
@@ -132,35 +185,35 @@ class AkreditasiIklimKerjaPdf {
 
     //Body
     int i = 1;
-    for (ResultKebisinganLK result in examination.examinationResult) {
+    for (ResultIklimKerja result in examination.examinationResult) {
       tableContent.add(
         TableRow(
+          verticalAlignment: TableCellVerticalAlignment.full,
           children: [
             _cell(widget: Text("$i", textAlign: TextAlign.center, style: PdfHelperUtils.smallStyle)),
             _cell(widget: Text(result.location, style: PdfHelperUtils.smallStyle)),
-            _cell(widget: Text("13:40", textAlign: TextAlign.center, style: PdfHelperUtils.smallStyle)),
-            _cell(widget: Text("dBA", textAlign: TextAlign.center, style: PdfHelperUtils.smallStyle)),
-            _cell(widget: Text(result.average.toStringAsFixed(2), textAlign: TextAlign.center, style: PdfHelperUtils.smallStyle)),
+            _cell(
+              widget:
+                  Text(DateTimeUtils.formatToTime(result.time), textAlign: TextAlign.center, style: PdfHelperUtils.smallStyle),
+            ),
+            Container(
+              decoration: BoxDecoration(border: Border.all(width: 1)),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  cellResult("${result.averageTA}"),
+                  cellResult("${result.averageTW}"),
+                  cellResult("${result.averageTG}"),
+                  cellResult("${result.averageRH}"),
+                  cellResult("${result.averageISBB}"),
+                ],
+              ),
+            ),
           ],
         ),
       );
       i++;
-    }
-
-    if (i < 6) {
-      for (i; i < 6; i++) {
-        tableContent.add(
-          TableRow(
-            children: [
-              _cell(widget: Text("$i", textAlign: TextAlign.center, style: PdfHelperUtils.smallStyle)),
-              _cell(widget: Text("", style: PdfHelperUtils.smallStyle)),
-              _cell(widget: Text("", style: PdfHelperUtils.smallStyle)),
-              _cell(widget: Text("", style: PdfHelperUtils.smallStyle)),
-              _cell(widget: Text("", style: PdfHelperUtils.smallStyle)),
-            ],
-          ),
-        );
-      }
     }
 
     return Container(
@@ -181,11 +234,10 @@ class AkreditasiIklimKerjaPdf {
                   left: BorderSide(width: 1),
                 ),
                 columnWidths: <int, TableColumnWidth>{
-                  0: const FixedColumnWidth(17),
-                  1: const FixedColumnWidth(90),
-                  2: const FixedColumnWidth(35),
-                  3: const FixedColumnWidth(30),
-                  4: const FixedColumnWidth(35),
+                  0: const FixedColumnWidth(30),
+                  1: const FixedColumnWidth(100),
+                  2: const FixedColumnWidth(65),
+                  3: const FlexColumnWidth(),
                 },
                 children: tableContent,
               ),
@@ -216,14 +268,15 @@ class AkreditasiIklimKerjaPdf {
                             children: const [
                               TextSpan(
                                 text:
-                                    "Nilai Ambang Batas (NAB) Intensitas kebisingan di ruang kerja berdasarkan Peraturan Menteri Ketenagakerjaan R.I No. 5 tahun 2018 untuk waktu paparan:",
+                                    "Nilai Ambang Batas Iklim Kerja\nWaktu Kerja 8 Jam per hari adalah:",
                               ),
-                              TextSpan(text: "\n8 jam      : 85 dBA"),
-                              TextSpan(text: "\n4 jam      : 88 dBA"),
-                              TextSpan(text: "\n2 jam      : 91 dBA"),
-                              TextSpan(text: "\n1 jam      : 94 dBA"),
-                              TextSpan(text: "\n30 Menit   : 97 dBA"),
-                              TextSpan(text: "\n15 Menit   : 100 dBA"),
+                              TextSpan(text: "\nBeban Kerja ringan : 31,0 °C"),
+                              TextSpan(text: "\nBeban Kerja Sedang : 28,0 °C"),
+                              TextSpan(text: "\nTa : Temperature Air  (Suhu Kering)"),
+                              TextSpan(text: "\nTw : Temperature Wet (Suhu Basah)"),
+                              TextSpan(text: "\nTg : Temperature Globe (Suhu Radiasi)"),
+                              TextSpan(text: "\nRH : Relative Humadity ( Kelembaban Relatif)"),
+                              TextSpan(text: "\nISBB : Indeks Suhu Basah dan Bola"),
                             ],
                           ),
                         ),
@@ -240,9 +293,9 @@ class AkreditasiIklimKerjaPdf {
   }
 
   static Widget _buildInfo(Examination examination) {
-    List<ResultKebisinganLK> result = examination.examinationResult;
+    List<ResultIklimKerja> result = examination.examinationResult;
     // String devices = result.map((e) => e.deviceCalibration!.name).join(',');
-    String devices = result.first.deviceCalibration!.device!.name ?? "";
+    String devices = result.first.deviceCalibrationISBB!.device!.name ?? "";
 
     List<Widget> widgets = [
       PdfHelperUtils.keyValueSeparated(
@@ -283,6 +336,15 @@ class AkreditasiIklimKerjaPdf {
     return Container(
       decoration: BoxDecoration(border: border),
       padding: const EdgeInsets.all(Dimens.paddingWidget),
+      child: widget,
+    );
+  }
+
+  static Widget _cellNumber({required Widget widget}) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: Dimens.paddingGap),
+      width: 35.3,
+      decoration: const BoxDecoration(border: Border.symmetric(vertical: BorderSide(width: 1))),
       child: widget,
     );
   }

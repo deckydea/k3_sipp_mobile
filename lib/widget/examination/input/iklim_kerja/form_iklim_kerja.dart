@@ -36,6 +36,13 @@ class _FormIklimKerjaState extends State<FormIklimKerja> {
   final TextInput _pengendalian = TextInput(label: "Pengendalian", required: false);
   final TextInput _note = TextInput(label: "Note", required: false);
 
+  final NumericInput _ta1 = NumericInput(label: "TA 1", required: true);
+  final NumericInput _ta2 = NumericInput(label: "TA 2", required: true);
+  final NumericInput _ta3 = NumericInput(label: "TA 3", required: true);
+  final NumericInput _ta4 = NumericInput(label: "TA 4", required: true);
+  final NumericInput _ta5 = NumericInput(label: "TA 5", required: true);
+  final NumericInput _ta6 = NumericInput(label: "TA 6", required: true);
+
   final NumericInput _tw1 = NumericInput(label: "TW 1", required: true);
   final NumericInput _tw2 = NumericInput(label: "TW 2", required: true);
   final NumericInput _tw3 = NumericInput(label: "TW 3", required: true);
@@ -65,10 +72,26 @@ class _FormIklimKerjaState extends State<FormIklimKerja> {
   final NumericInput _internalCalibrationTG = NumericInput(label: "Kalibrasi Internal (TG)", required: true);
   final NumericInput _internalCalibrationISBB = NumericInput(label: "Kalibrasi Internal (ISBB)", required: true, enable: false);
 
+  final List<DropdownMenuItem<LajuMetabolit>> _dropdownLajuMetabolit = [];
+  final List<DropdownMenuItem<SiklusKerja>> _dropdownSiklusKerja = [];
+  DropdownInput? _lajuMetabolit;
+  DropdownInput? _siklusKerja;
+
+  LajuMetabolit? _selectedLajuMetabolit;
+  SiklusKerja? _selectedSiklusKerja;
   Device? _selectedDeviceTW;
   Device? _selectedDeviceTG;
   Device? _selectedDeviceISBB;
   DataIklimKerja? _data;
+
+  void _calculateISBB() {
+    if (TextUtils.isEmpty(_internalCalibrationTW.value) || TextUtils.isEmpty(_internalCalibrationTG.value)) {
+      _internalCalibrationISBB.setValue("0");
+    } else {
+      _internalCalibrationISBB
+          .setValue("${(0.7 * double.parse(_internalCalibrationTW.value)) + (0.3 * double.parse(_internalCalibrationTG.value))}");
+    }
+  }
 
   Future<void> _navigateSelectDevice(CalibrationCategory category) async {
     var result = await navigatorKey.currentState?.pushNamed("/select_device");
@@ -77,21 +100,20 @@ class _FormIklimKerjaState extends State<FormIklimKerja> {
         case CalibrationCategory.tw:
           _selectedDeviceTW = result;
           _deviceCalibrationTW.setValue(_selectedDeviceTW!.name ?? "");
+
+          _calculateISBB();
           break;
         case CalibrationCategory.tg:
           _selectedDeviceTG = result;
           _deviceCalibrationTG.setValue(_selectedDeviceTG!.name ?? "");
+
+          _calculateISBB();
           break;
         case CalibrationCategory.isbb:
           _selectedDeviceISBB = result;
           _deviceCalibrationISBB.setValue(_selectedDeviceISBB!.name ?? "");
 
-          if (TextUtils.isEmpty(_internalCalibrationTW.value) || TextUtils.isEmpty(_internalCalibrationTG.value)) {
-            _internalCalibrationISBB.setValue("0");
-          } else {
-            _internalCalibrationISBB.setValue(
-                "${(0.7 * double.parse(_internalCalibrationTW.value)) + (0.3 * double.parse(_internalCalibrationTG.value))}");
-          }
+          _calculateISBB();
           break;
       }
     }
@@ -149,6 +171,12 @@ class _FormIklimKerjaState extends State<FormIklimKerja> {
         deviceCalibrationTG: deviceCalibrationTG,
         deviceCalibrationTW: deviceCalibrationTW,
         deviceCalibrationISBB: deviceCalibrationISBB,
+        ta1: double.parse(_ta1.value),
+        ta2: double.parse(_ta2.value),
+        ta3: double.parse(_ta3.value),
+        ta4: double.parse(_ta4.value),
+        ta5: double.parse(_ta5.value),
+        ta6: double.parse(_ta6.value),
         rh1: double.parse(_rh1.value),
         rh2: double.parse(_rh2.value),
         rh3: double.parse(_rh3.value),
@@ -167,6 +195,8 @@ class _FormIklimKerjaState extends State<FormIklimKerja> {
         tw4: double.parse(_tw4.value),
         tw5: double.parse(_tw5.value),
         tw6: double.parse(_tw6.value),
+        lajuMetabolit: _selectedLajuMetabolit!,
+        siklusKerja: _selectedSiklusKerja!,
       );
 
       if (widget.onUpdate != null) widget.onUpdate!(input);
@@ -194,7 +224,6 @@ class _FormIklimKerjaState extends State<FormIklimKerja> {
         device: _selectedDeviceISBB,
       );
 
-
       DateTime now = DateTime.now();
       DataIklimKerja input = DataIklimKerja(
         location: _location.value,
@@ -206,6 +235,12 @@ class _FormIklimKerjaState extends State<FormIklimKerja> {
         deviceCalibrationTG: deviceCalibrationTG,
         deviceCalibrationTW: deviceCalibrationTW,
         deviceCalibrationISBB: deviceCalibrationISBB,
+        ta1: double.parse(_ta1.value),
+        ta2: double.parse(_ta2.value),
+        ta3: double.parse(_ta3.value),
+        ta4: double.parse(_ta4.value),
+        ta5: double.parse(_ta5.value),
+        ta6: double.parse(_ta6.value),
         rh1: double.parse(_rh1.value),
         rh2: double.parse(_rh2.value),
         rh3: double.parse(_rh3.value),
@@ -224,6 +259,8 @@ class _FormIklimKerjaState extends State<FormIklimKerja> {
         tw4: double.parse(_tw4.value),
         tw5: double.parse(_tw5.value),
         tw6: double.parse(_tw6.value),
+        lajuMetabolit: _selectedLajuMetabolit!,
+        siklusKerja: _selectedSiklusKerja!,
       );
       if (widget.onAdd != null) widget.onAdd!(input);
       Navigator.of(context).pop();
@@ -256,6 +293,13 @@ class _FormIklimKerjaState extends State<FormIklimKerja> {
       _pengendalian.setValue(_data!.pengendalian);
       _note.setValue(_data!.note ?? "");
 
+      _ta1.setValue("${_data!.ta1}");
+      _ta2.setValue("${_data!.ta2}");
+      _ta3.setValue("${_data!.ta3}");
+      _ta4.setValue("${_data!.ta4}");
+      _ta5.setValue("${_data!.ta5}");
+      _ta6.setValue("${_data!.ta6}");
+
       _tw1.setValue("${_data!.tw1}");
       _tw2.setValue("${_data!.tw2}");
       _tw3.setValue("${_data!.tw3}");
@@ -284,9 +328,29 @@ class _FormIklimKerjaState extends State<FormIklimKerja> {
       _selectedDeviceTW = _data!.deviceCalibrationTW!.device;
       _selectedDeviceTG = _data!.deviceCalibrationTG!.device;
       _selectedDeviceISBB = _data!.deviceCalibrationISBB!.device;
+      _selectedLajuMetabolit = _data!.lajuMetabolit;
+      _selectedSiklusKerja = _data!.siklusKerja;
     }
 
-    _inputs.add(InputGroup(
+    for (LajuMetabolit lajuMetabolit in LajuMetabolit.values) {
+      _dropdownLajuMetabolit.add(DropdownMenuItem(
+        value: lajuMetabolit,
+        child: Text(lajuMetabolit.label),
+      ));
+    }
+    _selectedLajuMetabolit = _selectedLajuMetabolit ?? LajuMetabolit.rendah;
+    _lajuMetabolit = DropdownInput(selected: _selectedLajuMetabolit, dropdown: _dropdownLajuMetabolit);
+
+    for (SiklusKerja siklusKerja in SiklusKerja.values) {
+      _dropdownSiklusKerja.add(DropdownMenuItem(
+        value: siklusKerja,
+        child: Text(siklusKerja.label),
+      ));
+    }
+    _selectedSiklusKerja = _selectedSiklusKerja ?? SiklusKerja.siklus_75_100;
+    _siklusKerja = DropdownInput(selected: _selectedSiklusKerja, dropdown: _dropdownSiklusKerja);
+
+    _inputs.add(GroupInput(
         dataInputs: [],
         title: Text("Kalibrasi Alat", style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold))));
     _inputs.add(_deviceCalibrationTW);
@@ -296,30 +360,40 @@ class _FormIklimKerjaState extends State<FormIklimKerja> {
     _inputs.add(_deviceCalibrationISBB);
     _inputs.add(_internalCalibrationISBB);
 
-    _inputs.add(InputGroup(
+    _inputs.add(GroupInput(
         dataInputs: [],
         title: Text("Informasi", style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold))));
     _inputs.add(_location);
     _inputs.add(_time);
     _inputs.add(_jumlahTK);
     _inputs.add(_durasi);
+    _inputs.add(_lajuMetabolit!);
+    _inputs.add(_siklusKerja!);
     _inputs.add(_pengendalian);
     _inputs.add(_note);
 
-    _inputs.add(InputGroup(
+    _inputs.add(GroupInput(
+        dataInputs: [], title: Text("TA", style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold))));
+    _inputs.add(GroupInput(dataInputs: [_ta1, _ta2, _ta3]));
+    _inputs.add(GroupInput(dataInputs: [_ta4, _ta5, _ta6]));
+
+    _inputs.add(GroupInput(
         dataInputs: [], title: Text("TW", style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold))));
-    _inputs.add(InputGroup(dataInputs: [_tw1, _tw2, _tw3]));
-    _inputs.add(InputGroup(dataInputs: [_tw4, _tw5, _tw6]));
+    _inputs.add(GroupInput(dataInputs: [_tw1, _tw2, _tw3]));
+    _inputs.add(GroupInput(dataInputs: [_tw4, _tw5, _tw6]));
 
-    _inputs.add(InputGroup(
+    _inputs.add(GroupInput(
         dataInputs: [], title: Text("TG", style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold))));
-    _inputs.add(InputGroup(dataInputs: [_tg1, _tg2, _tg3]));
-    _inputs.add(InputGroup(dataInputs: [_tg4, _tg5, _tg6]));
+    _inputs.add(GroupInput(dataInputs: [_tg1, _tg2, _tg3]));
+    _inputs.add(GroupInput(dataInputs: [_tg4, _tg5, _tg6]));
 
-    _inputs.add(InputGroup(
+    _inputs.add(GroupInput(
         dataInputs: [], title: Text("RH", style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold))));
-    _inputs.add(InputGroup(dataInputs: [_rh1, _rh2, _rh3]));
-    _inputs.add(InputGroup(dataInputs: [_rh4, _rh5, _rh6]));
+    _inputs.add(GroupInput(dataInputs: [_rh1, _rh2, _rh3]));
+    _inputs.add(GroupInput(dataInputs: [_rh4, _rh5, _rh6]));
+
+    _internalCalibrationTW.setOnChange((value) => _calculateISBB());
+    _internalCalibrationTG.setOnChange((value) => _calculateISBB());
     setState(() {});
   }
 

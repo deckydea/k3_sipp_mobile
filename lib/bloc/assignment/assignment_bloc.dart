@@ -50,7 +50,6 @@ class AssignmentBloc extends Bloc<AssignmentEvent, AssignmentState> {
           emit(AssignmentErrorState());
         }
       } catch (_) {
-        print("__$_");
         emit(AssignmentErrorState());
       }
     });

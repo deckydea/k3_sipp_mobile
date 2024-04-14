@@ -7,7 +7,7 @@ import 'package:k3_sipp_mobile/util/pdf/template/pdf_template_utils.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart';
 
-class PeneranganResultPdf {
+class AkreditasiPeneranganResultPdf {
   static Future<Uint8List> generatePrint({required Examination examination}) async {
     Widget header = await PdfHelperUtils.buildHeader();
     Widget background = await PdfHelperUtils.buildBackground();

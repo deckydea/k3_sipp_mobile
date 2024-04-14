@@ -8,6 +8,7 @@ class ResultPenerangan {
   final String localLightingData;
   final double average;
   final double standardDeviation;
+  final double standar;
   final double upresisi;
   final double ukalibrasi;
   final double ugabungan;
@@ -28,6 +29,7 @@ class ResultPenerangan {
     required this.localLightingData,
     required this.average,
     required this.standardDeviation,
+    required this.standar,
     required this.upresisi,
     required this.ukalibrasi,
     required this.ugabungan,
@@ -49,6 +51,7 @@ class ResultPenerangan {
     'localLightingData': localLightingData,
     'average': average,
     'standardDeviation': standardDeviation,
+    'standar': standar,
     'upresisi': upresisi,
     'ukalibrasi': ukalibrasi,
     'ugabungan': ugabungan,
@@ -71,6 +74,7 @@ class ResultPenerangan {
       localLightingData: json['localLightingData'],
       average: double.parse(json['average'].toString()),
       standardDeviation: double.parse(json['standarDeviasi'].toString()),
+      standar: double.parse(json['standar'].toString()),
       upresisi: double.parse(json['Upresisi'].toString()),
       ukalibrasi: double.parse(json['Ukalibrasi'].toString()),
       ugabungan: double.parse(json['Ugabungan'].toString()),

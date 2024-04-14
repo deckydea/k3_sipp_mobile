@@ -10,7 +10,7 @@ import 'package:k3_sipp_mobile/util/text_utils.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart';
 
-class KebisinganLKLHPPdf {
+class LHPKebisinganLKPdf {
   static Future<Uint8List> generatePrint({required Examination examination}) async {
     Widget header = await PdfHelperUtils.buildHeader();
     Widget background = await PdfHelperUtils.buildBackground();
@@ -150,7 +150,7 @@ class KebisinganLKLHPPdf {
     }
 
     for (ResultKebisinganLK result in result) {
-      if (result.average > result.pemaparanKebisingan().nab) {
+      if (result.average > result.pemaparanKebisingan.nab) {
         texts.add(Bullet(text: highNAB(result), style: PdfHelperUtils.smallStyle.copyWith(lineSpacing: 1), bulletSize: 3));
       } else {
         texts.add(Bullet(text: lowNAB(result), style: PdfHelperUtils.smallStyle.copyWith(lineSpacing: 1), bulletSize: 3));
@@ -165,7 +165,7 @@ class KebisinganLKLHPPdf {
     List<ResultKebisinganLK> lowNAB = [];
 
     for (ResultKebisinganLK result in examination.examinationResult) {
-      if (result.average > 85) {
+      if (result.average > result.pemaparanKebisingan.nab) {
         highNAB.add(result);
       } else {
         lowNAB.add(result);
@@ -193,7 +193,7 @@ class KebisinganLKLHPPdf {
 
     bool highNAB = false;
     for (var element in result) {
-      if (element.average > 85) {
+      if (element.average > element.pemaparanKebisingan.nab) {
         highNAB = true;
         break;
       }
@@ -320,9 +320,9 @@ class KebisinganLKLHPPdf {
             _cell(widget: Text(result.average.toStringAsFixed(2), textAlign: TextAlign.center, style: PdfHelperUtils.smallStyle)),
             _cell(
                 widget:
-                    Text("${result.pemaparanKebisingan().nab}", textAlign: TextAlign.center, style: PdfHelperUtils.smallStyle)),
+                    Text("${result.pemaparanKebisingan.nab}", textAlign: TextAlign.center, style: PdfHelperUtils.smallStyle)),
             _cell(
-                widget: Text(result.pemaparanKebisingan().label, textAlign: TextAlign.center, style: PdfHelperUtils.smallStyle)),
+                widget: Text(result.pemaparanKebisingan.label, textAlign: TextAlign.center, style: PdfHelperUtils.smallStyle)),
             _cell(
                 widget: Text(TextUtils.isEmpty(result.pengendalian) ? "-" : result.pengendalian!,
                     textAlign: TextAlign.center, style: PdfHelperUtils.smallStyle)),

@@ -19,6 +19,8 @@ class DataInput {
     this.onChanged,
   });
 
+  void setOnChange(Function(String) onChanged) => this.onChanged = onChanged;
+
   String get value => controller.text;
 
   void setValue(String value) => controller.text = value;
@@ -200,12 +202,19 @@ class TimeInput extends DataInput {
   }
 }
 
-class InputGroup extends DataInput {
+class GroupInput extends DataInput {
   final List<DataInput> dataInputs;
   final Widget? title;
 
-  InputGroup({
+  GroupInput({
     required this.dataInputs,
     this.title,
-  }) : super(inputType: InputType.inputGroup);
+  }) : super(inputType: InputType.groupInput);
+}
+
+class DropdownInput extends DataInput {
+  final List<DropdownMenuItem> dropdown;
+  dynamic selected;
+
+  DropdownInput({required this.selected, required this.dropdown})  : super(inputType: InputType.dropdown);
 }

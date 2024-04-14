@@ -69,7 +69,7 @@ class ResultKebisinganLK {
         'deviceCalibration': deviceCalibration,
       };
 
-  PemaparanKebisingan pemaparanKebisingan() {
+  PemaparanKebisingan get pemaparanKebisingan {
     switch (pemaparan) {
       case 8:
         return PemaparanKebisingan.jam8;

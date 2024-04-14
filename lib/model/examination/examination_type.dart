@@ -16,7 +16,7 @@ class ExaminationTypeName {
   static const gelombangElektroMagnet = "GELOMBANG_ELEKTROMAGNET";
   static const kebisinganAmbient = "KEBISINGAN_AMBIENT";
   static const kebisinganFrekuensi = "KEBISINGAN_FREKUENSI";
-  static const noiseDose = "NOISE_DOSE";
+  static const noiseDose = "KEBISINGAN_NOISE_DOSE";
 }
 
 class ExaminationType {

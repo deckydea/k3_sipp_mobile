@@ -6,7 +6,6 @@ import 'package:k3_sipp_mobile/net/request/devices_request.dart';
 import 'package:k3_sipp_mobile/net/response/response_type.dart';
 import 'package:k3_sipp_mobile/repository/app_repository.dart';
 import 'package:k3_sipp_mobile/util/connection_utils.dart';
-import 'package:k3_sipp_mobile/util/date_time_utils.dart';
 import 'package:k3_sipp_mobile/widget/custom/custom_form_input.dart';
 
 class DeviceLogic {

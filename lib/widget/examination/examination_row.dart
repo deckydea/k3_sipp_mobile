@@ -37,7 +37,7 @@ class ExaminationRow extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(examination.metode ?? "", style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.blueGrey)),
+                      Text(examination.examinationType!.metode, style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.blueGrey)),
                       // Text(
                       //     examination.implementationDate != null
                       //         ? DateTimeUtils.formatToDate(examination.implementationDate!)

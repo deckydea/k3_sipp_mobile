@@ -38,6 +38,7 @@ class KebisinganFrekuensiPdf {
           _buildInfo(examination),
           SizedBox(height: Dimens.paddingMedium),
           _buildTable(examination),
+          // _buildContent(examination),
           SizedBox(height: Dimens.paddingLarge + Dimens.paddingSmall),
           _buildFooter(examination),
         ],
@@ -97,6 +98,24 @@ class KebisinganFrekuensiPdf {
 
   static Widget _buildTable(Examination examination) {
     List<TableRow> tableContent = [];
+
+    Widget cellDBA(String text) {
+      return _cellNumber(
+        widget: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(height: Dimens.paddingSmallGap),
+            Text(
+              text,
+              textAlign: TextAlign.center,
+              style: PdfHelperUtils.smallStyle.copyWith(fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+      );
+    }
+
     //Header
     tableContent.add(
       TableRow(
@@ -119,7 +138,7 @@ class KebisinganFrekuensiPdf {
                 SizedBox(height: Dimens.paddingGap),
                 Text("Leq (dBA)",
                     textAlign: TextAlign.center, style: PdfHelperUtils.smallStyle.copyWith(fontWeight: FontWeight.bold)),
-                SizedBox(height: Dimens.paddingSmall),
+                SizedBox(height: Dimens.paddingGap),
                 Container(
                   decoration: BoxDecoration(border: Border.all(width: 1)),
                   child: Row(
@@ -179,15 +198,13 @@ class KebisinganFrekuensiPdf {
 
     //Body
     int i = 1;
-    for (DataKebisinganFrekuensi result in examination.userInput) {
+    for (DataKebisinganFrekuensi result in examination.examinationResult) {
       tableContent.add(
         TableRow(
           verticalAlignment: TableCellVerticalAlignment.full,
           children: [
             _cell(widget: Text("$i", textAlign: TextAlign.center, style: PdfHelperUtils.smallStyle)),
-            _cell(
-              widget: Text(result.location, style: PdfHelperUtils.smallStyle),
-            ),
+            _cell(widget: Text(result.location, style: PdfHelperUtils.smallStyle)),
             _cell(
               widget:
                   Text(DateTimeUtils.formatToTime(result.time!), textAlign: TextAlign.center, style: PdfHelperUtils.smallStyle),
@@ -198,76 +215,16 @@ class KebisinganFrekuensiPdf {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  _cellNumber(
-                    widget: Text(
-                      "${result.value1}",
-                      textAlign: TextAlign.center,
-                      style: PdfHelperUtils.smallStyle.copyWith(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  _cellNumber(
-                    widget: Text(
-                      "${result.value2}",
-                      textAlign: TextAlign.center,
-                      style: PdfHelperUtils.smallStyle.copyWith(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  _cellNumber(
-                    widget: Text(
-                      "${result.value3}",
-                      textAlign: TextAlign.center,
-                      style: PdfHelperUtils.smallStyle.copyWith(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  _cellNumber(
-                    widget: Text(
-                      "${result.value4}",
-                      textAlign: TextAlign.center,
-                      style: PdfHelperUtils.smallStyle.copyWith(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  _cellNumber(
-                    widget: Text(
-                      "${result.value5}",
-                      textAlign: TextAlign.center,
-                      style: PdfHelperUtils.smallStyle.copyWith(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  _cellNumber(
-                    widget: Text(
-                      "${result.value6}",
-                      textAlign: TextAlign.center,
-                      style: PdfHelperUtils.smallStyle.copyWith(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  _cellNumber(
-                    widget: Text(
-                      "${result.value7}",
-                      textAlign: TextAlign.center,
-                      style: PdfHelperUtils.smallStyle.copyWith(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  _cellNumber(
-                    widget: Text(
-                      "${result.value8}",
-                      textAlign: TextAlign.center,
-                      style: PdfHelperUtils.smallStyle.copyWith(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  _cellNumber(
-                    widget: Text(
-                      "${result.value9}",
-                      textAlign: TextAlign.center,
-                      style: PdfHelperUtils.smallStyle.copyWith(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  _cellNumber(
-                    widget: Text(
-                      "${result.value10}",
-                      textAlign: TextAlign.center,
-                      style: PdfHelperUtils.smallStyle.copyWith(fontWeight: FontWeight.bold),
-                    ),
-                  ),
+                  cellDBA("${result.value1}"),
+                  cellDBA("${result.value2}"),
+                  cellDBA("${result.value3}"),
+                  cellDBA("${result.value4}"),
+                  cellDBA("${result.value5}"),
+                  cellDBA("${result.value6}"),
+                  cellDBA("${result.value7}"),
+                  cellDBA("${result.value8}"),
+                  cellDBA("${result.value9}"),
+                  cellDBA("${result.value10}"),
                 ],
               ),
             ),
@@ -298,7 +255,7 @@ class KebisinganFrekuensiPdf {
   }
 
   static Widget _buildInfo(Examination examination) {
-    List<DataKebisinganFrekuensi> result = examination.userInput;
+    List<DataKebisinganFrekuensi> result = examination.examinationResult;
     // String devices = result.map((e) => e.deviceCalibration!.name).join(',');
     String devices = result.first.deviceCalibration!.device!.name ?? "";
 
@@ -311,10 +268,10 @@ class KebisinganFrekuensiPdf {
         title: Text("Alamat", style: PdfHelperUtils.smallStyle),
         value: Text("${examination.company!.companyAddress}", style: PdfHelperUtils.smallStyle),
       ),
-      // PdfHelperUtils.keyValueSeparated(
-      //   title: Text("Tanggal Pelaksanaan", style: PdfHelperUtils.smallStyle),
-      //   value: Text(DateTimeUtils.formatToDate(examination.implementationTimeStart!), style: PdfHelperUtils.smallStyle),
-      // ),
+      PdfHelperUtils.keyValueSeparated(
+        title: Text("Tanggal Pelaksanaan", style: PdfHelperUtils.smallStyle),
+        value: Text(DateTimeUtils.formatToDate(examination.implementationTimeStart!), style: PdfHelperUtils.smallStyle),
+      ),
       PdfHelperUtils.keyValueSeparated(
         title: Text("Jenis Pengujian", style: PdfHelperUtils.smallStyle),
         value: Text(examination.examinationType!.description, style: PdfHelperUtils.smallStyle),

@@ -21,13 +21,13 @@ import 'package:k3_sipp_mobile/ui/assignment/input/input_penerangan_page.dart';
 import 'package:k3_sipp_mobile/ui/user/select_user.dart';
 import 'package:k3_sipp_mobile/util/date_time_utils.dart';
 import 'package:k3_sipp_mobile/util/dialog_utils.dart';
+import 'package:k3_sipp_mobile/util/enum_translation_utils.dart';
 import 'package:k3_sipp_mobile/util/file_utils.dart';
 import 'package:k3_sipp_mobile/util/message_utils.dart';
 import 'package:k3_sipp_mobile/util/pdf/examination_result/akreditasi_kebisingan_frekuensi_pdf.dart';
-import 'package:k3_sipp_mobile/util/pdf/examination_result/kebisingan_lk_lhp_pdf.dart';
-import 'package:k3_sipp_mobile/util/pdf/examination_result/kebisingan_lk_pdf.dart';
-import 'package:k3_sipp_mobile/util/pdf/examination_result/penerangan_pdf.dart';
-import 'package:k3_sipp_mobile/util/text_utils.dart';
+import 'package:k3_sipp_mobile/util/pdf/examination_result/lhp_kebisingan_lk_pdf.dart';
+import 'package:k3_sipp_mobile/util/pdf/examination_result/akreditasi_kebisingan_lk_pdf.dart';
+import 'package:k3_sipp_mobile/util/pdf/examination_result/akreditasi_penerangan_pdf.dart';
 import 'package:k3_sipp_mobile/widget/custom/custom_button.dart';
 import 'package:k3_sipp_mobile/widget/custom/custom_card.dart';
 import 'package:k3_sipp_mobile/widget/custom/custom_circular_progress_indicator.dart';
@@ -60,24 +60,24 @@ class _InputFormPageState extends State<InputFormPage> {
     bool permission = await FileUtils.requestStoragePermission();
     if (permission) {
       String fileName =
-          "${_logic.examination.typeOfExaminationName} - ${_logic.examination.company!.companyName} -${DateTimeUtils.formatToDateTime(DateTime.now())}";
+          "${EnumTranslationUtils.examinationType(_logic.examination.typeOfExaminationName)} - ${_logic.examination.company!.companyName} -${DateTimeUtils.formatToDateTime(DateTime.now())}";
       Uint8List? pdfBytes;
 
       switch (_logic.examination.typeOfExaminationName) {
         case ExaminationTypeName.kebisingan:
-          pdfBytes = await KebisinganLKResultPdf.generatePrint(examination: _logic.examination);
+          pdfBytes = await AkreditasiKebisinganLKPdf.generatePrint(examination: _logic.examination);
           break;
         case ExaminationTypeName.penerangan:
-          pdfBytes = await PeneranganResultPdf.generatePrint(examination: _logic.examination);
+          pdfBytes = await AkreditasiPeneranganResultPdf.generatePrint(examination: _logic.examination);
           break;
         case ExaminationTypeName.kebisinganFrekuensi:
-          print("kebisinganFrekuensi");
           pdfBytes = await KebisinganFrekuensiPdf.generatePrint(examination: _logic.examination);
+          break;
+        default:
+          if (mounted) MessageUtils.showMessage(context: context, content: "Document tidak tersedia.");
           break;
       }
 
-      print("pdfBytes != null && mounted");
-      print(pdfBytes != null && mounted);
       if (pdfBytes != null && mounted) {
         FileUtils.openPdfFiles(context: context, pdfBytes: pdfBytes, fileName: fileName);
       }
@@ -90,15 +90,18 @@ class _InputFormPageState extends State<InputFormPage> {
     bool permission = await FileUtils.requestStoragePermission();
     if (permission) {
       String fileName =
-          "${_logic.examination.typeOfExaminationName} - ${_logic.examination.company!.companyName} -${DateTimeUtils.formatToDateTime(DateTime.now())}";
+          "${EnumTranslationUtils.examinationType(_logic.examination.typeOfExaminationName)} - ${_logic.examination.company!.companyName} -${DateTimeUtils.formatToDateTime(DateTime.now())}";
       Uint8List? pdfBytes;
 
       switch (_logic.examination.typeOfExaminationName) {
         case ExaminationTypeName.kebisingan:
-          pdfBytes = await KebisinganLKLHPPdf.generatePrint(examination: _logic.examination);
+          pdfBytes = await LHPKebisinganLKPdf.generatePrint(examination: _logic.examination);
           break;
         case ExaminationTypeName.penerangan:
-          pdfBytes = await PeneranganResultPdf.generatePrint(examination: _logic.examination);
+          pdfBytes = await AkreditasiPeneranganResultPdf.generatePrint(examination: _logic.examination);
+          break;
+        default:
+          if (mounted) MessageUtils.showMessage(context: context, content: "Document tidak tersedia.");
           break;
       }
 
@@ -761,7 +764,7 @@ class _InputFormPageState extends State<InputFormPage> {
       appBar: AppBar(
         centerTitle: true,
         backgroundColor: ColorResources.background,
-        title: Text(widget.arguments.examination.typeOfExaminationName.toCapitalize(),
+        title: Text(EnumTranslationUtils.examinationType(widget.arguments.examination.typeOfExaminationName),
             style: Theme.of(context).textTheme.headlineLarge),
         // actions: [
         //   Padding(

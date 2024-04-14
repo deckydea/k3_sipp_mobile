@@ -54,7 +54,7 @@ class EnumTranslationUtils{
       case ExaminationTypeName.kebisinganFrekuensi:
         return "Kebisingan Frekuensi";
       case ExaminationTypeName.noiseDose:
-        return "Noise Dose";
+        return "Kebisingan Noise Dose";
       default:
         return "-";
     }

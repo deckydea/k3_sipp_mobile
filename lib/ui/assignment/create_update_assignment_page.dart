@@ -158,7 +158,7 @@ class _CreateOrUpdateAssignmentPageState extends State<CreateOrUpdateAssignmentP
     var result = await DialogUtils.showAlertDialog(
       context,
       dismissible: false,
-      title: "Hapus Device",
+      title: "Hapus",
       content: "Apakah Anda yakin akan menghapus ${examination.typeOfExaminationName}?",
       neutralAction: "Tidak",
       onNeutral: () => navigatorKey.currentState?.pop(false),
