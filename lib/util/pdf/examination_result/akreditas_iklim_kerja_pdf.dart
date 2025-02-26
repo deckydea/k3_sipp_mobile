@@ -10,17 +10,17 @@ import 'package:pdf/widgets.dart';
 class AkreditasiIklimKerjaPdf {
   static Future<Uint8List> generatePrint({required Examination examination}) async {
     Widget header = await PdfHelperUtils.buildHeader();
-    Widget background = await PdfHelperUtils.buildBackground();
+    Widget background = await PdfHelperUtils.buildBackground(akreditasi: true);
 
     final Document pdf = Document();
     pdf.addPage(
       MultiPage(
         pageTheme: PageTheme(
           pageFormat: PdfPageFormat.a4,
-          margin: const EdgeInsets.all(Dimens.paddingMedium),
+          margin: EdgeInsets.zero,
           buildBackground: (context) => background,
         ),
-        header: (context) => header,
+        header: (context) => Padding(padding: const EdgeInsets.all(Dimens.paddingMedium), child: header),
         crossAxisAlignment: CrossAxisAlignment.center,
         build: (context) => [
           SizedBox(height: Dimens.paddingMedium),
@@ -77,15 +77,15 @@ class AkreditasiIklimKerjaPdf {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: Dimens.paddingWidget),
               child: Text(
-                "3. Nilai Ambang Batas (NAB) iklim kerja ditempat kerja berdasarkan Peraturan Menteri Ketenagakerjaan R.I No. 5 Tahun 2018",
+                "3. Nilai Ambang Batas (NAB) iklim kerja ditempat kerja berdasarkan Peraturan\n    Menteri Ketenagakerjaan R.I No. 5 Tahun 2018",
                 style: PdfHelperUtils.xSmallStyle,
               ),
             ),
           ],
         ),
-        SizedBox(width: Dimens.paddingWidget),
+        SizedBox(width: Dimens.paddingSmall),
         Expanded(
-          flex: 2,
+          flex: 3,
           child: Align(
             alignment: Alignment.topRight,
             child: Padding(
@@ -202,11 +202,11 @@ class AkreditasiIklimKerjaPdf {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  cellResult("${result.averageTA}"),
-                  cellResult("${result.averageTW}"),
-                  cellResult("${result.averageTG}"),
-                  cellResult("${result.averageRH}"),
-                  cellResult("${result.averageISBB}"),
+                  cellResult(result.averageTA.toStringAsFixed(2)),
+                  cellResult(result.averageTW.toStringAsFixed(2)),
+                  cellResult(result.averageTG.toStringAsFixed(2)),
+                  cellResult(result.averageRH.toStringAsFixed(2)),
+                  cellResult(result.averageISBB.toStringAsFixed(2)),
                 ],
               ),
             ),
@@ -214,6 +214,38 @@ class AkreditasiIklimKerjaPdf {
         ),
       );
       i++;
+    }
+
+    if (i < 9) {
+      for (i; i < 9; i++) {
+        tableContent.add(
+          TableRow(
+            verticalAlignment: TableCellVerticalAlignment.full,
+            children: [
+              _cell(widget: Text("$i", textAlign: TextAlign.center, style: PdfHelperUtils.smallStyle)),
+              _cell(widget: Text("", style: PdfHelperUtils.smallStyle)),
+              _cell(
+                widget:
+                Text("", textAlign: TextAlign.center, style: PdfHelperUtils.smallStyle),
+              ),
+              Container(
+                decoration: BoxDecoration(border: Border.all(width: 1)),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    cellResult(""),
+                    cellResult(""),
+                    cellResult(""),
+                    cellResult(""),
+                    cellResult(""),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      }
     }
 
     return Container(
@@ -343,7 +375,7 @@ class AkreditasiIklimKerjaPdf {
   static Widget _cellNumber({required Widget widget}) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: Dimens.paddingGap),
-      width: 35.3,
+      width: 40 ,
       decoration: const BoxDecoration(border: Border.symmetric(vertical: BorderSide(width: 1))),
       child: widget,
     );

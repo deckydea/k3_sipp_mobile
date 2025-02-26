@@ -127,6 +127,7 @@ class _TemplateDetailPageState extends State<TemplateDetailPage> {
           return Padding(
             padding: const EdgeInsets.only(top: Dimens.paddingSmall),
             child: ListView.builder(
+              physics: const NeverScrollableScrollPhysics(),
               itemCount: examinations.length,
               shrinkWrap: true,
               itemBuilder: (context, index) {

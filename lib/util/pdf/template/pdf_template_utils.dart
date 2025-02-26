@@ -21,6 +21,8 @@ class PdfHelperUtils {
   static final TextStyle smallStyle = TextStyle(fontSize: Dimens.fontXXSmall, color: PdfColor.fromInt(ColorResources.text.value));
   static final TextStyle xSmallStyle =
       TextStyle(fontSize: Dimens.fontXXXSmall, color: PdfColor.fromInt(ColorResources.text.value));
+  static final TextStyle xxSmallStyle =
+      TextStyle(fontSize: Dimens.fontXXXXSmall, color: PdfColor.fromInt(ColorResources.text.value));
 
   static Future<Widget> buildHeader() async {
     final k3Logo = MemoryImage((await rootBundle.load("assets/drawable/raw.png")).buffer.asUint8List());
@@ -69,16 +71,24 @@ class PdfHelperUtils {
     );
   }
 
-  static Future<Widget> buildBackground() async {
-    final k3Logo = MemoryImage((await rootBundle.load("assets/drawable/background_kemnaker.png")).buffer.asUint8List());
+  static Future<Widget> buildBackground({bool akreditasi = false}) async {
+    final k3Logo = MemoryImage((await rootBundle.load("assets/drawable/background_kemnaker_removebg.png")).buffer.asUint8List());
+    final bgAkreditasi = MemoryImage((await rootBundle.load("assets/drawable/background_akreditasi.png")).buffer.asUint8List());
 
-    return Container(
-      padding: const EdgeInsets.only(bottom: Dimens.paddingWidget),
-      decoration: const BoxDecoration(color: PdfColors.white),
-      child: Center(
-        child: Image(k3Logo, fit: BoxFit.contain, height: Dimens.logoSizeBackground, width: Dimens.logoSizeBackground),
-      ),
-    );
+    return akreditasi
+        ? Container(
+            decoration: BoxDecoration(image: DecorationImage(image: bgAkreditasi, fit: BoxFit.cover)),
+            child: Center(
+              child: Image(k3Logo, fit: BoxFit.contain, height: Dimens.logoSizeBackground, width: Dimens.logoSizeBackground),
+            ),
+          )
+        : Container(
+            padding: const EdgeInsets.only(bottom: Dimens.paddingWidget),
+            decoration: const BoxDecoration(color: PdfColors.white),
+            child: Center(
+              child: Image(k3Logo, fit: BoxFit.contain, height: Dimens.logoSizeBackground, width: Dimens.logoSizeBackground),
+            ),
+          );
   }
 
   //===================== Custom Widget =======================

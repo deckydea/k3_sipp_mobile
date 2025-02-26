@@ -4,12 +4,22 @@ import 'package:k3_sipp_mobile/model/company/company.dart';
 import 'package:k3_sipp_mobile/model/device/device_calibration.dart';
 import 'package:k3_sipp_mobile/model/examination/examination_status.dart';
 import 'package:k3_sipp_mobile/model/examination/examination_type.dart';
+import 'package:k3_sipp_mobile/model/examination/input/input_elektromagnetic.dart';
+import 'package:k3_sipp_mobile/model/examination/input/input_hand_arm.dart';
 import 'package:k3_sipp_mobile/model/examination/input/input_iklim_kerja.dart';
 import 'package:k3_sipp_mobile/model/examination/input/input_kebisingan_frekuensi.dart';
 import 'package:k3_sipp_mobile/model/examination/input/input_kebisingan_lk.dart';
+import 'package:k3_sipp_mobile/model/examination/input/input_kebisingan_noise_dose.dart';
 import 'package:k3_sipp_mobile/model/examination/input/input_penerangan.dart';
+import 'package:k3_sipp_mobile/model/examination/input/input_uv.dart';
+import 'package:k3_sipp_mobile/model/examination/input/input_whole_body.dart';
+import 'package:k3_sipp_mobile/model/examination/result/result_elektromagnetic.dart';
+import 'package:k3_sipp_mobile/model/examination/result/result_hand_arm.dart';
+import 'package:k3_sipp_mobile/model/examination/result/result_iklim_kerja.dart';
 import 'package:k3_sipp_mobile/model/examination/result/result_kebisingan_lk.dart';
 import 'package:k3_sipp_mobile/model/examination/result/result_penerangan.dart';
+import 'package:k3_sipp_mobile/model/examination/result/result_uv.dart';
+import 'package:k3_sipp_mobile/model/examination/result/result_whole_body.dart';
 import 'package:k3_sipp_mobile/model/user/user.dart';
 import 'package:k3_sipp_mobile/repository/examination_repository.dart';
 import 'package:k3_sipp_mobile/res/colors.dart';
@@ -99,6 +109,22 @@ class Examination {
         return Colors.brown;
       case ExaminationTypeName.penerangan:
         return Colors.amber;
+      case ExaminationTypeName.kebisinganFrekuensi:
+        return Colors.lightGreen;
+      case ExaminationTypeName.kebisinganNoiseDose:
+        return Colors.grey;
+      case ExaminationTypeName.kebisinganAmbient:
+        return Colors.redAccent;
+      case ExaminationTypeName.iklimKerja:
+        return Colors.blueAccent;
+      case ExaminationTypeName.getaranWholeBody:
+        return Colors.purpleAccent;
+      case ExaminationTypeName.getaranLengan:
+        return Colors.pinkAccent;
+      case ExaminationTypeName.gelombangElektroMagnet:
+        return Colors.black;
+      case ExaminationTypeName.sinarUV:
+        return Colors.deepOrangeAccent;
     }
 
     return ColorResources.primaryDark;
@@ -179,6 +205,22 @@ class Examination {
         return const Icon(Icons.noise_aware_outlined, color: Colors.white, size: Dimens.iconSize);
       case ExaminationTypeName.penerangan:
         return const Icon(Icons.light_mode_outlined, color: Colors.white, size: Dimens.iconSize);
+      case ExaminationTypeName.kebisinganFrekuensi:
+        return const Icon(Icons.surround_sound, color: Colors.white, size: Dimens.iconSize);
+      case ExaminationTypeName.kebisinganNoiseDose:
+        return const Icon(Icons.speaker, color: Colors.white, size: Dimens.iconSize);
+      case ExaminationTypeName.kebisinganAmbient:
+        return const Icon(Icons.share_arrival_time, color: Colors.white, size: Dimens.iconSize);
+      case ExaminationTypeName.iklimKerja:
+        return const Icon(Icons.cloud_sync, color: Colors.white, size: Dimens.iconSize);
+      case ExaminationTypeName.getaranWholeBody:
+        return const Icon(Icons.accessibility_new, color: Colors.white, size: Dimens.iconSize);
+      case ExaminationTypeName.getaranLengan:
+        return const Icon(Icons.handshake, color: Colors.white, size: Dimens.iconSize);
+      case ExaminationTypeName.gelombangElektroMagnet:
+        return const Icon(Icons.electric_meter_outlined, color: Colors.white, size: Dimens.iconSize);
+      case ExaminationTypeName.sinarUV:
+        return const Icon(Icons.sunny, color: Colors.white, size: Dimens.iconSize);
     }
 
     return const Icon(Icons.unarchive_outlined, color: Colors.white, size: Dimens.iconSize);
@@ -328,11 +370,51 @@ class Examination {
           }
           examinationResult = results;
           break;
+        case ExaminationTypeName.kebisinganNoiseDose:
+          Iterable iterable = json["examinationResult"];
+          List<DataNoiseDose> results = [];
+          for (var result in iterable) {
+            results.add(DataNoiseDose.fromJson(result));
+          }
+          examinationResult = results;
+          break;
         case ExaminationTypeName.iklimKerja:
           Iterable iterable = json["examinationResult"];
-          List<DataIklimKerja> results = [];
+          List<ResultIklimKerja> results = [];
           for (var result in iterable) {
-            results.add(DataIklimKerja.fromJson(result));
+            results.add(ResultIklimKerja.fromJson(result));
+          }
+          examinationResult = results;
+          break;
+        case ExaminationTypeName.gelombangElektroMagnet:
+          Iterable iterable = json["examinationResult"];
+          List<ResultElektromagnetic> results = [];
+          for (var result in iterable) {
+            results.add(ResultElektromagnetic.fromJson(result));
+          }
+          examinationResult = results;
+          break;
+        case ExaminationTypeName.sinarUV:
+          Iterable iterable = json["examinationResult"];
+          List<ResultUV> results = [];
+          for (var result in iterable) {
+            results.add(ResultUV.fromJson(result));
+          }
+          examinationResult = results;
+          break;
+        case ExaminationTypeName.getaranWholeBody:
+          Iterable iterable = json["examinationResult"];
+          List<ResultWholeBody> results = [];
+          for (var result in iterable) {
+            results.add(ResultWholeBody.fromJson(result));
+          }
+          examinationResult = results;
+          break;
+        case ExaminationTypeName.getaranLengan:
+          Iterable iterable = json["examinationResult"];
+          List<ResultHandArm> results = [];
+          for (var result in iterable) {
+            results.add(ResultHandArm.fromJson(result));
           }
           examinationResult = results;
           break;
@@ -366,11 +448,51 @@ class Examination {
           }
           userInput = userInputs;
           break;
+        case ExaminationTypeName.kebisinganNoiseDose:
+          Iterable iterable = json["userInput"];
+          List<DataNoiseDose> userInputs = [];
+          for (var userInput in iterable) {
+            userInputs.add(DataNoiseDose.fromJson(userInput));
+          }
+          userInput = userInputs;
+          break;
         case ExaminationTypeName.iklimKerja:
           Iterable iterable = json["userInput"];
           List<DataIklimKerja> userInputs = [];
           for (var userInput in iterable) {
             userInputs.add(DataIklimKerja.fromJson(userInput));
+          }
+          userInput = userInputs;
+          break;
+        case ExaminationTypeName.gelombangElektroMagnet:
+          Iterable iterable = json["userInput"];
+          List<DataElektromagnetik> userInputs = [];
+          for (var userInput in iterable) {
+            userInputs.add(DataElektromagnetik.fromJson(userInput));
+          }
+          userInput = userInputs;
+          break;
+        case ExaminationTypeName.sinarUV:
+          Iterable iterable = json["userInput"];
+          List<DataUltraviolet> userInputs = [];
+          for (var userInput in iterable) {
+            userInputs.add(DataUltraviolet.fromJson(userInput));
+          }
+          userInput = userInputs;
+          break;
+        case ExaminationTypeName.getaranWholeBody:
+          Iterable iterable = json["userInput"];
+          List<DataWholeBody> userInputs = [];
+          for (var userInput in iterable) {
+            userInputs.add(DataWholeBody.fromJson(userInput));
+          }
+          userInput = userInputs;
+          break;
+        case ExaminationTypeName.getaranLengan:
+          Iterable iterable = json["userInput"];
+          List<DataHandArm> userInputs = [];
+          for (var userInput in iterable) {
+            userInputs.add(DataHandArm.fromJson(userInput));
           }
           userInput = userInputs;
           break;

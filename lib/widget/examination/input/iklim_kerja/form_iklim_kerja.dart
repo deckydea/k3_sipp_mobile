@@ -339,7 +339,7 @@ class _FormIklimKerjaState extends State<FormIklimKerja> {
       ));
     }
     _selectedLajuMetabolit = _selectedLajuMetabolit ?? LajuMetabolit.rendah;
-    _lajuMetabolit = DropdownInput(selected: _selectedLajuMetabolit, dropdown: _dropdownLajuMetabolit);
+    _lajuMetabolit = DropdownInput(selected: _selectedLajuMetabolit, dropdown: _dropdownLajuMetabolit, label: "Laju Metabolit");
 
     for (SiklusKerja siklusKerja in SiklusKerja.values) {
       _dropdownSiklusKerja.add(DropdownMenuItem(
@@ -348,7 +348,7 @@ class _FormIklimKerjaState extends State<FormIklimKerja> {
       ));
     }
     _selectedSiklusKerja = _selectedSiklusKerja ?? SiklusKerja.siklus_75_100;
-    _siklusKerja = DropdownInput(selected: _selectedSiklusKerja, dropdown: _dropdownSiklusKerja);
+    _siklusKerja = DropdownInput(selected: _selectedSiklusKerja, dropdown: _dropdownSiklusKerja, label: "Siklus Waktu Kerja");
 
     _inputs.add(GroupInput(
         dataInputs: [],
@@ -358,7 +358,7 @@ class _FormIklimKerjaState extends State<FormIklimKerja> {
     _inputs.add(_deviceCalibrationTG);
     _inputs.add(_internalCalibrationTG);
     _inputs.add(_deviceCalibrationISBB);
-    _inputs.add(_internalCalibrationISBB);
+    _inputs.add(_internalCalibrationISBB); 
 
     _inputs.add(GroupInput(
         dataInputs: [],

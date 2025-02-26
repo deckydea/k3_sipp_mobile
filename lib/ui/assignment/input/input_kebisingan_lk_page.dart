@@ -23,32 +23,23 @@ class InputKebisinganLKPageState extends State<InputKebisinganLKPage> {
   InputView _view = InputView.tableView;
 
   Future<void> _addOrUpdateRow({DataKebisinganLK? data}) async {
-    if(!widget.logic.examination.canUpdateInput) return;
+    if (!widget.logic.examination.canUpdateInput) return;
 
-    await showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      isDismissible: false,
-      builder: (context) {
-        return SafeArea(
-          child: Padding(
-            padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-            child: FormKebisinganLK(
-              data: data,
-              onUpdate: (input) {
-                if (data != input) {
-                  widget.logic.examination.userInput.remove(data);
-                  widget.logic.examination.userInput.add(input);
-                }
-              },
-              onAdd: (input) => widget.logic.examination.userInput.add(input),
-              onDelete: (input) => widget.logic.examination.userInput.remove(input),
-            ),
-          ),
-        );
-      },
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => FormKebisinganLK(
+          data: data,
+          onUpdate: (input) {
+            if (data != input) {
+              widget.logic.examination.userInput.remove(data);
+              widget.logic.examination.userInput.add(input);
+            }
+          },
+          onAdd: (input) => widget.logic.examination.userInput.add(input),
+          onDelete: (input) => widget.logic.examination.userInput.remove(input),
+        ),
+      ),
     );
-
     setState(() {});
   }
 

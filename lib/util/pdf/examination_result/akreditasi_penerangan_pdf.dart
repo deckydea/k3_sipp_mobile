@@ -93,8 +93,8 @@ class AkreditasiPeneranganResultPdf {
               child: PdfHelperUtils.signatureWidget(
                 date: DateTime.now(),
                 title: "Penanggung Jawab Teknis",
-                name: "Waluyo M.Si",
-                nip: "1982837182738",
+                name: "dr. Diana Rosa",
+                nip: "19770215 200501 2 002",
               ),
             ),
           ),
@@ -147,8 +147,8 @@ class AkreditasiPeneranganResultPdf {
       i++;
     }
 
-    if (i < 6) {
-      for (i; i < 6; i++) {
+    if (i < 7) {
+      for (i; i < 7; i++) {
         tableContent.add(
           TableRow(
             children: [
@@ -271,7 +271,8 @@ class AkreditasiPeneranganResultPdf {
   }
 
   static Widget _buildInfo(Examination examination) {
-    String devices = examination.deviceCalibrations!.map((e) => e.device!.name).join(',');
+    List<ResultPenerangan> result = examination.examinationResult;
+    String devices = result.first.deviceCalibration!.device!.name ?? "";
 
     List<Widget> widgets = [
       PdfHelperUtils.keyValueSeparated(

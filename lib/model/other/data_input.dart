@@ -216,5 +216,9 @@ class DropdownInput extends DataInput {
   final List<DropdownMenuItem> dropdown;
   dynamic selected;
 
-  DropdownInput({required this.selected, required this.dropdown})  : super(inputType: InputType.dropdown);
+  DropdownInput({
+    required this.selected,
+    required this.dropdown,
+    required super.label,
+  }) : super(inputType: InputType.dropdown);
 }

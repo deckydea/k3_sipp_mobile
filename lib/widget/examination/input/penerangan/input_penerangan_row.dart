@@ -104,12 +104,12 @@ class InputPeneranganRow extends StatelessWidget {
           children: [
             Text(
               input.location,
-              style: theme.textTheme.bodySmall?.copyWith(color: ColorResources.primaryDark, fontWeight: FontWeight.bold),
+              style: theme.textTheme.bodyMedium?.copyWith(color: ColorResources.primaryDark, fontWeight: FontWeight.bold),
             ),
             const SizedBox(width: Dimens.paddingWidget),
             Text(
               input.localLightingData,
-              style: theme.textTheme.bodySmall?.copyWith(color: ColorResources.primaryDark, fontWeight: FontWeight.bold),
+              style: theme.textTheme.bodyMedium?.copyWith(color: ColorResources.primaryDark, fontWeight: FontWeight.bold),
             ),
           ],
         ),

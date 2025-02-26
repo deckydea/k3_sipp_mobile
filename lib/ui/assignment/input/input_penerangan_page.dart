@@ -24,30 +24,22 @@ class _InputPeneranganPageState extends State<InputPeneranganPage> {
 
   Future<void> _addOrUpdateRow({DataPenerangan? data}) async {
     if(!widget.logic.examination.canUpdateInput) return;
-    await showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      isDismissible: false,
-      builder: (context) {
-        return SafeArea(
-          child: Padding(
-            padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-            child: FormPenerangan(
-              data: data,
-              onUpdate: (input) {
-                if (data != input) {
-                  widget.logic.examination.userInput.remove(data);
-                  widget.logic.examination.userInput.add(input);
-                }
-              },
-              onAdd: (input) => widget.logic.examination.userInput.add(input),
-              onDelete: (input) => widget.logic.examination.userInput.remove(input),
-            ),
-          ),
-        );
-      },
-    );
 
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => FormPenerangan(
+          data: data,
+          onUpdate: (input) {
+            if (data != input) {
+              widget.logic.examination.userInput.remove(data);
+              widget.logic.examination.userInput.add(input);
+            }
+          },
+          onAdd: (input) => widget.logic.examination.userInput.add(input),
+          onDelete: (input) => widget.logic.examination.userInput.remove(input),
+        ),
+      ),
+    );
     setState(() {});
   }
 

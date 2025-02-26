@@ -141,7 +141,7 @@ class LHPPeneranganPdf {
     List<Widget> texts = [];
 
     String highNAB(ResultPenerangan result) {
-      return "Pengukuran intensitas pencahayaan yang dilakukan pada ${result.location}  yaitu sebesar ${result.average.toStringAsFixed(2)} lux. Sudah memenuhi standar minimal yang diperkenankan, pencahayaan sudah cukup di area tersebut dengan cahaya alami dan buatan";
+      return "Pengukuran intensitas pencahayaan yang dilakukan pada ${result.location}  yaitu sebesar ${result.average.toStringAsFixed(2)} lux. Sudah memenuhi standar minimal yang diperkenankan, pencahayaan sudah cukup di area tersebut dengan ${result.sumberCahaya.label}";
     }
 
     String lowNAB(ResultPenerangan result) {
@@ -301,7 +301,7 @@ class LHPPeneranganPdf {
             _cell(widget: Text(result.location, style: PdfHelperUtils.smallStyle)),
             _cell(widget: Text("${result.jumlahTK}", textAlign: TextAlign.center, style: PdfHelperUtils.smallStyle)),
             _cell(widget: Text(result.sumberCahaya.label, textAlign: TextAlign.center, style: PdfHelperUtils.smallStyle)),
-            _cell(widget: Text("${result.average}", textAlign: TextAlign.center, style: PdfHelperUtils.smallStyle)),
+            _cell(widget: Text(result.average.toStringAsFixed(2), textAlign: TextAlign.center, style: PdfHelperUtils.smallStyle)),
             _cell(widget: Text("${result.standar}", textAlign: TextAlign.center, style: PdfHelperUtils.smallStyle)),
             _cell(widget: Text(result.jenisPengukuran.label, textAlign: TextAlign.center, style: PdfHelperUtils.smallStyle)),
           ],
@@ -323,7 +323,7 @@ class LHPPeneranganPdf {
           0: const FixedColumnWidth(20),
           1: const FixedColumnWidth(80),
           2: const FixedColumnWidth(35),
-          3: const FixedColumnWidth(40),
+          3: const FixedColumnWidth(43),
           4: const FixedColumnWidth(30),
           5: const FixedColumnWidth(40),
           6: const FixedColumnWidth(60),

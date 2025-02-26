@@ -184,7 +184,7 @@ class CustomFormInputState extends State<CustomFormInput> {
       icon: dataInput.icon,
       enabled: dataInput.enable,
       onChanged: dataInput.onChanged,
-      validator: (value) =>
+      validator: (value) => TextUtils.isEmpty(value) ? "Required" :
           ValidatorUtils.validateNumericValue(context, double.parse(value!), dataInput.lowerBound, dataInput.upperBound),
       textInputType: TextInputType.number,
     );
@@ -248,6 +248,7 @@ class CustomFormInputState extends State<CustomFormInput> {
     return StatefulBuilder(
       builder: (BuildContext context, insideState) {
         return CustomDropdownButton(
+          hint: dataInput.label,
           items: dataInput.dropdown,
           value: dataInput.selected,
           width: double.infinity,

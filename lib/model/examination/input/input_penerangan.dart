@@ -126,7 +126,7 @@ class DataPenerangan extends Equatable {
         'jumlahTK': jumlahTK,
         'sumberCahaya': sumberCahaya?.label,
         'jenisPengukuran': jenisPengukuran?.label,
-        'deviceCalibrations': deviceCalibration,
+        'deviceCalibration': deviceCalibration,
         'isUpdate': isUpdate,
       };
 
@@ -143,7 +143,7 @@ class DataPenerangan extends Equatable {
       jumlahTK: json['jumlahTK'],
       sumberCahaya: json['sumberCahaya'] == null ? null : SumberCahaya.values.firstWhere((element) => element.label == json['sumberCahaya']),
       jenisPengukuran: json['jenisPengukuran'] == null ? null : JenisPengukuran.values.firstWhere((element) => element.label == json['jenisPengukuran']),
-      deviceCalibration: json['deviceCalibrations'] == null ? null : DeviceCalibration.fromJson(json['deviceCalibrations']),
+      deviceCalibration: json['deviceCalibration'] == null ? null : DeviceCalibration.fromJson(json['deviceCalibration']),
       isUpdate: json['isUpdate'] ?? false,
     );
   }

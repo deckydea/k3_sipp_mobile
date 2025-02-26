@@ -9,6 +9,7 @@ class ResultIklimKerja {
   final double standarDeviasi;
   final double upresisi;
   final double ukalibrasi;
+  final double ubias;
   final double ugabungan;
   final double u95;
   final DateTime time;
@@ -61,6 +62,7 @@ class ResultIklimKerja {
     required this.standarDeviasi,
     required this.upresisi,
     required this.ukalibrasi,
+    required this.ubias,
     required this.ugabungan,
     required this.u95,
     required this.time,
@@ -115,7 +117,7 @@ class ResultIklimKerja {
 
   double get averageISBB => (isbb1 + isbb2 + isbb3 + isbb4 + isbb5 + isbb6) / 6;
 
-  double? get nab {
+  double get nab {
     switch (siklusKerja) {
       case SiklusKerja.siklus_75_100:
         switch (lajuMetabolit) {
@@ -124,9 +126,9 @@ class ResultIklimKerja {
           case LajuMetabolit.sedang:
             return 28.0;
           case LajuMetabolit.berat:
-            return null;
+            return 0;
           case LajuMetabolit.sangatBerat:
-            return null;
+            return 0;
         }
       case SiklusKerja.siklus_50_75:
         switch (lajuMetabolit) {
@@ -137,7 +139,7 @@ class ResultIklimKerja {
           case LajuMetabolit.berat:
             return 27.5;
           case LajuMetabolit.sangatBerat:
-            return null;
+            return 0;
         }
       case SiklusKerja.siklus_25_50:
         switch (lajuMetabolit) {
@@ -170,6 +172,7 @@ class ResultIklimKerja {
         'average': average,
         'standarDeviasi': standarDeviasi,
         'Upresisi': upresisi,
+        'Ubias': ubias,
         'Ukalibrasi': ukalibrasi,
         'Ugabungan': ugabungan,
         'U95': u95,
@@ -223,42 +226,43 @@ class ResultIklimKerja {
       standarDeviasi: double.parse(json['standarDeviasi'].toString()),
       upresisi: double.parse(json['Upresisi'].toString()),
       ukalibrasi: double.parse(json['Ukalibrasi'].toString()),
+      ubias: double.parse(json['Ubias'].toString()),
       ugabungan: double.parse(json['Ugabungan'].toString()),
       u95: double.parse(json['U95'].toString()),
       time: DateTime.parse(json['time']).toLocal(),
       jumlahTK: json['jumlahTK'],
       pengendalian: json['pengendalian'],
       durasi: json['durasi'],
-      ta1: double.parse(json['ta1']),
-      ta2: double.parse(json['ta2']),
-      ta3: double.parse(json['ta3']),
-      ta4: double.parse(json['ta4']),
-      ta5: double.parse(json['ta5']),
-      ta6: double.parse(json['ta6']),
-      tw1: double.parse(json['tw1']),
-      tw2: double.parse(json['tw2']),
-      tw3: double.parse(json['tw3']),
-      tw4: double.parse(json['tw4']),
-      tw5: double.parse(json['tw5']),
-      tw6: double.parse(json['tw6']),
-      tg1: double.parse(json['tg1']),
-      tg2: double.parse(json['tg2']),
-      tg3: double.parse(json['tg3']),
-      tg4: double.parse(json['tg4']),
-      tg5: double.parse(json['tg5']),
-      tg6: double.parse(json['tg6']),
-      rh1: double.parse(json['rh1']),
-      rh2: double.parse(json['rh2']),
-      rh3: double.parse(json['rh3']),
-      rh4: double.parse(json['rh4']),
-      rh5: double.parse(json['rh5']),
-      rh6: double.parse(json['rh6']),
-      isbb1: double.parse(json['isbb1']),
-      isbb2: double.parse(json['isbb2']),
-      isbb3: double.parse(json['isbb3']),
-      isbb4: double.parse(json['isbb4']),
-      isbb5: double.parse(json['isbb5']),
-      isbb6: double.parse(json['isbb6']),
+      ta1: double.parse(json['ta1'].toString()),
+      ta2: double.parse(json['ta2'].toString()),
+      ta3: double.parse(json['ta3'].toString()),
+      ta4: double.parse(json['ta4'].toString()),
+      ta5: double.parse(json['ta5'].toString()),
+      ta6: double.parse(json['ta6'].toString()),
+      tw1: double.parse(json['tw1'].toString()),
+      tw2: double.parse(json['tw2'].toString()),
+      tw3: double.parse(json['tw3'].toString()),
+      tw4: double.parse(json['tw4'].toString()),
+      tw5: double.parse(json['tw5'].toString()),
+      tw6: double.parse(json['tw6'].toString()),
+      tg1: double.parse(json['tg1'].toString()),
+      tg2: double.parse(json['tg2'].toString()),
+      tg3: double.parse(json['tg3'].toString()),
+      tg4: double.parse(json['tg4'].toString()),
+      tg5: double.parse(json['tg5'].toString()),
+      tg6: double.parse(json['tg6'].toString()),
+      rh1: double.parse(json['rh1'].toString()),
+      rh2: double.parse(json['rh2'].toString()),
+      rh3: double.parse(json['rh3'].toString()),
+      rh4: double.parse(json['rh4'].toString()),
+      rh5: double.parse(json['rh5'].toString()),
+      rh6: double.parse(json['rh6'].toString()),
+      isbb1: double.parse(json['isbb1'].toString()),
+      isbb2: double.parse(json['isbb2'].toString()),
+      isbb3: double.parse(json['isbb3'].toString()),
+      isbb4: double.parse(json['isbb4'].toString()),
+      isbb5: double.parse(json['isbb5'].toString()),
+      isbb6: double.parse(json['isbb6'].toString()),
       lajuMetabolit: LajuMetabolit.values.firstWhere((element) => element.name == json['lajuMetabolit']),
       siklusKerja: SiklusKerja.values.firstWhere((element) => element.name == json['siklusKerja']),
       deviceCalibrationTW: json['deviceCalibrationTW'] == null ? null : DeviceCalibration.fromJson(json['deviceCalibrationTW']),

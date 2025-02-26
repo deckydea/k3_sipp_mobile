@@ -13,10 +13,10 @@ class ExaminationTypeName {
   static const getaranLengan = "GETARAN_LENGAN";
   static const getaranWholeBody = "GETARAN_WHOLE_BODY";
   static const sinarUV = "SINAR_UV";
-  static const gelombangElektroMagnet = "GELOMBANG_ELEKTROMAGNET";
+  static const gelombangElektroMagnet = "GELOMBANG_ELEKTROMAGNETIK";
   static const kebisinganAmbient = "KEBISINGAN_AMBIENT";
   static const kebisinganFrekuensi = "KEBISINGAN_FREKUENSI";
-  static const noiseDose = "KEBISINGAN_NOISE_DOSE";
+  static const kebisinganNoiseDose = "NOISE_DOSE";
 }
 
 class ExaminationType {

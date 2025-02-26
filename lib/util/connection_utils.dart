@@ -24,8 +24,8 @@ class ConnectionUtils {
 //   static final Uri altHakuUri = Uri.https("backend.hakureward", "/haku/rest");
 //   static final Uri altMilleImageUri = Uri.https("backend.millehub.com", "/mille/image");
 
-  static final Uri k3sippUri = Uri.http("192.168.100.152:8080", "/");
-  static final Uri altK3sippUri = Uri.http("192.168.100.152:8080", "/");
+  static final Uri k3sippUri = Uri.http("192.168.1.6:8080", "/");
+  static final Uri altK3sippUri = Uri.http("192.168.1.6:8080", "/");
 
   static final Map<String, String> httpHeader = {"Accept": "application/json", "content-type": "application/json"};
   static const String noConnectionResponse = "Unable to connect to server.";

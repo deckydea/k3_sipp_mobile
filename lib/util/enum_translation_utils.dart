@@ -53,7 +53,7 @@ class EnumTranslationUtils{
         return "Kebisingan Ambient";
       case ExaminationTypeName.kebisinganFrekuensi:
         return "Kebisingan Frekuensi";
-      case ExaminationTypeName.noiseDose:
+      case ExaminationTypeName.kebisinganNoiseDose:
         return "Kebisingan Noise Dose";
       default:
         return "-";

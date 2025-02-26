@@ -71,6 +71,27 @@ class CreateAssignmentLogic {
     inputs.add(templateNameInput);
   }
 
+  Future<MasterMessage> onUpdate({required List<Examination> examinations}) async {
+    if (formKey.currentState!.validate()) {
+      List<Petugas> petugas = [];
+      for (User user in selectedUsers) {
+        petugas.add(Petugas(petugasId: user.id!, penanggungJawab: userPJ != null && user.id == userPJ!.id));
+      }
+
+      Template template = Template(
+        examinations: examinations,
+        templateName: templateNameInput.value,
+        company: selectedCompany!,
+        petugas: petugas,
+        deadlineDate: deadlineInput.selectedDate,
+      );
+
+      String? token = await AppRepository().getToken();
+      return await ConnectionUtils.sendRequest(ManagementTemplateRequest(template: template, token: token));
+    }
+    return MasterMessage(response: MasterResponseType.failed);
+  }
+
   Future<MasterMessage> onCreate({required List<Examination> examinations}) async {
     if (formKey.currentState!.validate()) {
       List<Petugas> petugas = [];

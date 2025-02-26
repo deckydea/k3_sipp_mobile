@@ -14,20 +14,37 @@ import 'package:k3_sipp_mobile/net/master_message.dart';
 import 'package:k3_sipp_mobile/net/response/response_type.dart';
 import 'package:k3_sipp_mobile/res/colors.dart';
 import 'package:k3_sipp_mobile/res/dimens.dart';
+import 'package:k3_sipp_mobile/ui/assignment/input/input_elektromagnetic_page.dart';
+import 'package:k3_sipp_mobile/ui/assignment/input/input_hand_arm_page.dart';
 import 'package:k3_sipp_mobile/ui/assignment/input/input_iklim_kerja_page.dart';
 import 'package:k3_sipp_mobile/ui/assignment/input/input_kebisingan_frekuensi_page.dart';
 import 'package:k3_sipp_mobile/ui/assignment/input/input_kebisingan_lk_page.dart';
+import 'package:k3_sipp_mobile/ui/assignment/input/input_kebisingan_noise_dose_page.dart';
 import 'package:k3_sipp_mobile/ui/assignment/input/input_penerangan_page.dart';
+import 'package:k3_sipp_mobile/ui/assignment/input/input_uv_page.dart';
+import 'package:k3_sipp_mobile/ui/assignment/input/input_whole_body_page.dart';
 import 'package:k3_sipp_mobile/ui/user/select_user.dart';
 import 'package:k3_sipp_mobile/util/date_time_utils.dart';
 import 'package:k3_sipp_mobile/util/dialog_utils.dart';
 import 'package:k3_sipp_mobile/util/enum_translation_utils.dart';
 import 'package:k3_sipp_mobile/util/file_utils.dart';
 import 'package:k3_sipp_mobile/util/message_utils.dart';
+import 'package:k3_sipp_mobile/util/pdf/examination_result/akreditas_hand_arm_pdf.dart';
+import 'package:k3_sipp_mobile/util/pdf/examination_result/akreditas_iklim_kerja_pdf.dart';
+import 'package:k3_sipp_mobile/util/pdf/examination_result/akreditasi_elektromagnetic_pdf.dart';
 import 'package:k3_sipp_mobile/util/pdf/examination_result/akreditasi_kebisingan_frekuensi_pdf.dart';
+import 'package:k3_sipp_mobile/util/pdf/examination_result/akreditasi_noise_dose_pdf.dart';
+import 'package:k3_sipp_mobile/util/pdf/examination_result/akreditasi_uv_pdf.dart';
+import 'package:k3_sipp_mobile/util/pdf/examination_result/akreditasi_whole_body_pdf.dart';
+import 'package:k3_sipp_mobile/util/pdf/examination_result/lhp_elektromagnetic_pdf.dart';
+import 'package:k3_sipp_mobile/util/pdf/examination_result/lhp_hand_arm_pdf.dart';
+import 'package:k3_sipp_mobile/util/pdf/examination_result/lhp_iklim_kerja_pdf.dart';
 import 'package:k3_sipp_mobile/util/pdf/examination_result/lhp_kebisingan_lk_pdf.dart';
 import 'package:k3_sipp_mobile/util/pdf/examination_result/akreditasi_kebisingan_lk_pdf.dart';
 import 'package:k3_sipp_mobile/util/pdf/examination_result/akreditasi_penerangan_pdf.dart';
+import 'package:k3_sipp_mobile/util/pdf/examination_result/lhp_penerangan_pdf.dart';
+import 'package:k3_sipp_mobile/util/pdf/examination_result/lhp_uv_pdf.dart';
+import 'package:k3_sipp_mobile/util/pdf/examination_result/lhp_whole_body_pdf.dart';
 import 'package:k3_sipp_mobile/widget/custom/custom_button.dart';
 import 'package:k3_sipp_mobile/widget/custom/custom_card.dart';
 import 'package:k3_sipp_mobile/widget/custom/custom_circular_progress_indicator.dart';
@@ -73,6 +90,24 @@ class _InputFormPageState extends State<InputFormPage> {
         case ExaminationTypeName.kebisinganFrekuensi:
           pdfBytes = await KebisinganFrekuensiPdf.generatePrint(examination: _logic.examination);
           break;
+        case ExaminationTypeName.gelombangElektroMagnet:
+          pdfBytes = await AkreditasiElektromagneticPdf.generatePrint(examination: _logic.examination);
+          break;
+        case ExaminationTypeName.kebisinganNoiseDose:
+          pdfBytes = await AkreditasiNoiseDosePdf.generatePrint(examination: _logic.examination);
+          break;
+        case ExaminationTypeName.iklimKerja:
+          pdfBytes = await AkreditasiIklimKerjaPdf.generatePrint(examination: _logic.examination);
+          break;
+        case ExaminationTypeName.sinarUV:
+          pdfBytes = await AkreditasiUVPdf.generatePrint(examination: _logic.examination);
+          break;
+        case ExaminationTypeName.getaranLengan:
+          pdfBytes = await AkreditasiHandArmPdf.generatePrint(examination: _logic.examination);
+          break;
+        case ExaminationTypeName.getaranWholeBody:
+          pdfBytes = await AkreditasiWholeBodyPdf.generatePrint(examination: _logic.examination);
+          break;
         default:
           if (mounted) MessageUtils.showMessage(context: context, content: "Document tidak tersedia.");
           break;
@@ -98,7 +133,22 @@ class _InputFormPageState extends State<InputFormPage> {
           pdfBytes = await LHPKebisinganLKPdf.generatePrint(examination: _logic.examination);
           break;
         case ExaminationTypeName.penerangan:
-          pdfBytes = await AkreditasiPeneranganResultPdf.generatePrint(examination: _logic.examination);
+          pdfBytes = await LHPPeneranganPdf.generatePrint(examination: _logic.examination);
+          break;
+        case ExaminationTypeName.gelombangElektroMagnet:
+          pdfBytes = await LHPElektromagnetikPdf.generatePrint(examination: _logic.examination);
+          break;
+        case ExaminationTypeName.sinarUV:
+          pdfBytes = await LHPUVPdf.generatePrint(examination: _logic.examination);
+          break;
+        case ExaminationTypeName.getaranLengan:
+          pdfBytes = await LHPHandArmPdf.generatePrint(examination: _logic.examination);
+          break;
+        case ExaminationTypeName.getaranWholeBody:
+          pdfBytes = await LHPWholeBodyPdf.generatePrint(examination: _logic.examination);
+          break;
+        case ExaminationTypeName.iklimKerja:
+          pdfBytes = await LHPIklimKerjaPdf.generatePrint(examination: _logic.examination);
           break;
         default:
           if (mounted) MessageUtils.showMessage(context: context, content: "Document tidak tersedia.");
@@ -516,12 +566,33 @@ class _InputFormPageState extends State<InputFormPage> {
     switch (_logic.examination.typeOfExaminationName) {
       case ExaminationTypeName.kebisingan:
         widget = InputKebisinganLKPage(logic: _logic);
+        break;
       case ExaminationTypeName.penerangan:
         widget = InputPeneranganPage(logic: _logic);
+        break;
+      case ExaminationTypeName.kebisinganAmbient:
+        widget = Container();
+        break;
       case ExaminationTypeName.kebisinganFrekuensi:
         widget = InputKebisinganFrekuensiPage(logic: _logic);
+        break;
       case ExaminationTypeName.iklimKerja:
         widget = InputIklimKerjaPage(logic: _logic);
+        break;
+      case ExaminationTypeName.kebisinganNoiseDose:
+        widget = InputKebisinganNoiseDosePage(logic: _logic);
+        break;
+      case ExaminationTypeName.gelombangElektroMagnet:
+        widget = InputElektromagneticPage(logic: _logic);
+        break;
+      case ExaminationTypeName.sinarUV:
+        widget = InputUVPage(logic: _logic);
+        break;
+      case ExaminationTypeName.getaranWholeBody:
+        widget = InputWholeBodyPage(logic: _logic);
+        break;
+      case ExaminationTypeName.getaranLengan:
+        widget = InputHandArmPage(logic: _logic);
       default:
         widget = Container();
     }
@@ -532,12 +603,7 @@ class _InputFormPageState extends State<InputFormPage> {
           child: CustomCard(
             color: Colors.white,
             child: Padding(
-              padding: const EdgeInsets.only(
-                top: Dimens.paddingWidget,
-                left: Dimens.paddingWidget,
-                right: Dimens.paddingWidget,
-                bottom: Dimens.paddingMedium,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: Dimens.paddingWidget),
               child: widget,
             ),
           ),

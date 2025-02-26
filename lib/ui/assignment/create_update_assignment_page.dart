@@ -91,6 +91,45 @@ class _CreateOrUpdateAssignmentPageState extends State<CreateOrUpdateAssignmentP
     }
   }
 
+  Future<void> _actionUpdate() async {
+    final ProgressDialog progressDialog =
+    ProgressDialog("Update...", _logic.onUpdate(examinations: context.read<ExaminationsCubit>().state.examinations));
+
+    MasterMessage message = await progressDialog.show();
+    if (!TextUtils.isEmpty(message.token)) await AppRepository().setToken(message.token!);
+    switch (message.response) {
+      case MasterResponseType.success:
+        if (!TextUtils.isEmpty(message.content)) {
+          //TODO: Handle Success
+
+          if (mounted) {
+            await MessageUtils.showMessage(
+              context: context,
+              title: "Berhasil",
+              content: "berhasil ditambahkan",
+            );
+          }
+          navigatorKey.currentState?.pop();
+        }
+        break;
+      case MasterResponseType.invalidAccess:
+        if (mounted) DialogUtils.handleInvalidAccess(context);
+        break;
+      case MasterResponseType.notExist:
+      case MasterResponseType.invalidCredential:
+        if (mounted) DialogUtils.handleInvalidCredential(context);
+        break;
+      case MasterResponseType.invalidMessageFormat:
+        if (mounted) DialogUtils.handleInvalidMessageFormat(context);
+        break;
+      case MasterResponseType.noConnection:
+        if (mounted) DialogUtils.handleNoConnection(context);
+        break;
+      default:
+        if (mounted) DialogUtils.handleException(context);
+    }
+  }
+
   Future<void> _actionCreate() async {
     final ProgressDialog progressDialog =
         ProgressDialog("Mendaftarkan...", _logic.onCreate(examinations: context.read<ExaminationsCubit>().state.examinations));
@@ -292,9 +331,9 @@ class _CreateOrUpdateAssignmentPageState extends State<CreateOrUpdateAssignmentP
           padding: const EdgeInsets.all(Dimens.paddingPage),
           child: CustomButton(
             minimumSize: const Size(double.infinity, Dimens.buttonHeightSmall),
-            label: Text("Daftar", style: Theme.of(context).textTheme.titleMedium!.copyWith(color: Colors.white)),
+            label: Text( _logic.isUpdate ? "Update" : "Daftar", style: Theme.of(context).textTheme.titleMedium!.copyWith(color: Colors.white)),
             backgroundColor: ColorResources.primaryDark,
-            onPressed: _actionCreate,
+            onPressed:  _logic.isUpdate ? _actionUpdate : _actionCreate,
           ),
         ),
       ],

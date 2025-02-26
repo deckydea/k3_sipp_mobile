@@ -9,7 +9,6 @@ import 'package:k3_sipp_mobile/util/dialog_utils.dart';
 import 'package:k3_sipp_mobile/util/text_utils.dart';
 import 'package:k3_sipp_mobile/util/validator_utils.dart';
 import 'package:k3_sipp_mobile/widget/custom/custom_button.dart';
-import 'package:k3_sipp_mobile/widget/custom/custom_dialog_title.dart';
 import 'package:k3_sipp_mobile/widget/custom/custom_dropdown_button.dart';
 import 'package:k3_sipp_mobile/widget/custom/custom_edit_text.dart';
 
@@ -192,18 +191,18 @@ class _FormPeneranganState extends State<FormPenerangan> {
   @override
   Widget build(BuildContext context) {
     if (!_initialized) _init();
-    return Form(
-      key: _formKey,
-      child: SingleChildScrollView(
+    return Scaffold(
+      appBar: AppBar(
+        centerTitle: false,
+        backgroundColor: ColorResources.background,
+        title: Text("Form Penerangan", style: Theme.of(context).textTheme.headlineLarge),
+      ),
+      body: Form(
+        key: _formKey,
         child: Padding(
           padding: const EdgeInsets.all(Dimens.paddingPage),
           child: Column(
             children: [
-              CustomDialogTitle(
-                titleWidget: Text("Form Penerangan", style: Theme.of(context).textTheme.headlineLarge),
-                withCloseButton: true,
-              ),
-              const SizedBox(height: Dimens.paddingSmall),
               CustomEditText(
                 label: "Alat",
                 controller: _deviceController,
@@ -319,7 +318,7 @@ class _FormPeneranganState extends State<FormPenerangan> {
                 validator: (value) => ValidatorUtils.validateInputLength(context, value, 0, 200),
                 textInputType: TextInputType.text,
               ),
-              const SizedBox(height: Dimens.paddingMedium),
+              const Expanded(child: SizedBox(height: Dimens.paddingMedium)),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -350,6 +349,7 @@ class _FormPeneranganState extends State<FormPenerangan> {
                   ),
                 ],
               ),
+              const SizedBox(height: Dimens.paddingMedium),
             ],
           ),
         ),

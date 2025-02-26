@@ -248,30 +248,30 @@ class DataIklimKerja {
       durasi: json['durasi'],
       pengendalian: json['pengendalian'],
       note: json['note'],
-      ta1: double.parse(json['ta1']),
-      ta2: double.parse(json['ta2']),
-      ta3: double.parse(json['ta3']),
-      ta4: double.parse(json['ta4']),
-      ta5: double.parse(json['ta5']),
-      ta6: double.parse(json['ta6']),
-      tw1: double.parse(json['tw1']),
-      tw2: double.parse(json['tw2']),
-      tw3: double.parse(json['tw3']),
-      tw4: double.parse(json['tw4']),
-      tw5: double.parse(json['tw5']),
-      tw6: double.parse(json['tw6']),
-      tg1: double.parse(json['tg1']),
-      tg2: double.parse(json['tg2']),
-      tg3: double.parse(json['tg3']),
-      tg4: double.parse(json['tg4']),
-      tg5: double.parse(json['tg5']),
-      tg6: double.parse(json['tg6']),
-      rh1: double.parse(json['rh1']),
-      rh2: double.parse(json['rh2']),
-      rh3: double.parse(json['rh3']),
-      rh4: double.parse(json['rh4']),
-      rh5: double.parse(json['rh5']),
-      rh6: double.parse(json['rh6']),
+      ta1: double.parse(json['ta1'].toString()),
+      ta2: double.parse(json['ta2'].toString()),
+      ta3: double.parse(json['ta3'].toString()),
+      ta4: double.parse(json['ta4'].toString()),
+      ta5: double.parse(json['ta5'].toString()),
+      ta6: double.parse(json['ta6'].toString()),
+      tw1: double.parse(json['tw1'].toString()),
+      tw2: double.parse(json['tw2'].toString()),
+      tw3: double.parse(json['tw3'].toString()),
+      tw4: double.parse(json['tw4'].toString()),
+      tw5: double.parse(json['tw5'].toString()),
+      tw6: double.parse(json['tw6'].toString()),
+      tg1: double.parse(json['tg1'].toString()),
+      tg2: double.parse(json['tg2'].toString()),
+      tg3: double.parse(json['tg3'].toString()),
+      tg4: double.parse(json['tg4'].toString()),
+      tg5: double.parse(json['tg5'].toString()),
+      tg6: double.parse(json['tg6'].toString()),
+      rh1: double.parse(json['rh1'].toString()),
+      rh2: double.parse(json['rh2'].toString()),
+      rh3: double.parse(json['rh3'].toString()),
+      rh4: double.parse(json['rh4'].toString()),
+      rh5: double.parse(json['rh5'].toString()),
+      rh6: double.parse(json['rh6'].toString()),
       lajuMetabolit: LajuMetabolit.values.firstWhere((element) => element.name == json['lajuMetabolit']),
       siklusKerja: SiklusKerja.values.firstWhere((element) => element.name == json['siklusKerja']),
       deviceCalibrationTW: json['deviceCalibrationTW'] == null ? null : DeviceCalibration.fromJson(json['deviceCalibrationTW']),
@@ -285,26 +285,26 @@ class DataIklimKerja {
 
 class InputIklimKerja {
   int examinationId;
-  List<DataIklimKerja> dataInputIklimKerja;
+  List<DataIklimKerja> dataIklimKerja;
 
-  InputIklimKerja({required this.examinationId, required this.dataInputIklimKerja});
+  InputIklimKerja({required this.examinationId, required this.dataIklimKerja});
 
   Map<String, dynamic> toJson() => {
         'examinationId': examinationId,
-        'dataInputIklimKerja': dataInputIklimKerja.toList(),
+        'dataIklimKerja': dataIklimKerja.toList(),
       };
 
   factory InputIklimKerja.fromJson(Map<String, dynamic> json) {
-    List<DataIklimKerja> dataInputIklimKerja = [];
-    if (json["dataInputIklimKerja"] != null) {
-      Iterable iterable = json["dataInputIklimKerja"];
+    List<DataIklimKerja> dataIklimKerja = [];
+    if (json["dataIklimKerja"] != null) {
+      Iterable iterable = json["dataIklimKerja"];
       for (var data in iterable) {
-        dataInputIklimKerja.add(DataIklimKerja.fromJson(data));
+        dataIklimKerja.add(DataIklimKerja.fromJson(data));
       }
     }
     return InputIklimKerja(
       examinationId: json['examinationId'],
-      dataInputIklimKerja: dataInputIklimKerja,
+      dataIklimKerja: dataIklimKerja,
     );
   }
 }

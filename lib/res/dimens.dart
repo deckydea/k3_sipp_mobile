@@ -89,6 +89,7 @@ class Dimens {
   static const double fontButton = 14;
   static const double fontDefault = 13;
   static const double fontXXXSmall = 7;
+  static const double fontXXXXSmall = 5;
   static const double fontXXSmall = 8;
   static const double fontXSmall = 9;
   static const double fontSmall = 12;

@@ -217,8 +217,9 @@ class LHPKebisinganLKPdf {
       );
     } else {
       text = RichText(
-        text: const TextSpan(
-          children: [
+        text: TextSpan(
+          style: PdfHelperUtils.smallStyle,
+          children: const [
             TextSpan(
                 text:
                     "Pertahankan kondisi lingkungan kerja yang aman sehat dan Produktif, dan lakukan pengujian lingkungan kerja secara berkala."),
@@ -319,10 +320,8 @@ class LHPKebisinganLKPdf {
             _cell(widget: Text("${result.jumlahTK ?? "0"}", textAlign: TextAlign.center, style: PdfHelperUtils.smallStyle)),
             _cell(widget: Text(result.average.toStringAsFixed(2), textAlign: TextAlign.center, style: PdfHelperUtils.smallStyle)),
             _cell(
-                widget:
-                    Text("${result.pemaparanKebisingan.nab}", textAlign: TextAlign.center, style: PdfHelperUtils.smallStyle)),
-            _cell(
-                widget: Text(result.pemaparanKebisingan.label, textAlign: TextAlign.center, style: PdfHelperUtils.smallStyle)),
+                widget: Text("${result.pemaparanKebisingan.nab}", textAlign: TextAlign.center, style: PdfHelperUtils.smallStyle)),
+            _cell(widget: Text(result.pemaparanKebisingan.label, textAlign: TextAlign.center, style: PdfHelperUtils.smallStyle)),
             _cell(
                 widget: Text(TextUtils.isEmpty(result.pengendalian) ? "-" : result.pengendalian!,
                     textAlign: TextAlign.center, style: PdfHelperUtils.smallStyle)),
